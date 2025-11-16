@@ -34,6 +34,7 @@ except ImportError:
     logger.warning("tiktoken not available, using rough estimation for token counting")
 
 from ...config import settings
+from .entity_normalizer import EntityNormalizer
 
 
 class LLMEntityExtractor:
@@ -51,6 +52,10 @@ class LLMEntityExtractor:
         self.max_tokens_per_request = 1200  # Conservative for quality extraction
         self.encoding = None
         self.redis_client = None
+
+        # Initialize entity normalizer for deduplication
+        self.normalizer = EntityNormalizer()
+        logger.info("Entity normalizer initialized for duplicate prevention")
 
         # Auto-detect available provider
         self._detect_provider()
@@ -436,17 +441,46 @@ JSON:"""
             return {"entities": [], "relationships": []}
 
     def _deduplicate_entities(self, entities: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        """Remove duplicate entities, keeping highest confidence"""
+        """
+        Remove duplicate entities using entity normalizer.
+
+        Prevents duplicates like "Dr. Ahmed Hassan" and "Ahmed Hassan, PhD"
+        by normalizing entity names before deduplication.
+        """
         seen = {}
+        original_count = len(entities)
+
         for entity in entities:
-            key = (entity["text"].lower().strip(), entity["type"])
+            entity_text = entity.get("text", "")
+            entity_type = entity.get("type", "Unknown")
+
+            # Normalize the entity name
+            normalized_name = self.normalizer.normalize_entity_name(entity_text, entity_type)
+
+            # Use normalized name for deduplication key
+            key = (normalized_name.lower().strip(), entity_type)
+
+            # Keep entity with highest confidence or update text to normalized form
             if key not in seen or entity.get("confidence", 0) > seen[key].get("confidence", 0):
+                # Update entity text to normalized form
+                entity["text"] = normalized_name
+                entity["original_text"] = entity_text  # Keep original for reference
                 seen[key] = entity
 
-        return list(seen.values())
+        deduplicated = list(seen.values())
+        removed_count = original_count - len(deduplicated)
+
+        if removed_count > 0:
+            logger.info(f"Entity normalizer removed {removed_count} duplicate entities")
+
+        return deduplicated
 
     def _deduplicate_relationships(self, relationships: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        """Remove duplicate relationships"""
+        """
+        Remove duplicate relationships and normalize entity names.
+
+        Also normalizes source/target entity names to match normalized entity names.
+        """
         seen = set()
         unique = []
 
@@ -456,7 +490,17 @@ JSON:"""
                 logger.warning(f"Skipping invalid relationship (missing required fields): {rel}")
                 continue
 
-            key = (rel["source"].lower().strip(), rel["target"].lower().strip(), rel["type"])
+            # Normalize source and target names (assume Person type for safety)
+            # The exact type doesn't matter much for relationship normalization
+            source_normalized = self.normalizer.normalize_entity_name(rel["source"], "Person")
+            target_normalized = self.normalizer.normalize_entity_name(rel["target"], "Person")
+
+            # Update relationship with normalized names
+            rel["source"] = source_normalized
+            rel["target"] = target_normalized
+
+            # Deduplicate using normalized names
+            key = (source_normalized.lower().strip(), target_normalized.lower().strip(), rel["type"])
             if key not in seen:
                 seen.add(key)
                 unique.append(rel)
