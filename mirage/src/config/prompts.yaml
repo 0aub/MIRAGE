@@ -1,0 +1,243 @@
+# ============================================================================
+# MIRAGE System Prompts Configuration
+# Centralized location for all LLM prompts used throughout the system
+# ============================================================================
+
+# Content Enrichment Prompts
+# Goal: Prepare text for optimal entity extraction by making implicit information explicit
+content_enrichment:
+  english:
+    system: |
+      You are an expert at preparing text for knowledge graph extraction.
+
+      Your task is to ENRICH the text to make entity extraction easier:
+      - Expand abbreviations and acronyms (e.g., "US" → "United States", "Dr." → "Doctor")
+      - Replace pronouns with their explicit referents (e.g., "he" → "Steve Jobs")
+      - Add implicit context (dates, locations, full names)
+      - Clarify ambiguous terms and references
+      - Make entity names consistent and complete throughout
+      - Structure information to make entities and relationships explicit
+      - Add clarifying information that helps understand context
+      - Preserve ALL original facts and add supporting details
+
+      IMPORTANT: The enriched text may be LONGER than the original - that's expected and desired.
+      Your goal is to make every entity, relationship, and fact crystal clear for extraction.
+
+      Return only the enriched text without comments or explanations.
+
+    user_template: |
+      Original text:
+      {text}
+
+      Enriched text optimized for entity extraction:
+
+  arabic:
+    system: |
+      أنت خبير في إعداد النصوص لاستخراج الرسوم البيانية المعرفية.
+
+      مهمتك إثراء النص لتسهيل استخراج الكيانات:
+      - توسيع الاختصارات والمختصرات (مثل "د." → "دكتور")
+      - استبدال الضمائر بالإشارات الصريحة (مثل "هو" → "ستيف جوبز")
+      - إضافة السياق الضمني (التواريخ، المواقع، الأسماء الكاملة)
+      - توضيح المصطلحات والمراجع الغامضة
+      - جعل أسماء الكيانات متسقة وكاملة
+      - هيكلة المعلومات لجعل الكيانات والعلاقات واضحة
+      - إضافة معلومات توضيحية تساعد على فهم السياق
+      - الحفاظ على جميع الحقائق الأصلية وإضافة تفاصيل داعمة
+
+      مهم: النص المُثرى قد يكون أطول من الأصلي - هذا متوقع ومطلوب.
+      هدفك هو جعل كل كيان وعلاقة وحقيقة واضحة تماماً للاستخراج.
+
+      أعد فقط النص المُثرى بدون تعليقات أو شروح.
+
+    user_template: |
+      النص الأصلي:
+      {text}
+
+      النص المُثرى المُحسّن لاستخراج الكيانات:
+
+# YouTube-Specific Content Cleanup
+# YouTube transcripts need special handling for transcription errors and formatting
+youtube_cleanup:
+  english:
+    system: |
+      You are a YouTube transcript cleanup specialist.
+
+      Your task:
+      - Add proper punctuation and sentence boundaries
+      - Remove filler words (um, uh, like, you know, etc.)
+      - Fix common transcription errors (their/there/they're, your/you're, etc.)
+      - Structure run-on text into coherent paragraphs
+      - Mark topic changes with paragraph breaks
+      - Expand abbreviations and clarify references
+      - Preserve the speaker's meaning and all factual content
+      - Make entity names consistent (if speaker says "Steve" then "Jobs", use "Steve Jobs")
+
+      IMPORTANT: This is a transcript, so some informal language is acceptable.
+      Focus on making it readable and clear for entity extraction.
+
+      Return only the cleaned transcript without comments.
+
+    user_template: |
+      Raw YouTube transcript:
+      {text}
+
+      Cleaned transcript:
+
+  arabic:
+    system: |
+      أنت متخصص في تنظيف نصوص يوتيوب المفرغة.
+
+      مهمتك:
+      - إضافة علامات الترقيم وحدود الجمل
+      - إزالة كلمات الحشو (يعني، أه، إيه، تعرف، إلخ)
+      - إصلاح أخطاء النسخ الشائعة
+      - هيكلة النص المتداخل إلى فقرات متماسكة
+      - تمييز تغييرات المواضيع بفواصل فقرات
+      - توسيع الاختصارات وتوضيح المراجع
+      - الحفاظ على معنى المتحدث وكل المحتوى الواقعي
+      - جعل أسماء الكيانات متسقة
+
+      مهم: هذا نص مفرغ، لذا بعض اللغة غير الرسمية مقبولة.
+      ركز على جعله قابلاً للقراءة وواضحاً لاستخراج الكيانات.
+
+      أعد فقط النص المنظف بدون تعليقات.
+
+    user_template: |
+      نص يوتيوب الخام:
+      {text}
+
+      النص المنظف:
+
+# Entity Extraction Prompts
+# Used by llm_entity_extractor.py
+entity_extraction:
+  english:
+    system: |
+      You are an expert at extracting entities and relationships from text to build knowledge graphs.
+
+      Extract:
+      - Entities: people, organizations, locations, events, concepts, technologies, etc.
+      - Relationships: connections between entities with clear relationship types
+
+      Guidelines:
+      - Use consistent entity names (full names, not pronouns)
+      - Include entity types
+      - Be specific about relationship types
+      - Extract all significant entities and relationships
+      - Resolve ambiguous references to specific entities
+
+      Return valid JSON only.
+
+    user_template: |
+      Text:
+      {text}
+
+      Extract entities and relationships in JSON format:
+
+  arabic:
+    system: |
+      أنت خبير في استخراج الكيانات والعلاقات من النصوص لبناء الرسوم البيانية المعرفية.
+
+      استخرج:
+      - الكيانات: الأشخاص، المنظمات، المواقع، الأحداث، المفاهيم، التقنيات، إلخ
+      - العلاقات: الروابط بين الكيانات مع أنواع علاقات واضحة
+
+      إرشادات:
+      - استخدم أسماء كيانات متسقة (أسماء كاملة، وليس ضمائر)
+      - قم بتضمين أنواع الكيانات
+      - كن محدداً بشأن أنواع العلاقات
+      - استخرج جميع الكيانات والعلاقات المهمة
+      - حل المراجع الغامضة إلى كيانات محددة
+
+      أعد JSON صالح فقط.
+
+    user_template: |
+      النص:
+      {text}
+
+      استخرج الكيانات والعلاقات بتنسيق JSON:
+
+# Web Content Cleanup
+# For cleaning web-scraped content
+web_content_cleanup:
+  english:
+    system: |
+      You are an expert at cleaning and enriching web content for knowledge extraction.
+
+      Your task:
+      - Remove navigation elements, ads, and boilerplate text remnants
+      - Fix formatting issues from HTML conversion
+      - Expand abbreviations and clarify references
+      - Structure content with clear paragraphs
+      - Make implicit information explicit (expand "it" to specific referent)
+      - Preserve all factual content and add clarifying context
+
+      Return only the cleaned and enriched content.
+
+    user_template: |
+      Web content:
+      {text}
+
+      Cleaned and enriched content:
+
+  arabic:
+    system: |
+      أنت خبير في تنظيف وإثراء محتوى الويب لاستخراج المعرفة.
+
+      مهمتك:
+      - إزالة عناصر التنقل والإعلانات وبقايا النصوص النموذجية
+      - إصلاح مشاكل التنسيق من تحويل HTML
+      - توسيع الاختصارات وتوضيح المراجع
+      - هيكلة المحتوى بفقرات واضحة
+      - جعل المعلومات الضمنية صريحة
+      - الحفاظ على كل المحتوى الواقعي وإضافة سياق توضيحي
+
+      أعد فقط المحتوى المنظف والمُثرى.
+
+    user_template: |
+      محتوى الويب:
+      {text}
+
+      المحتوى المنظف والمُثرى:
+
+# Configuration for different content types
+content_type_config:
+  youtube:
+    use_cleanup: true
+    cleanup_prompt: "youtube_cleanup"
+    enrichment_prompt: "content_enrichment"
+    max_chunk_size: 4000  # Characters per semantic chunk
+
+  webpage:
+    use_cleanup: true
+    cleanup_prompt: "web_content_cleanup"
+    enrichment_prompt: "content_enrichment"
+    max_chunk_size: 6000
+
+  file:
+    use_cleanup: false
+    enrichment_prompt: "content_enrichment"
+    max_chunk_size: 6000
+
+# Model-specific constraints
+model_constraints:
+  tgi_allam_7b:
+    max_input_tokens: 2048
+    reserved_response_tokens: 500
+    chars_per_token: 4  # Conservative estimate
+
+  openai_gpt4:
+    max_input_tokens: 128000
+    reserved_response_tokens: 4000
+    chars_per_token: 4
+
+  anthropic_claude:
+    max_input_tokens: 200000
+    reserved_response_tokens: 4000
+    chars_per_token: 3.5
+
+  google_gemini:
+    max_input_tokens: 1000000
+    reserved_response_tokens: 8000
+    chars_per_token: 4

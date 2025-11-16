@@ -1,0 +1,103 @@
+# Content-Type-Specific Chunking Strategies
+# Different content types require different chunking approaches
+
+# ============================================================
+# YOUTUBE TRANSCRIPTS
+# ============================================================
+youtube:
+  strategy: "semantic"
+  description: "Transcripts lack structure - use semantic similarity"
+
+  # Semantic chunking parameters
+  chunk_size: 1000              # Target chunk size in characters
+  max_chunk_size: 1500          # HARD maximum (for ALLaM-7B)
+  similarity_threshold: 0.7     # Cosine similarity threshold
+  min_sentences_per_chunk: 2    # Minimum sentences per chunk
+
+  # Transcript-specific settings
+  respect_timestamps: false     # Don't force breaks at timestamp boundaries
+  merge_speaker_turns: true     # Merge consecutive turns from same speaker
+
+# ============================================================
+# WEB PAGES
+# ============================================================
+webpage:
+  strategy: "structural"
+  description: "Use HTML structure as primary chunking signal"
+
+  # Structural chunking - respect HTML semantics
+  primary_boundaries:
+    - "article"      # Each <article> is a chunk
+    - "section"      # Each <section> is a chunk
+    - "div.content"  # Content divs
+
+  secondary_boundaries:
+    - "h1"  # Major headings create chunks
+    - "h2"  # Section headings create chunks
+    - "h3"  # Subsection headings (if chunk too large)
+
+  # Size constraints
+  max_chunk_size: 2000          # Larger than YouTube (web content is denser)
+  min_chunk_size: 200           # Don't create tiny chunks
+
+  # Fallback behavior
+  fallback_to_semantic: true    # If no structure found, use semantic
+  semantic_similarity_threshold: 0.7
+
+  # HTML-specific settings
+  strip_navigation: true        # Remove nav, header, footer
+  strip_sidebars: true          # Remove aside elements
+  preserve_code_blocks: true    # Keep <pre><code> together
+
+# ============================================================
+# PDF DOCUMENTS
+# ============================================================
+pdf:
+  strategy: "page_based"
+  description: "Use page boundaries as primary chunks"
+
+  # Page-based chunking
+  chunk_by_page: true           # Each page is a chunk
+  max_chars_per_page: 2500      # If page exceeds this, split it
+
+  # Heading detection (if available from PDF structure)
+  respect_headings: true        # Use PDF outline/bookmarks as boundaries
+  heading_levels: [1, 2]        # Which heading levels create chunks
+
+  # Fallback for large pages
+  split_large_pages: true       # Split pages that exceed max size
+  split_method: "semantic"      # How to split: "semantic" or "paragraph"
+
+  # PDF-specific settings
+  merge_hyphenated_words: true  # "exam-\nple" → "example"
+  preserve_tables: true         # Keep tables in single chunk
+  preserve_figures: false       # Skip figure captions (no image processing yet)
+
+# ============================================================
+# PLAIN TEXT FILES
+# ============================================================
+text_file:
+  strategy: "semantic"
+  description: "Generic text files - use semantic chunking"
+
+  # Similar to YouTube but with different thresholds
+  chunk_size: 1200
+  max_chunk_size: 1800
+  similarity_threshold: 0.75    # Stricter similarity for structured text
+  min_sentences_per_chunk: 3
+
+  # Text-specific settings
+  detect_markdown_headings: true   # If markdown, use ## as boundaries
+  preserve_code_blocks: true       # Keep ``` blocks together
+
+# ============================================================
+# FALLBACK (Unknown Content Type)
+# ============================================================
+default:
+  strategy: "semantic"
+  description: "Fallback for unknown content types"
+
+  chunk_size: 1000
+  max_chunk_size: 1500
+  similarity_threshold: 0.7
+  min_sentences_per_chunk: 2

@@ -1,0 +1,82 @@
+# LLM and Embedding Model Configuration
+# This file centralizes all model-related settings for easy experimentation
+
+# ============================================================
+# LLM PROVIDER CONFIGURATION
+# ============================================================
+llm:
+  # Provider priority (1=highest, used first if enabled)
+  providers:
+    tgi:
+      enabled: true
+      endpoint: "http://tgi:8765"
+      model: "tgi"  # TGI doesn't need specific model ID
+      priority: 1
+      description: "Local Text Generation Inference (ALLaM-7B on GPU)"
+
+    openai:
+      enabled: false
+      model: "gpt-4o-mini"
+      priority: 2
+      description: "OpenAI GPT-4o Mini (requires OPENAI_API_KEY)"
+
+    anthropic:
+      enabled: false
+      model: "claude-3-haiku-20240307"
+      priority: 3
+      description: "Claude 3 Haiku (requires ANTHROPIC_API_KEY)"
+
+    google:
+      enabled: false
+      model: "gemini/gemini-2.0-flash-exp"
+      priority: 4
+      description: "Google Gemini 2.0 Flash (requires GOOGLE_API_KEY)"
+
+  # LLM Generation Parameters
+  # Used for content rewriting and entity extraction
+  parameters:
+    temperature: 0.3      # Lower = more deterministic (0.0-1.0)
+    max_tokens: 2000      # Maximum tokens to generate
+
+  # Token Constraints for Different Models
+  # Used to calculate maximum input size per model
+  constraints:
+    tgi_allam_7b:
+      max_input_tokens: 2048      # ALLaM-7B context window
+      reserved_response_tokens: 500  # Reserve for response
+      chars_per_token: 4          # Rough estimate (conservative)
+
+    openai_gpt4:
+      max_input_tokens: 8192
+      reserved_response_tokens: 1000
+      chars_per_token: 4
+
+    anthropic_claude:
+      max_input_tokens: 100000
+      reserved_response_tokens: 1000
+      chars_per_token: 4
+
+    google_gemini:
+      max_input_tokens: 32768
+      reserved_response_tokens: 1000
+      chars_per_token: 4
+
+# ============================================================
+# EMBEDDING MODEL CONFIGURATION
+# ============================================================
+embeddings:
+  provider: "jina"  # Currently only Jina is supported
+
+  jina:
+    model: "jina-embeddings-v4"
+    use_api: false  # false = local inference, true = Jina API
+    api_url: "https://api.jina.ai/v1/embeddings"
+    embedding_dim: 1024  # v4=1024, v3=768
+
+    # Task types for different use cases
+    # https://jina.ai/embeddings
+    tasks:
+      default: "retrieval.passage"  # For document chunks
+      query: "retrieval.query"      # For user queries
+      classification: "classification"
+      separation: "separation"

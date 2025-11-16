@@ -1,0 +1,82 @@
+# Database Configuration
+# This file centralizes all database connection and configuration settings
+
+# ============================================================
+# NEO4J GRAPH DATABASE
+# ============================================================
+neo4j:
+  # Connection settings
+  uri: "bolt://neo4j:7687"
+  user: "neo4j"
+  password: "password"
+
+  # Graph generation settings
+  graph:
+    # Enable relationship deduplication
+    deduplicate_relationships: true
+
+    # Maximum relationships per entity (prevents graph explosion)
+    max_relationships_per_entity: 50
+
+# ============================================================
+# QDRANT VECTOR STORE
+# ============================================================
+qdrant:
+  # Connection settings
+  host: "qdrant"
+  port: 6333
+
+  # Collection name for document chunks
+  collection_name: "mirage_chunks"
+
+  # Vector configuration
+  vector_config:
+    # Embedding dimension (must match embedding model)
+    # Jina v4 = 1024, Jina v3 = 768
+    dimension: 1024
+
+    # Distance metric for similarity search
+    # Options: COSINE, EUCLIDEAN, DOT
+    distance: "COSINE"
+
+  # Search configuration
+  search:
+    # Default number of results to return
+    default_limit: 10
+
+    # Minimum similarity score threshold (0.0-1.0)
+    # Results below this score are filtered out
+    score_threshold: 0.5
+
+    # Use approximate nearest neighbor (faster but less accurate)
+    use_approximate: true
+
+# ============================================================
+# REDIS (Caching & Progress Tracking)
+# ============================================================
+redis:
+  # Connection URL
+  url: "redis://redis:6379"
+
+  # TTL for processing status (seconds)
+  processing_status_ttl: 3600
+
+  # TTL for embeddings cache (seconds)
+  embeddings_cache_ttl: 86400  # 24 hours
+
+# ============================================================
+# MONGODB (Document Storage)
+# ============================================================
+mongodb:
+  # Connection URL
+  url: "mongodb://mongo:27017"
+
+  # Database name
+  database: "mirage"
+
+  # Collection names
+  collections:
+    documents: "documents"
+    chunks: "chunks"
+    entities: "entities"
+    relationships: "relationships"

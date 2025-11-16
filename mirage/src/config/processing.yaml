@@ -1,0 +1,83 @@
+# Document Processing Configuration
+# This file centralizes all processing pipeline settings
+
+# ============================================================
+# SEMANTIC CHUNKING
+# ============================================================
+semantic_chunking:
+  # Target chunk size in characters (soft limit)
+  chunk_size: 1000
+
+  # HARD maximum chunk size (NEVER exceeded)
+  # This is critical for models with small context windows (e.g., ALLaM-7B with 2048 tokens)
+  max_chunk_size: 1500
+
+  # Minimum cosine similarity to group sentences together (0.0-1.0)
+  # Higher = stricter grouping (more semantic coherence)
+  # Lower = looser grouping (larger chunks, less coherent)
+  similarity_threshold: 0.7
+
+  # Minimum number of sentences per chunk
+  # Prevents too-small chunks that lack context
+  min_sentences_per_chunk: 2
+
+# ============================================================
+# CONTENT REWRITING (Optional Pre-Processing)
+# ============================================================
+content_rewriting:
+  # Enable LLM-based content cleanup before entity extraction
+  # IMPORTANT: This adds 2-5 minutes per document
+  # Benefits: Cleans up transcripts, fixes grammar, removes repetition
+  # Disable for testing or when raw content is already high quality
+  enabled: false
+
+# ============================================================
+# REFRAG COMPRESSION
+# ============================================================
+refrag:
+  # Compression rate for REFRAG (higher = more compression)
+  compression_rate: 16
+
+  # Cache size for REFRAG (number of cached compressions)
+  cache_size: 1000
+
+# ============================================================
+# UPLOAD LIMITS
+# ============================================================
+upload:
+  # Maximum upload file size in MB
+  max_size_mb: 100
+
+# ============================================================
+# ENTITY EXTRACTION
+# ============================================================
+entity_extraction:
+  # Process entities per-chunk (vs concatenating all chunks)
+  # true = More reliable, avoids token limit errors
+  # false = May produce better entity linking, but risks token errors
+  per_chunk: true
+
+  # Deduplicate entities after extraction
+  deduplicate: true
+
+  # Minimum entity confidence score (0.0-1.0)
+  # Entities below this threshold are filtered out
+  min_confidence: 0.0
+
+# ============================================================
+# GRAPH GENERATION
+# ============================================================
+graph_generation:
+  # Minimum relationship confidence score (0.0-1.0)
+  # Relationships below this threshold are filtered out
+  min_relationship_confidence: 0.0
+
+  # Maximum traversal depth for graph queries
+  max_traversal_depth: 3
+
+  # Merge duplicate entities based on name similarity
+  merge_similar_entities: true
+
+  # Name similarity threshold for merging (0.0-1.0)
+  # Higher = stricter matching (fewer merges)
+  name_similarity_threshold: 0.85
