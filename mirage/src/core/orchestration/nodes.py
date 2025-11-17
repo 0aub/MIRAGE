@@ -10,10 +10,12 @@ from loguru import logger
 
 from ..graph_builder import Neo4jClient
 from ..graph_builder.enhanced_neo4j_client import EnhancedNeo4jClient
+from ..graph_builder import GraphTraversal, HybridSearchEngine
 from ..embeddings import JinaEmbedder
 from ..refrag import REFRAGCompressor
 from .claude_client import ClaudeClient
 from .workflow_state import WorkflowState
+from ...config.settings import settings
 
 
 class WorkflowNodes:
@@ -49,6 +51,21 @@ class WorkflowNodes:
             logger.warning(f"Could not initialize EnhancedNeo4jClient: {e}. Falling back to standard client.")
             self.enhanced_neo4j = None
             self.embedder = None
+
+        # Initialize GraphRAG components (Phase 1-5)
+        try:
+            self.graph_traversal = GraphTraversal(neo4j_client)
+            self.hybrid_search = HybridSearchEngine(
+                neo4j_client=neo4j_client,
+                graph_traversal=self.graph_traversal,
+                llm_endpoint=settings.tgi_endpoint,
+                auto_route=True  # Automatic query routing
+            )
+            logger.info("Initialized GraphRAG HybridSearchEngine with auto-routing")
+        except Exception as e:
+            logger.warning(f"Could not initialize GraphRAG components: {e}. Using standard retrieval.")
+            self.graph_traversal = None
+            self.hybrid_search = None
 
         logger.info("Initialized WorkflowNodes")
     
@@ -183,35 +200,145 @@ Keywords:"""
     
     def graph_retrieval_node(self, state: WorkflowState) -> WorkflowState:
         """
-        Retrieve relevant subgraph from Neo4j
-        
+        Retrieve relevant subgraph from Neo4j using GraphRAG HybridSearch
+
+        GraphRAG Enhancement:
+        - Auto-routes query to Global (community summaries) or Local (entity traversal)
+        - Global: Best for holistic questions ("What are the main themes?")
+        - Local: Best for specific questions ("Who works at IBM?")
+        - Hybrid: Combines both for complex queries
+
         Args:
             state: Current workflow state
-            
+
         Returns:
-            Updated state with retrieved subgraph
+            Updated state with retrieved subgraph and GraphRAG metadata
         """
         start_time = time.time()
-        
+
+        query = state.get("query", "")
         entities = state.get("entities_found", [])
-        logger.info(f"Retrieving subgraphs for {len(entities)} entities")
-        
-        # Collect all relevant nodes and edges
+
+        # Try GraphRAG first if available
+        if self.hybrid_search:
+            try:
+                logger.info(f"Using GraphRAG HybridSearch for query: {query}")
+
+                # Execute GraphRAG search (auto-routes to Global/Local/Hybrid)
+                graphrag_result = self.hybrid_search.search(query)
+
+                logger.info(
+                    f"GraphRAG search completed: mode={graphrag_result.search_mode}, "
+                    f"confidence={graphrag_result.confidence:.2f}"
+                )
+
+                # Extract GraphRAG metadata for explainability
+                graphrag_metadata = {
+                    "search_mode": graphrag_result.search_mode,
+                    "confidence": graphrag_result.confidence,
+                }
+
+                # Extract nodes, edges, communities based on search mode
+                all_nodes = []
+                all_edges = []
+                communities = []
+
+                if graphrag_result.search_mode == "local":
+                    # Local search metadata
+                    local_meta = graphrag_result.metadata
+                    graphrag_metadata["seed_entities"] = local_meta.get("seed_entities", [])
+                    graphrag_metadata["discovered_entities"] = local_meta.get("discovered_entities", 0)
+                    graphrag_metadata["relationships"] = local_meta.get("relationships", 0)
+
+                    # Retrieve actual subgraph for visualization
+                    for entity_name in local_meta.get("seed_entities", [])[:3]:
+                        subgraph = self.neo4j.query_subgraph(entity_name, depth=2)
+                        all_nodes.extend(subgraph.get("nodes", []))
+                        all_edges.extend(subgraph.get("edges", []))
+
+                elif graphrag_result.search_mode == "global":
+                    # Global search metadata
+                    global_meta = graphrag_result.metadata
+                    graphrag_metadata["communities_searched"] = global_meta.get("communities_searched", 0)
+                    graphrag_metadata["themes"] = global_meta.get("themes", [])
+
+                    # Retrieve community data for visualization
+                    communities = self._get_community_data()
+
+                elif graphrag_result.search_mode == "hybrid":
+                    # Hybrid metadata combines both
+                    hybrid_meta = graphrag_result.metadata
+                    if "local" in hybrid_meta:
+                        graphrag_metadata["seed_entities"] = hybrid_meta["local"].get("seed_entities", [])
+                        graphrag_metadata["discovered_entities"] = hybrid_meta["local"].get("discovered_entities", 0)
+                    if "global" in hybrid_meta:
+                        graphrag_metadata["communities_searched"] = hybrid_meta["global"].get("communities_searched", 0)
+                        graphrag_metadata["themes"] = hybrid_meta["global"].get("themes", [])
+
+                    # Get both subgraph and communities
+                    if "local" in hybrid_meta:
+                        for entity_name in hybrid_meta["local"].get("seed_entities", [])[:3]:
+                            subgraph = self.neo4j.query_subgraph(entity_name, depth=2)
+                            all_nodes.extend(subgraph.get("nodes", []))
+                            all_edges.extend(subgraph.get("edges", []))
+                    communities = self._get_community_data()
+
+                # Deduplicate nodes
+                unique_nodes = self._deduplicate_nodes(all_nodes)
+
+                # Create chunks from GraphRAG answer
+                retrieved_chunks = [{
+                    "text": graphrag_result.answer,
+                    "source": "graphrag",
+                    "search_mode": graphrag_result.search_mode,
+                    "metadata": graphrag_metadata,
+                }]
+
+                latency = (time.time() - start_time) * 1000
+
+                state["subgraph"] = {
+                    "nodes": unique_nodes,
+                    "edges": all_edges,
+                    "communities": communities,
+                    "node_count": len(unique_nodes),
+                    "edge_count": len(all_edges),
+                    "community_count": len(communities),
+                }
+                state["retrieved_chunks"] = retrieved_chunks
+                state["graphrag_metadata"] = graphrag_metadata
+                state["workflow_step"] = "graph_retrieval"
+                state["latency_ms"]["graph_retrieval"] = latency
+
+                logger.info(
+                    f"GraphRAG retrieval complete: {len(unique_nodes)} nodes, "
+                    f"{len(all_edges)} edges, {len(communities)} communities "
+                    f"(mode={graphrag_result.search_mode}, latency={latency:.1f}ms)"
+                )
+
+                return state
+
+            except Exception as e:
+                logger.warning(f"GraphRAG search failed: {e}. Falling back to standard retrieval.")
+                # Fall through to standard retrieval
+
+        # Fallback: Standard subgraph retrieval (original implementation)
+        logger.info(f"Using standard subgraph retrieval for {len(entities)} entities")
+
         all_nodes = []
         all_edges = []
         retrieved_chunks = []
-        
+
         for entity in entities[:3]:  # Limit to top 3 entities
             entity_name = entity.get("name", "")
             if not entity_name:
                 continue
-            
+
             # Get subgraph around this entity
             subgraph = self.neo4j.query_subgraph(entity_name, depth=2)
-            
+
             all_nodes.extend(subgraph.get("nodes", []))
             all_edges.extend(subgraph.get("edges", []))
-            
+
             # Create text chunks from subgraph
             for node in subgraph.get("nodes", []):
                 chunk_text = self._node_to_text(node)
@@ -221,12 +348,12 @@ Keywords:"""
                     "entity": entity_name,
                     "node_data": node,
                 })
-        
+
         # Deduplicate nodes
         unique_nodes = self._deduplicate_nodes(all_nodes)
-        
+
         latency = (time.time() - start_time) * 1000
-        
+
         state["subgraph"] = {
             "nodes": unique_nodes,
             "edges": all_edges,
@@ -236,13 +363,13 @@ Keywords:"""
         state["retrieved_chunks"] = retrieved_chunks
         state["workflow_step"] = "graph_retrieval"
         state["latency_ms"]["graph_retrieval"] = latency
-        
+
         logger.info(
             f"Retrieved subgraph: {len(unique_nodes)} nodes, "
             f"{len(all_edges)} edges, {len(retrieved_chunks)} chunks "
             f"(latency={latency:.1f}ms)"
         )
-        
+
         return state
     
     def compression_node(self, state: WorkflowState) -> WorkflowState:
@@ -399,18 +526,60 @@ Keywords:"""
         """Build context string from compressed chunks"""
         if not compressed_chunks:
             return "No relevant information found."
-        
+
         context_parts = []
-        
+
         for i, chunk in enumerate(compressed_chunks, 1):
             compressed_text = chunk.get("compressed_text", chunk.get("text", ""))
             entity = chunk.get("entity", "")
-            
+
             # Format as numbered section
             section = f"[{i}] {compressed_text}"
             if entity:
                 section += f" (source: {entity})"
-            
+
             context_parts.append(section)
-        
+
         return "\n\n".join(context_parts)
+
+    def _get_community_data(self) -> list:
+        """
+        Retrieve community data from Neo4j for visualization
+
+        Returns:
+            List of community dictionaries with metadata
+        """
+        try:
+            query = """
+            MATCH (c:Community)
+            OPTIONAL MATCH (c)<-[:BELONGS_TO]-(e:Entity)
+            WITH c, COUNT(e) as member_count, COLLECT(e.name)[0..5] as sample_members
+            RETURN
+                c.id as id,
+                c.level as level,
+                c.summary as summary,
+                c.themes as themes,
+                member_count,
+                sample_members
+            ORDER BY c.level, c.id
+            LIMIT 50
+            """
+
+            results = self.neo4j.execute_query(query)
+
+            communities = []
+            for record in results:
+                communities.append({
+                    "id": record.get("id"),
+                    "level": record.get("level", 0),
+                    "summary": record.get("summary", ""),
+                    "themes": record.get("themes", []),
+                    "member_count": record.get("member_count", 0),
+                    "sample_members": record.get("sample_members", []),
+                })
+
+            return communities
+
+        except Exception as e:
+            logger.error(f"Error retrieving community data: {e}")
+            return []

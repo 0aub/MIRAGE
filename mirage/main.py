@@ -19,6 +19,7 @@ from src.api import (
     db_service,
     url_service,
     benchmark_service,
+    graphrag_service,
 )
 
 # Configure logger
@@ -61,6 +62,7 @@ async def root():
             "documents": "/documents",
             "chat": "/chat",
             "graph": "/graph",
+            "graphrag": "/graphrag",
             "refrag": "/refrag",
             "files": "/files",
             "database": "/db",
@@ -134,6 +136,12 @@ app.include_router(
     benchmark_service.router,
     prefix="/benchmark",
     tags=["Benchmarking & Evaluation"],
+)
+
+app.include_router(
+    graphrag_service.router,
+    # Prefix already defined in graphrag_service.router
+    tags=["GraphRAG Search"],
 )
 
 
