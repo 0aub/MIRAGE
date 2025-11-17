@@ -454,6 +454,28 @@ class Neo4jClient:
 
         return stats
 
+    def execute_query(self, query: str, parameters: Dict[str, Any] = None) -> List[Dict[str, Any]]:
+        """
+        Execute a raw Cypher query and return results
+
+        Args:
+            query: Cypher query string
+            parameters: Optional query parameters
+
+        Returns:
+            List of result records as dictionaries
+        """
+        if not self._connected:
+            self.connect()
+
+        try:
+            with self.driver.session() as session:
+                result = session.run(query, parameters or {})
+                return [dict(record) for record in result]
+        except Exception as e:
+            logger.error(f"Error executing query: {e}")
+            return []
+
     def query_subgraph(
         self,
         entity_name: str,
