@@ -11,10 +11,13 @@ import os
 
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
+# Add graph_builder to path to avoid __init__.py dependency loading
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src/core/graph_builder'))
 
-from core.database.neo4j_client import Neo4jClient
-from core.graph_builder.community_detector import CommunityDetector
-from core.graph_builder.community_visualizer import CommunityVisualizer, print_community_tree
+# Direct imports to avoid loading all dependencies
+from neo4j_client import Neo4jClient
+from community_detector import CommunityDetector
+from community_visualizer import CommunityVisualizer, print_community_tree
 import logging
 
 # Colors for output
