@@ -517,4 +517,86 @@ export const chatApi = {
   },
 };
 
+// GraphRAG APIs
+export const graphragApi = {
+  // Hybrid search (auto-routed)
+  search: (query: string, mode?: string) => {
+    return fetchApi<{
+      query: string;
+      answer: string;
+      search_mode: string;
+      confidence: number;
+      metadata: any;
+    }>('/graphrag/search', {
+      method: 'POST',
+      body: JSON.stringify({ query, mode }),
+    });
+  },
+
+  // Global search (community summaries)
+  globalSearch: (query: string) => {
+    return fetchApi<{
+      query: string;
+      answer: string;
+      search_mode: string;
+      confidence: number;
+      metadata: any;
+    }>('/graphrag/global', {
+      method: 'POST',
+      body: JSON.stringify({ query }),
+    });
+  },
+
+  // Local search (entity traversal)
+  localSearch: (query: string) => {
+    return fetchApi<{
+      query: string;
+      answer: string;
+      search_mode: string;
+      confidence: number;
+      metadata: any;
+    }>('/graphrag/local', {
+      method: 'POST',
+      body: JSON.stringify({ query }),
+    });
+  },
+
+  // Get search statistics
+  getStats: () => {
+    return fetchApi<{
+      global_stats: any;
+      local_stats: any;
+    }>('/graphrag/stats');
+  },
+
+  // Get communities hierarchy
+  getCommunities: (level?: number) => {
+    const query = level !== undefined ? `?level=${level}` : '';
+    return fetchApi<{
+      communities: Array<{
+        id: string;
+        level: number;
+        summary: string;
+        themes: string[];
+        member_count: number;
+        sample_members: string[];
+        parent_id?: string;
+      }>;
+      total: number;
+      levels: number;
+    }>(`/graphrag/communities${query}`);
+  },
+
+  // Health check
+  health: () => {
+    return fetchApi<{
+      status: string;
+      neo4j_connected: boolean;
+      entity_count: number;
+      community_count: number;
+      tgi_endpoint: string;
+    }>('/graphrag/health');
+  },
+};
+
 export { ApiError };

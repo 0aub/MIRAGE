@@ -3,10 +3,21 @@ import { Network } from "vis-network";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Download, Filter, ZoomIn, ZoomOut, Maximize2, Loader2 } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Search, Download, Filter, ZoomIn, ZoomOut, Maximize2, Loader2, Network as NetworkIcon, Layers } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { graphApi } from "@/lib/api";
+import { graphApi, graphragApi } from "@/lib/api";
+
+interface Community {
+  id: string;
+  level: number;
+  summary: string;
+  themes: string[];
+  member_count: number;
+  sample_members: string[];
+  parent_id?: string;
+}
 
 export default function GraphPage() {
   const networkRef = useRef<HTMLDivElement>(null);
@@ -16,6 +27,9 @@ export default function GraphPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [graphData, setGraphData] = useState<{ nodes: any[]; edges: any[] }>({ nodes: [], edges: [] });
   const [isDarkMode, setIsDarkMode] = useState(document.documentElement.classList.contains('dark'));
+  const [communities, setCommunities] = useState<Community[]>([]);
+  const [isLoadingCommunities, setIsLoadingCommunities] = useState(false);
+  const [selectedLevel, setSelectedLevel] = useState<number | undefined>(undefined);
   const { toast } = useToast();
 
   // Listen for theme changes
@@ -73,6 +87,24 @@ export default function GraphPage() {
       setGraphData({ nodes: [], edges: [] });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const loadCommunities = async (level?: number) => {
+    try {
+      setIsLoadingCommunities(true);
+      const response = await graphragApi.getCommunities(level);
+      setCommunities(response.communities);
+    } catch (error) {
+      console.error('Error loading communities:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load communities from server",
+        variant: "destructive",
+      });
+      setCommunities([]);
+    } finally {
+      setIsLoadingCommunities(false);
     }
   };
 
@@ -539,11 +571,24 @@ export default function GraphPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold mb-2">Knowledge Graph</h1>
-          <p className="text-muted-foreground">Explore relationships and entities</p>
+          <p className="text-muted-foreground">Explore relationships, entities, and communities</p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <Tabs defaultValue="graph" className="w-full">
+        <TabsList className="grid w-full max-w-md grid-cols-2">
+          <TabsTrigger value="graph" className="gap-2">
+            <NetworkIcon className="w-4 h-4" />
+            Graph View
+          </TabsTrigger>
+          <TabsTrigger value="communities" className="gap-2" onClick={() => communities.length === 0 && loadCommunities()}>
+            <Layers className="w-4 h-4" />
+            Communities
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="graph" className="mt-6">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Control Panel */}
         <Card className="p-6 lg:col-span-1 h-fit">
           <h2 className="text-lg font-semibold mb-4">Controls</h2>
@@ -694,6 +739,141 @@ export default function GraphPage() {
           )}
         </Card>
       </div>
+        </TabsContent>
+
+        <TabsContent value="communities" className="mt-6">
+          {isLoadingCommunities ? (
+            <div className="text-center py-12">
+              <Loader2 className="w-12 h-12 mx-auto text-primary animate-spin mb-4" />
+              <p className="text-muted-foreground">Loading communities...</p>
+            </div>
+          ) : communities.length === 0 ? (
+            <Card className="p-12 text-center">
+              <Layers className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
+              <h3 className="text-xl font-semibold mb-2">No communities found</h3>
+              <p className="text-muted-foreground mb-4">
+                Communities are detected using the Louvain algorithm during graph processing
+              </p>
+              <Button onClick={() => loadCommunities()}>Load Communities</Button>
+            </Card>
+          ) : (
+            <div className="space-y-6">
+              {/* Community Level Filter */}
+              <Card className="p-4">
+                <div className="flex items-center justify-between">
+                  <div className="text-sm text-muted-foreground">
+                    Showing {communities.length} communities across {Math.max(...communities.map(c => c.level)) + 1} levels
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      variant={selectedLevel === undefined ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => {
+                        setSelectedLevel(undefined);
+                        loadCommunities();
+                      }}
+                    >
+                      All Levels
+                    </Button>
+                    {Array.from(new Set(communities.map(c => c.level))).sort().map(level => (
+                      <Button
+                        key={level}
+                        variant={selectedLevel === level ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => {
+                          setSelectedLevel(level);
+                          loadCommunities(level);
+                        }}
+                      >
+                        L{level}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              </Card>
+
+              {/* Communities Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {communities.map((community) => (
+                  <Card key={community.id} className="p-4 hover:shadow-lg transition-shadow">
+                    <div className="space-y-3">
+                      {/* Header */}
+                      <div className="flex items-start justify-between gap-2">
+                        <Badge variant="outline" className="text-xs">
+                          Level {community.level}
+                        </Badge>
+                        <Badge variant="secondary" className="text-xs">
+                          {community.member_count} members
+                        </Badge>
+                      </div>
+
+                      {/* Community ID */}
+                      <div className="text-xs text-muted-foreground font-mono">
+                        {community.id}
+                      </div>
+
+                      {/* Themes */}
+                      {community.themes && community.themes.length > 0 && (
+                        <div className="flex flex-wrap gap-1">
+                          {community.themes.slice(0, 3).map((theme, idx) => (
+                            <Badge key={idx} variant="outline" className="text-xs">
+                              {theme}
+                            </Badge>
+                          ))}
+                          {community.themes.length > 3 && (
+                            <Badge variant="outline" className="text-xs">
+                              +{community.themes.length - 3}
+                            </Badge>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Summary */}
+                      {community.summary && (
+                        <div className="bg-secondary/30 rounded-lg p-3">
+                          <p className="text-xs leading-relaxed line-clamp-4">
+                            {community.summary}
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Sample Members */}
+                      {community.sample_members && community.sample_members.length > 0 && (
+                        <div className="pt-2 border-t">
+                          <details className="text-xs">
+                            <summary className="cursor-pointer text-muted-foreground hover:text-foreground">
+                              Members ({community.member_count})
+                            </summary>
+                            <div className="mt-2 space-y-1">
+                              {community.sample_members.map((member, idx) => (
+                                <div key={idx} className="text-xs pl-2">
+                                  • {member}
+                                </div>
+                              ))}
+                              {community.member_count > community.sample_members.length && (
+                                <div className="text-xs pl-2 text-muted-foreground">
+                                  ... and {community.member_count - community.sample_members.length} more
+                                </div>
+                              )}
+                            </div>
+                          </details>
+                        </div>
+                      )}
+
+                      {/* Parent Info */}
+                      {community.parent_id && (
+                        <div className="pt-2 border-t text-xs text-muted-foreground">
+                          Parent: {community.parent_id}
+                        </div>
+                      )}
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

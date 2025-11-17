@@ -142,44 +142,41 @@ export default function VectorsPage() {
         </Card>
       ) : (
         <>
-          <div className="space-y-4">
+          {/* Grid Layout: 3 blocks per row on desktop, 2 on tablet, 1 on mobile */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredChunks.map((chunk) => (
-              <Card key={chunk.id} className="p-6 hover:shadow-lg transition-shadow">
-                <div className="space-y-4">
+              <Card key={chunk.id} className="p-4 hover:shadow-lg transition-shadow flex flex-col h-full">
+                <div className="space-y-3 flex flex-col h-full">
                   {/* Header */}
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Badge variant="outline" className="font-mono text-xs">
-                          Chunk {chunk.chunk_index}
-                        </Badge>
-                        <span className="text-sm text-muted-foreground truncate">
-                          {chunk.document_id}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="flex gap-2 text-xs text-muted-foreground">
-                      <span>{chunk.word_count} words</span>
-                      <span>•</span>
-                      <span>{chunk.sentence_count} sentences</span>
-                    </div>
+                  <div className="flex items-start justify-between gap-2">
+                    <Badge variant="outline" className="font-mono text-xs">
+                      Chunk {chunk.chunk_index}
+                    </Badge>
+                    <span className="text-xs text-muted-foreground">
+                      {chunk.word_count}w
+                    </span>
                   </div>
 
-                  {/* Chunk Text */}
-                  <div className="bg-secondary/30 rounded-lg p-4">
-                    <p className="text-sm leading-relaxed whitespace-pre-wrap">
-                      {truncateText(chunk.text, 300)}
+                  {/* Document ID */}
+                  <div className="text-xs text-muted-foreground truncate">
+                    {chunk.document_id}
+                  </div>
+
+                  {/* Chunk Text - takes available space */}
+                  <div className="bg-secondary/30 rounded-lg p-3 flex-1 overflow-hidden">
+                    <p className="text-xs leading-relaxed whitespace-pre-wrap line-clamp-6">
+                      {truncateText(chunk.text, 200)}
                     </p>
                   </div>
 
                   {/* Metadata */}
                   {chunk.metadata && Object.keys(chunk.metadata).length > 0 && (
                     <div className="pt-2 border-t">
-                      <details className="text-sm">
+                      <details className="text-xs">
                         <summary className="cursor-pointer text-muted-foreground hover:text-foreground">
-                          View metadata
+                          Metadata ({Object.keys(chunk.metadata).length})
                         </summary>
-                        <pre className="mt-2 p-3 bg-secondary/30 rounded text-xs overflow-x-auto">
+                        <pre className="mt-2 p-2 bg-secondary/30 rounded text-xs overflow-x-auto max-h-32 overflow-y-auto">
                           {JSON.stringify(chunk.metadata, null, 2)}
                         </pre>
                       </details>
@@ -187,10 +184,9 @@ export default function VectorsPage() {
                   )}
 
                   {/* Footer Stats */}
-                  <div className="flex items-center gap-4 text-xs text-muted-foreground pt-2 border-t">
-                    <span>ID: {chunk.id.substring(0, 8)}...</span>
-                    <span>•</span>
-                    <span>{chunk.char_count.toLocaleString()} characters</span>
+                  <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t">
+                    <span title={chunk.id}>{chunk.id.substring(0, 8)}...</span>
+                    <span>{chunk.char_count} chars</span>
                   </div>
                 </div>
               </Card>
