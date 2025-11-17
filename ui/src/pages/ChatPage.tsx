@@ -3,7 +3,9 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Send, Bot, User, ChevronDown, Loader2 } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { Send, Bot, User, ChevronDown, Loader2, Network as NetworkIcon, GitBranch, Layers, FileText, Info } from "lucide-react";
 import { Network } from "vis-network";
 import { chatApi } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
@@ -36,6 +38,8 @@ export default function ChatPage() {
     edges: [],
   });
   const [retrievedNodesCount, setRetrievedNodesCount] = useState(0);
+  const [retrievalMetadata, setRetrievalMetadata] = useState<any>(null);
+  const [retrievedContext, setRetrievedContext] = useState<string>("");
   const networkRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
@@ -149,6 +153,7 @@ export default function ChatPage() {
           id: idx + 1,
           label: node.label || node.id,
           group: node.type?.toLowerCase() || "entity",
+          raw: node, // Keep raw data for details view
         }));
 
         const nodeIdMap = new Map(response.graph_visualization.nodes.map((node: any, idx: number) => [node.id, idx + 1]));
@@ -156,11 +161,18 @@ export default function ChatPage() {
         const edges = response.graph_visualization.edges?.map((edge: any) => ({
           from: nodeIdMap.get(edge.source) || 1,
           to: nodeIdMap.get(edge.target) || 1,
+          raw: edge, // Keep raw data for details view
         })) || [];
 
         setContextGraph({ nodes, edges });
         setRetrievedNodesCount(nodes.length);
       }
+
+      // Store GraphRAG metadata for explainability
+      setRetrievalMetadata(response.workflow_metadata?.graphrag_metadata || null);
+
+      // Store context for display
+      setRetrievedContext(response.workflow_metadata?.context || "");
 
     } catch (error: any) {
       console.error('Error sending message:', error);
@@ -280,31 +292,233 @@ export default function ChatPage() {
         </div>
       </Card>
 
-      {/* Active Subgraph */}
-      <Card className="lg:w-96 p-6">
-        <h2 className="text-lg font-semibold mb-4">Active Context</h2>
-        {contextGraph.nodes.length > 0 ? (
-          <>
-            <div
-              ref={networkRef}
-              className="w-full h-64 rounded-lg bg-secondary/20"
-              style={{ border: "1px solid hsl(var(--border))" }}
-            />
-            <div className="mt-4 space-y-2">
-              <p className="text-sm font-medium">Retrieved Nodes: {retrievedNodesCount}</p>
-              <p className="text-sm text-muted-foreground">
-                Showing relevant subgraph for current query
-              </p>
-            </div>
-          </>
+      {/* Explainability Panel */}
+      <Card className="lg:w-[500px] p-6">
+        <h2 className="text-lg font-semibold mb-4">Explainability & Context</h2>
+        {contextGraph.nodes.length > 0 || retrievalMetadata || retrievedContext ? (
+          <Tabs defaultValue="graph" className="w-full">
+            <TabsList className="grid w-full grid-cols-5 h-auto">
+              <TabsTrigger value="graph" className="text-xs py-2">
+                <NetworkIcon className="w-3 h-3 mr-1" />
+                Graph
+              </TabsTrigger>
+              <TabsTrigger value="nodes" className="text-xs py-2">
+                <GitBranch className="w-3 h-3 mr-1" />
+                Nodes
+              </TabsTrigger>
+              <TabsTrigger value="edges" className="text-xs py-2">
+                <GitBranch className="w-3 h-3 mr-1 rotate-90" />
+                Edges
+              </TabsTrigger>
+              <TabsTrigger value="context" className="text-xs py-2">
+                <FileText className="w-3 h-3 mr-1" />
+                Context
+              </TabsTrigger>
+              <TabsTrigger value="metadata" className="text-xs py-2">
+                <Info className="w-3 h-3 mr-1" />
+                Meta
+              </TabsTrigger>
+            </TabsList>
+
+            {/* Graph Visualization */}
+            <TabsContent value="graph" className="mt-4">
+              <div
+                ref={networkRef}
+                className="w-full h-80 rounded-lg bg-secondary/20"
+                style={{ border: "1px solid hsl(var(--border))" }}
+              />
+              <div className="mt-3 space-y-1">
+                <p className="text-sm font-medium">Retrieved: {retrievedNodesCount} nodes, {contextGraph.edges.length} edges</p>
+                <p className="text-xs text-muted-foreground">
+                  Visual representation of retrieved subgraph
+                </p>
+              </div>
+            </TabsContent>
+
+            {/* Nodes List */}
+            <TabsContent value="nodes" className="mt-4">
+              <ScrollArea className="h-80">
+                <div className="space-y-2 pr-4">
+                  {contextGraph.nodes.length === 0 ? (
+                    <p className="text-sm text-muted-foreground text-center py-8">No nodes retrieved</p>
+                  ) : (
+                    contextGraph.nodes.map((node) => (
+                      <Card key={node.id} className="p-3">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <Badge variant="outline" className="text-xs">
+                                {node.group}
+                              </Badge>
+                              <span className="text-sm font-medium truncate">
+                                {node.label}
+                              </span>
+                            </div>
+                            {node.raw?.confidence && (
+                              <div className="text-xs text-muted-foreground">
+                                Confidence: {(node.raw.confidence * 100).toFixed(0)}%
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </Card>
+                    ))
+                  )}
+                </div>
+              </ScrollArea>
+            </TabsContent>
+
+            {/* Edges List */}
+            <TabsContent value="edges" className="mt-4">
+              <ScrollArea className="h-80">
+                <div className="space-y-2 pr-4">
+                  {contextGraph.edges.length === 0 ? (
+                    <p className="text-sm text-muted-foreground text-center py-8">No edges retrieved</p>
+                  ) : (
+                    contextGraph.edges.map((edge, idx) => {
+                      const sourceNode = contextGraph.nodes.find(n => n.id === edge.from);
+                      const targetNode = contextGraph.nodes.find(n => n.id === edge.to);
+                      return (
+                        <Card key={idx} className="p-3">
+                          <div className="text-xs space-y-1">
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium truncate">{sourceNode?.label || `Node ${edge.from}`}</span>
+                              <span className="text-muted-foreground">→</span>
+                              <span className="font-medium truncate">{targetNode?.label || `Node ${edge.to}`}</span>
+                            </div>
+                            {edge.raw?.relationship && (
+                              <div className="text-muted-foreground">
+                                Type: {edge.raw.relationship}
+                              </div>
+                            )}
+                            {edge.raw?.confidence && (
+                              <div className="text-muted-foreground">
+                                Confidence: {(edge.raw.confidence * 100).toFixed(0)}%
+                              </div>
+                            )}
+                          </div>
+                        </Card>
+                      );
+                    })
+                  )}
+                </div>
+              </ScrollArea>
+            </TabsContent>
+
+            {/* Context Text */}
+            <TabsContent value="context" className="mt-4">
+              <ScrollArea className="h-80">
+                {retrievedContext ? (
+                  <div className="bg-secondary/30 rounded-lg p-4 pr-6">
+                    <p className="text-xs leading-relaxed whitespace-pre-wrap">
+                      {retrievedContext}
+                    </p>
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground text-center py-8">
+                    No context available
+                  </p>
+                )}
+              </ScrollArea>
+            </TabsContent>
+
+            {/* Metadata */}
+            <TabsContent value="metadata" className="mt-4">
+              <ScrollArea className="h-80">
+                <div className="space-y-3 pr-4">
+                  {retrievalMetadata ? (
+                    <>
+                      {retrievalMetadata.search_mode && (
+                        <div>
+                          <div className="text-xs font-medium mb-1">Search Mode</div>
+                          <Badge variant="default">{retrievalMetadata.search_mode}</Badge>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {retrievalMetadata.search_mode === "global" && "Community-based search (holistic)"}
+                            {retrievalMetadata.search_mode === "local" && "Entity-based search (specific)"}
+                            {retrievalMetadata.search_mode === "hybrid" && "Combined approach"}
+                          </p>
+                        </div>
+                      )}
+
+                      {retrievalMetadata.confidence !== undefined && (
+                        <div>
+                          <div className="text-xs font-medium mb-1">Confidence</div>
+                          <div className="flex items-center gap-2">
+                            <div className="flex-1 bg-secondary rounded-full h-2">
+                              <div
+                                className="bg-primary rounded-full h-2"
+                                style={{ width: `${retrievalMetadata.confidence * 100}%` }}
+                              />
+                            </div>
+                            <span className="text-xs">{(retrievalMetadata.confidence * 100).toFixed(0)}%</span>
+                          </div>
+                        </div>
+                      )}
+
+                      {retrievalMetadata.seed_entities && (
+                        <div>
+                          <div className="text-xs font-medium mb-1">Seed Entities</div>
+                          <div className="flex flex-wrap gap-1">
+                            {retrievalMetadata.seed_entities.map((entity: string, idx: number) => (
+                              <Badge key={idx} variant="outline" className="text-xs">
+                                {entity}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {retrievalMetadata.themes && (
+                        <div>
+                          <div className="text-xs font-medium mb-1">Themes</div>
+                          <div className="flex flex-wrap gap-1">
+                            {retrievalMetadata.themes.map((theme: string, idx: number) => (
+                              <Badge key={idx} variant="secondary" className="text-xs">
+                                {theme}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {retrievalMetadata.communities_searched && (
+                        <div>
+                          <div className="text-xs font-medium mb-1">Communities Searched</div>
+                          <Badge variant="outline">{retrievalMetadata.communities_searched}</Badge>
+                        </div>
+                      )}
+
+                      {retrievalMetadata.discovered_entities !== undefined && (
+                        <div>
+                          <div className="text-xs font-medium mb-1">Discovered Entities</div>
+                          <Badge variant="outline">{retrievalMetadata.discovered_entities}</Badge>
+                        </div>
+                      )}
+
+                      {retrievalMetadata.relationships !== undefined && (
+                        <div>
+                          <div className="text-xs font-medium mb-1">Relationships</div>
+                          <Badge variant="outline">{retrievalMetadata.relationships}</Badge>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <p className="text-sm text-muted-foreground text-center py-8">
+                      No GraphRAG metadata available
+                    </p>
+                  )}
+                </div>
+              </ScrollArea>
+            </TabsContent>
+          </Tabs>
         ) : (
-          <div className="w-full h-64 rounded-lg bg-secondary/20 flex items-center justify-center" style={{ border: "1px solid hsl(var(--border))" }}>
+          <div className="w-full h-96 rounded-lg bg-secondary/20 flex items-center justify-center" style={{ border: "1px solid hsl(var(--border))" }}>
             <div className="text-center p-4">
+              <Info className="w-12 h-12 mx-auto text-muted-foreground mb-3" />
               <p className="text-sm text-muted-foreground">
                 {isLoading
-                  ? "Retrieving context..."
-                  : "Send a message to see the relevant knowledge graph context"
-                }
+                  ? "Retrieving context and metadata..."
+                  : "Send a message to see explainability details"}
               </p>
             </div>
           </div>
