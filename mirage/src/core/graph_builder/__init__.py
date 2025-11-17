@@ -8,13 +8,15 @@ Handles:
 - Neo4j graph storage
 - Dynamic schema evolution
 
-GraphRAG Components (Phase 1, 2, 3 & 4):
+GraphRAG Components (COMPLETE - Phases 1-5):
 - Entity normalization (prevent duplicates)
 - Multi-hop graph traversal
 - Community detection (Louvain algorithm)
 - Community visualization
 - Community summarization (Allam LLM)
 - Global search (map-reduce over summaries)
+- Local search (entity-centric traversal)
+- Hybrid search (global + local + routing)
 """
 
 from .entity_extractor import EntityExtractor
@@ -26,6 +28,8 @@ from .community_detector import CommunityDetector, Community, CommunityDetection
 from .community_visualizer import CommunityVisualizer, print_community_tree
 from .community_summarizer import CommunitySummarizer, CommunitySummary
 from .global_search import GlobalSearchEngine, SearchResult
+from .local_search import LocalSearchEngine, LocalSearchResult
+from .hybrid_search import HybridSearchEngine, HybridSearchResult, QueryRouter
 
 __all__ = [
     # Original components
@@ -49,4 +53,10 @@ __all__ = [
     # Phase 4: Global search
     "GlobalSearchEngine",
     "SearchResult",
+    # Phase 5: Local & hybrid search
+    "LocalSearchEngine",
+    "LocalSearchResult",
+    "HybridSearchEngine",
+    "HybridSearchResult",
+    "QueryRouter",
 ]
