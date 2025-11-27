@@ -89,20 +89,17 @@ export default function DataSourcesPage() {
     return () => clearInterval(interval);
   }, []);
 
-  // Initial data load - fetch BOTH sources concurrently
+  // Initial data load - fetch documents only (async jobs handle their own progress tracking)
   useEffect(() => {
     const loadInitialData = async () => {
       try {
         setIsLoading(true);
 
-        // Fetch BOTH sources concurrently
-        const [documentsResponse, processingResponse] = await Promise.all([
-          documentsApi.list({ limit: 100 }),
-          urlApi.getProcessingStatus()
-        ]);
+        // Fetch completed documents
+        const documentsResponse = await documentsApi.list({ limit: 100 });
 
-        // Convert completed documents to DataSource format
-        const completedSources: DataSource[] = documentsResponse.documents.map(doc => {
+        // Convert to DataSource format
+        const sources: DataSource[] = documentsResponse.documents.map(doc => {
           const dateAdded = doc.created_at
             ? new Date(doc.created_at).toLocaleDateString()
             : new Date().toLocaleDateString();
@@ -133,31 +130,7 @@ export default function DataSourcesPage() {
           };
         });
 
-        // Convert processing items to DataSource format
-        const processingSources: DataSource[] = processingResponse.processing.map(p => ({
-          id: p.document_id,
-          title: p.title || 'Untitled',
-          type: p.content_type as 'webpage' | 'youtube',
-          status: 'processing' as const,
-          progress: 0,
-          processingStartTime: p.start_time * 1000,
-          dateAdded: new Date().toLocaleDateString(),
-          thumbnail: p.content_type === 'youtube'
-            ? `https://img.youtube.com/vi/${p.document_id.replace('yt_', '')}/mqdefault.jpg`
-            : undefined,
-          currentChunk: p.current_chunk,
-          totalChunks: p.total_chunks,
-        }));
-
-        // Create set of processing IDs
-        const processingIds = new Set(processingSources.map(p => p.id));
-
-        // Filter out completed docs that are currently processing
-        const filteredCompleted = completedSources.filter(s => !processingIds.has(s.id));
-
-        // Merge: processing items first, then completed
-        const mergedData = [...processingSources, ...filteredCompleted];
-        setDataSources(mergedData);
+        setDataSources(sources);
       } catch (error) {
         console.error('Error loading data sources:', error);
         toast({
@@ -173,84 +146,7 @@ export default function DataSourcesPage() {
     loadInitialData();
   }, [toast]);
 
-  // Poll processing status updates every 3 seconds (after initial load)
-  useEffect(() => {
-    const fetchProcessingStatus = async () => {
-      try {
-        const response = await urlApi.getProcessingStatus();
-
-        setDataSources(prev => {
-          // Track which items were processing before
-          const previousProcessingIds = new Set(
-            prev.filter(s => s.status === 'processing').map(s => s.id)
-          );
-
-          // Track which items are currently processing
-          const currentProcessingIds = new Set(response.processing.map(p => p.document_id));
-
-          // Detect items that just completed (were processing, now not)
-          const justCompleted = Array.from(previousProcessingIds).filter(
-            id => !currentProcessingIds.has(id)
-          );
-
-          // If items just completed, trigger a refresh of completed documents
-          if (justCompleted.length > 0) {
-            // Trigger loadFiles() after a short delay to let the backend finish writing to DB
-            setTimeout(() => loadFiles(), 500);
-          }
-
-          if (response.processing.length === 0) {
-            // No processing items - remove any stale processing items from state
-            return prev.filter(s => s.status !== 'processing');
-          }
-
-          // Create map of processing items by ID
-          const processingMap = new Map(
-            response.processing.map(p => [
-              p.document_id,
-              {
-                id: p.document_id,
-                title: p.title || 'Untitled',
-                type: p.content_type as 'webpage' | 'youtube',
-                status: 'processing' as const,
-                progress: 0,
-                processingStartTime: p.start_time * 1000,
-                dateAdded: new Date().toLocaleDateString(),
-                thumbnail: p.content_type === 'youtube'
-                  ? `https://img.youtube.com/vi/${p.document_id.replace('yt_', '')}/mqdefault.jpg`
-                  : undefined,
-                currentChunk: p.current_chunk,
-                totalChunks: p.total_chunks,
-              } as DataSource
-            ])
-          );
-
-          // Update existing items or add new processing items
-          const updated = prev.map(source => {
-            const processingItem = processingMap.get(source.id);
-            if (processingItem) {
-              processingMap.delete(source.id);
-              return processingItem;
-            }
-            return source;
-          });
-
-          // Add any new processing items
-          const newProcessingItems = Array.from(processingMap.values());
-
-          return [...updated, ...newProcessingItems];
-        });
-      } catch (error) {
-        // Silent fail - don't show toast on polling errors
-        console.error('Error fetching processing status:', error);
-      }
-    };
-
-    // Poll every 3 seconds
-    const interval = setInterval(fetchProcessingStatus, 3000);
-
-    return () => clearInterval(interval);
-  }, []);
+  // Note: Polling removed - async jobs now handle their own progress tracking via WebPageTab/YouTubeTab
 
   const loadFiles = async () => {
     try {
@@ -288,13 +184,8 @@ export default function DataSourcesPage() {
         };
       });
 
-      // Replace all completed documents, keep processing items
-      setDataSources(prev => {
-        const processingItems = prev.filter(s => s.status === 'processing');
-        const processingIds = new Set(processingItems.map(p => p.id));
-        const completedSources = sources.filter(s => !processingIds.has(s.id));
-        return [...processingItems, ...completedSources];
-      });
+      // Simply replace all documents (no processing items to merge since jobs handle their own progress)
+      setDataSources(sources);
     } catch (error) {
       console.error('Error loading documents:', error);
       toast({
