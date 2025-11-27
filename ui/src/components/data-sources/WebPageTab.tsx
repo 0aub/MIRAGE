@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import { Globe, Loader2, ExternalLink, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { urlApi } from "@/lib/api";
@@ -15,7 +16,72 @@ export default function WebPageTab({ onClose }: WebPageTabProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [preview, setPreview] = useState<any>(null);
-  const { toast } = useToast();
+  const [jobId, setJobId] = useState<string | null>(null);
+  const [progress, setProgress] = useState(0);
+  const [currentPhase, setCurrentPhase] = useState<string>("");
+  const { toast} = useToast();
+  const pollIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Cleanup polling on unmount
+  useEffect(() => {
+    return () => {
+      if (pollIntervalRef.current) {
+        clearInterval(pollIntervalRef.current);
+      }
+    };
+  }, []);
+
+  // Poll job status
+  const pollJobStatus = async (jid: string) => {
+    try {
+      const status = await urlApi.getJobStatus(jid);
+
+      setProgress(status.progress);
+      setCurrentPhase(status.current_phase || "");
+
+      if (status.status === "completed") {
+        // Job completed, stop polling
+        if (pollIntervalRef.current) {
+          clearInterval(pollIntervalRef.current);
+          pollIntervalRef.current = null;
+        }
+
+        // Get final result
+        try {
+          const result = await urlApi.getJobResult(jid);
+          toast({
+            title: "Success!",
+            description: `Web page processed successfully. ${result.phase2.entities_extracted} entities extracted.`,
+          });
+          setIsProcessing(false);
+          onClose();
+        } catch (error: any) {
+          toast({
+            title: "Error",
+            description: "Failed to get processing result",
+            variant: "destructive",
+          });
+          setIsProcessing(false);
+        }
+      } else if (status.status === "failed") {
+        // Job failed, stop polling
+        if (pollIntervalRef.current) {
+          clearInterval(pollIntervalRef.current);
+          pollIntervalRef.current = null;
+        }
+
+        toast({
+          title: "Processing Failed",
+          description: status.error || "Unknown error occurred",
+          variant: "destructive",
+        });
+        setIsProcessing(false);
+      }
+    } catch (error: any) {
+      console.error("Error polling job status:", error);
+      // Continue polling even on error (might be temporary)
+    }
+  };
 
   const handleFetchContent = async () => {
     if (!url) {
@@ -59,14 +125,24 @@ export default function WebPageTab({ onClose }: WebPageTabProps) {
     if (!url || !preview) return;
 
     setIsProcessing(true);
+    setProgress(0);
+    setCurrentPhase("queued");
 
     try {
-      const response = await urlApi.process(url);
+      // Submit job for async processing
+      const response = await urlApi.processAsync(url);
+      setJobId(response.job_id);
+
       toast({
-        title: "Success",
-        description: `Web page processed successfully. ${response.phase2.entities_extracted} entities extracted.`,
+        title: "Processing Started",
+        description: "Your web page is being processed in the background",
       });
-      onClose();
+
+      // Start polling for status
+      pollIntervalRef.current = setInterval(() => {
+        pollJobStatus(response.job_id);
+      }, 2000); // Poll every 2 seconds
+
     } catch (error: any) {
       console.error('Error processing URL:', error);
       toast({
@@ -74,9 +150,23 @@ export default function WebPageTab({ onClose }: WebPageTabProps) {
         description: error.message || "Failed to process web page",
         variant: "destructive",
       });
-    } finally {
       setIsProcessing(false);
     }
+  };
+
+  const getPhaseLabel = (phase: string) => {
+    const labels: Record<string, string> = {
+      "fetching": "Fetching content",
+      "chunking": "Chunking text",
+      "rewriting": "Rewriting content",
+      "extracting": "Extracting entities",
+      "storing_graph": "Storing graph",
+      "compressing": "Compressing",
+      "storing_vector": "Storing vectors",
+      "finalizing": "Finalizing",
+      "queued": "Queued"
+    };
+    return labels[phase] || phase;
   };
 
   return (
@@ -93,9 +183,10 @@ export default function WebPageTab({ onClose }: WebPageTabProps) {
               onChange={(e) => setUrl(e.target.value)}
               className="pl-9"
               onKeyDown={(e) => e.key === 'Enter' && !isLoading && url && handleFetchContent()}
+              disabled={isProcessing}
             />
           </div>
-          <Button onClick={handleFetchContent} disabled={isLoading || !url}>
+          <Button onClick={handleFetchContent} disabled={isLoading || !url || isProcessing}>
             {isLoading ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -109,7 +200,7 @@ export default function WebPageTab({ onClose }: WebPageTabProps) {
       </div>
 
       {/* Empty State - when no content is loaded */}
-      {!preview && !isLoading && (
+      {!preview && !isLoading && !isProcessing && (
         <div className="flex-1 flex flex-col items-center justify-center text-center p-8 border-2 border-dashed rounded-lg border-border">
           <div className="w-16 h-16 rounded-full bg-blue-500/10 flex items-center justify-center mb-4">
             <Globe className="w-8 h-8 text-blue-500" />
@@ -133,7 +224,24 @@ export default function WebPageTab({ onClose }: WebPageTabProps) {
         </div>
       )}
 
-      {preview && (
+      {/* Processing Status */}
+      {isProcessing && (
+        <Card className="p-4 bg-secondary/50">
+          <div className="space-y-3">
+            <div className="flex items-center gap-3">
+              <Loader2 className="w-5 h-5 animate-spin text-primary" />
+              <div className="flex-1">
+                <p className="text-sm font-medium">Processing...</p>
+                <p className="text-xs text-muted-foreground">{getPhaseLabel(currentPhase)}</p>
+              </div>
+              <span className="text-sm font-medium">{progress}%</span>
+            </div>
+            <Progress value={progress} className="h-2" />
+          </div>
+        </Card>
+      )}
+
+      {preview && !isProcessing && (
         <Card className="p-4 bg-secondary/50">
           <div className="flex items-start gap-3">
             <Globe className="w-8 h-8 text-primary flex-shrink-0" />
@@ -162,7 +270,7 @@ export default function WebPageTab({ onClose }: WebPageTabProps) {
             {isProcessing ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Processing...
+                Processing ({progress}%)
               </>
             ) : (
               "Add to Data Sources"

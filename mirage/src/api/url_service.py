@@ -4,7 +4,7 @@ Handles web page URLs and YouTube video URLs
 Extracts content and processes through the pipeline
 """
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, BackgroundTasks
 from typing import Dict, Any, Optional, List
 from pydantic import BaseModel, HttpUrl
 from loguru import logger
@@ -24,10 +24,8 @@ from youtube_transcript_api._errors import (
     VideoUnavailable
 )
 
-# Shared variable to track if processing is currently active
-_is_processing = False
-
 from ..core.document_processor import TextChunker, SemanticChunker, get_chunker_factory
+from ..core.jobs import JobManager, BackgroundWorker, JobStatus, ProcessingPhase
 from ..core.document_processor.content_cleaner import ContentCleaner
 from ..core.document_processor.punctuation_restorer import PunctuationRestorer
 from ..core.media_processor import WhisperTranscriber
@@ -86,6 +84,16 @@ try:
 except Exception as e:
     logger.error(f"Failed to initialize Redis: {e}")
     redis_client = None
+
+# Initialize Job Manager and Background Worker for async processing
+try:
+    job_manager = JobManager(redis_host="redis", redis_port=6379, ttl=86400)
+    background_worker = BackgroundWorker(job_manager)
+    logger.info("Job manager and background worker initialized successfully")
+except Exception as e:
+    logger.error(f"Failed to initialize job manager: {e}")
+    job_manager = None
+    background_worker = None
 
 # Helper functions for Redis-based processing status tracking
 def set_processing_status(document_id: str, title: str, url: str, content_type: str, start_time: int, current_chunk: int = 0, total_chunks: int = 0, phase: str = "starting"):
@@ -508,36 +516,27 @@ async def preview_url_content(request: URLRequest):
         )
 
 
-@router.post("/process", response_model=URLProcessResponse)
-async def process_url(request: URLRequest):
+# Background processing function for async job execution
+def process_url_background(job_id: str, url: str, use_semantic_chunking: bool = True) -> Dict[str, Any]:
     """
-    Process a URL (web page or YouTube) through the full pipeline
-    Phase 1: Content extraction & chunking
-    Phase 2: Entity extraction & graph building
-    Phase 3: REFRAG compression
-    Phase 5: Vector storage
+    Process URL in background thread with job status updates
+
+    Args:
+        job_id: Job ID for tracking
+        url: URL to process
+        use_semantic_chunking: Whether to use semantic chunking
+
+    Returns:
+        Processing result dictionary
     """
-    global _is_processing
-
-    # Check if already processing
-    if _is_processing:
-        raise HTTPException(
-            status_code=409,
-            detail="Another document is currently being processed. Please wait for it to complete before processing a new document."
-        )
-
-    url_str = str(request.url)
-    logger.info(f"Processing URL: {url_str}")
-
-    # Mark as processing
-    _is_processing = True
+    start_time = time.time()
 
     try:
-        # Start timing the entire process
-        start_time = time.time()
+        # Update: Starting
+        job_manager.update_job(job_id, progress=5, current_phase=ProcessingPhase.FETCHING)
 
         # Check if it's a YouTube URL
-        video_id = extract_youtube_video_id(url_str)
+        video_id = extract_youtube_video_id(url)
 
         if video_id:
             # Fetch YouTube transcript
@@ -546,14 +545,21 @@ async def process_url(request: URLRequest):
             document_id = f"yt_{video_id}"
         else:
             # Fetch web page content
-            content_data = fetch_webpage_content(url_str)
+            content_data = fetch_webpage_content(url)
             content_type = "webpage"
-            # Generate document ID from URL
-            document_id = "web_" + str(abs(hash(url_str)))[:12]
+            document_id = "web_" + str(abs(hash(url)))[:12]
+
+        # Update job with document info
+        job_manager.update_job(
+            job_id,
+            document_id=document_id,
+            title=content_data.get("title"),
+            content_type=content_type
+        )
 
         full_text = content_data["text"]
         metadata = {
-            "url": url_str,
+            "url": url,
             "title": content_data.get("title"),
             "description": content_data.get("description"),
             "content_type": content_type,
@@ -561,36 +567,23 @@ async def process_url(request: URLRequest):
         }
 
         # Phase 1: Chunking
-        logger.info(f"Phase 1: Chunking content (content_type={content_type})")
-        if request.use_semantic_chunking:
-            # Get appropriate chunker for content type from factory
-            # Factory will select semantic chunker for YouTube, structural for webpages (future), etc.
+        job_manager.update_job(job_id, progress=15, current_phase=ProcessingPhase.CHUNKING)
+        logger.info(f"[Job {job_id}] Phase 1: Chunking content (content_type={content_type})")
+
+        if use_semantic_chunking:
             chunker = chunker_factory.get_chunker(content_type, embedder=jina_embedder)
             chunks = chunker.chunk_text(full_text, metadata)
             chunking_method = chunker_factory.get_strategy_info(content_type).get("strategy", "semantic")
         else:
-            # Use basic text chunker
             document = {"text": full_text, "metadata": metadata}
             chunked_doc = text_chunker.chunk_document(document)
             chunks = chunked_doc.get("chunks", [])
             chunking_method = "fixed"
 
-        logger.info(f"Created {len(chunks)} chunks")
+        logger.info(f"[Job {job_id}] Created {len(chunks)} chunks")
+        job_manager.update_job(job_id, total_chunks=len(chunks))
 
-        # Set processing status to "rewriting" phase (Phase 1: Preparing Content)
-        set_processing_status(
-            document_id=document_id,
-            title=content_data.get("title", "Untitled"),
-            url=url_str,
-            content_type=content_type,
-            start_time=int(start_time),
-            current_chunk=0,
-            total_chunks=len(chunks),
-            phase="rewriting"
-        )
-
-        # Create document placeholder in Neo4j IMMEDIATELY (before extraction)
-        # This ensures the document appears in the list during processing and on page reload
+        # Create document placeholder in Neo4j
         try:
             initial_metadata = content_data.get("metadata", {}).copy()
             initial_metadata.update({
@@ -604,117 +597,60 @@ async def process_url(request: URLRequest):
                 content_type=content_type,
                 metadata=initial_metadata
             )
-            logger.info(f"Created document placeholder in Neo4j: {document_id}")
+            logger.info(f"[Job {job_id}] Created document placeholder in Neo4j")
         except Exception as e:
-            logger.warning(f"Failed to create document placeholder: {e}")
+            logger.warning(f"[Job {job_id}] Failed to create document placeholder: {e}")
 
-        # Phase 2: Rewrite and clean content chunks (OPTIONAL - configurable)
+        # Phase 2: Rewrite (optional)
         if settings.enable_content_rewriting:
-            logger.info("Phase 2: Rewriting and cleaning content (ENABLED)")
-
-            # Update status to rewriting phase
-            set_processing_status(
-                document_id=document_id,
-                title=content_data.get("title", "Untitled"),
-                url=url_str,
-                content_type=content_type,
-                start_time=int(start_time),
-                current_chunk=0,
-                total_chunks=len(chunks),
-                phase="rewriting"
-            )
+            job_manager.update_job(job_id, progress=25, current_phase=ProcessingPhase.REWRITING)
+            logger.info(f"[Job {job_id}] Phase 2: Rewriting content")
 
             rewritten_chunks = content_rewriter.rewrite_chunks(chunks, document_id=document_id)
-            logger.info(f"Completed rewriting {len(rewritten_chunks)} chunks")
-
-            # Combine rewritten chunks into processed text
             processed_text = " ".join([chunk.get("text", "") for chunk in rewritten_chunks])
-
-            # Use rewritten chunks for extraction
             extraction_chunks = rewritten_chunks
         else:
-            logger.info("Phase 2: Content rewriting DISABLED - using raw text for extraction")
-            # Skip rewriting, use original chunks directly
             extraction_chunks = chunks
-            processed_text = full_text  # No rewriting, processed = raw
+            processed_text = full_text
 
-        # Update status for extraction phase
-        set_processing_status(
-            document_id=document_id,
-            title=content_data.get("title", "Untitled"),
-            url=url_str,
-            content_type=content_type,
-            start_time=int(start_time),
-            current_chunk=0,
-            total_chunks=len(extraction_chunks),
-            phase="extraction"
-        )
+        # Phase 3: Extract entities
+        job_manager.update_job(job_id, progress=40, current_phase=ProcessingPhase.EXTRACTING)
+        logger.info(f"[Job {job_id}] Phase 3: Extracting entities and relationships")
 
-        # Phase 3: Extract entities and relationships from RAW text (rewriting disabled by default)
-        logger.info(f"Phase 3: Extracting entities and relationships from {'processed' if settings.enable_content_rewriting else 'raw'} text")
         entity_result = entity_extractor.extract_from_chunks(extraction_chunks, document_id=document_id)
 
         # Check extraction status
         extraction_status = entity_result.get("status", "success")
         if extraction_status == "unavailable":
-            logger.warning("LLM extraction unavailable - TGI may still be loading")
-            raise HTTPException(
-                status_code=503,
-                detail={
-                    "error": "service_unavailable",
-                    "message": entity_result.get("message", "LLM entity extraction is currently unavailable"),
-                    "suggestion": "The Llama 3.1 70B model may still be downloading. Please wait a few minutes and try again."
-                }
-            )
+            raise Exception("LLM entity extraction is currently unavailable. TGI may still be loading.")
         elif extraction_status == "rate_limited":
-            logger.warning(f"Rate limit hit: {entity_result.get('message')}")
-            raise HTTPException(
-                status_code=429,
-                detail={
-                    "error": "rate_limited",
-                    "message": entity_result.get("message", "API rate limit exceeded"),
-                    "suggestion": "Consider using local TGI for unlimited processing, or wait before trying again."
-                }
-            )
+            raise Exception(entity_result.get("message", "API rate limit exceeded"))
         elif extraction_status == "error":
-            logger.error(f"Extraction error: {entity_result.get('message')}")
-            raise HTTPException(
-                status_code=500,
-                detail={
-                    "error": "extraction_failed",
-                    "message": entity_result.get("message", "Entity extraction failed"),
-                    "suggestion": "Please check the logs and try again later."
-                }
-            )
+            raise Exception(entity_result.get("message", "Entity extraction failed"))
 
         entities = entity_result.get("entities", [])
-        logger.info(f"Extracted {len(entities)} unique entities")
-
-        # Check if LLM already extracted relationships
         extraction_method = entity_result.get("extraction_method", "")
+
         if "relationships" in entity_result and extraction_method.startswith("llm"):
             relationships = entity_result["relationships"]
-            logger.info(f"LLM extracted {len(relationships)} relationships (method: {extraction_method})")
         else:
-            # Fall back to traditional relationship extraction
-            logger.info(f"Phase 2: Extracting relationships using co-occurrence (LLM method was: {extraction_method})")
             relationships = relationship_extractor.extract_relationships(entities, full_text)
-            logger.info(f"Extracted {len(relationships)} relationships")
 
-        # Phase 2: Store in Neo4j
-        logger.info("Phase 2: Storing in Neo4j")
+        logger.info(f"[Job {job_id}] Extracted {len(entities)} entities, {len(relationships)} relationships")
+
+        # Phase 4: Store in Neo4j
+        job_manager.update_job(job_id, progress=60, current_phase=ProcessingPhase.STORING_GRAPH)
+        logger.info(f"[Job {job_id}] Phase 4: Storing in Neo4j")
+
         try:
-            # Calculate processing time
             processing_time_seconds = int(time.time() - start_time)
-
-            # Prepare enhanced metadata with text statistics and full content
             enhanced_metadata = content_data.get("metadata", {}).copy()
             enhanced_metadata.update({
                 "total_chars": len(full_text),
                 "total_words": len(full_text.split()),
-                "full_text": full_text,  # Store the complete raw transcript/content
-                "processed_text": processed_text,  # Store the rewritten/cleaned content
-                "processing_time_seconds": processing_time_seconds,  # Track processing time in seconds
+                "full_text": full_text,
+                "processed_text": processed_text,
+                "processing_time_seconds": processing_time_seconds,
             })
 
             graph_stats = neo4j_client.store_graph(
@@ -724,56 +660,54 @@ async def process_url(request: URLRequest):
                 document_title=content_data.get("title"),
                 document_type=content_type,
                 document_metadata=enhanced_metadata,
-                enhanced_neo4j_client=enhanced_neo4j_client  # Pass enhanced client for enrichment
+                enhanced_neo4j_client=enhanced_neo4j_client
             )
-            logger.info(f"Stored graph: {graph_stats}")
+            logger.info(f"[Job {job_id}] Stored graph: {graph_stats}")
         except Exception as e:
-            logger.error(f"Error storing graph in Neo4j: {e}")
+            logger.error(f"[Job {job_id}] Error storing graph: {e}")
             graph_stats = {"error": str(e)}
 
-        # Phase 3: REFRAG compression
-        logger.info("Phase 3: Applying REFRAG compression")
+        # Phase 5: REFRAG compression
+        job_manager.update_job(job_id, progress=75, current_phase=ProcessingPhase.COMPRESSING)
+        logger.info(f"[Job {job_id}] Phase 5: REFRAG compression")
+
         compression_result = refrag_compressor.compress(chunks, query_context=None)
+        speedup_factor = compression_result["original_length"] / max(1, compression_result["compressed_length"])
 
-        speedup_factor = (
-            compression_result["original_length"] /
-            max(1, compression_result["compressed_length"])
-        )
+        # Phase 6: Store in vector database
+        job_manager.update_job(job_id, progress=85, current_phase=ProcessingPhase.STORING_VECTOR)
+        logger.info(f"[Job {job_id}] Phase 6: Storing in vector database")
 
-        logger.info(
-            f"REFRAG compression: {compression_result['compression_ratio']:.2f} ratio, "
-            f"{speedup_factor:.2f}x speedup"
-        )
-
-        # Phase 5: Store in vector database
-        logger.info("Phase 5: Storing in vector database")
         try:
             vector_stats = vector_store.add_chunks(chunks, document_id)
-            logger.info(f"Stored vectors: {vector_stats}")
+            logger.info(f"[Job {job_id}] Stored vectors: {vector_stats}")
         except Exception as e:
-            logger.error(f"Error storing in vector database: {e}")
+            logger.error(f"[Job {job_id}] Error storing vectors: {e}")
             vector_stats = {"error": str(e)}
 
-        # Return complete result with final processing time
+        # Finalize
+        job_manager.update_job(job_id, progress=95, current_phase=ProcessingPhase.FINALIZING)
         final_processing_time = int(time.time() - start_time)
-        return URLProcessResponse(
-            document_id=document_id,
-            url=url_str,
-            title=content_data.get("title"),
-            content_type=content_type,
-            processing_time_seconds=final_processing_time,
-            phase1={
+
+        # Build result
+        result = {
+            "document_id": document_id,
+            "url": url,
+            "title": content_data.get("title"),
+            "content_type": content_type,
+            "processing_time_seconds": final_processing_time,
+            "phase1": {
                 "total_chars": len(full_text),
                 "total_words": len(full_text.split()),
                 "chunk_count": len(chunks),
                 "chunking_method": chunking_method,
             },
-            phase2={
+            "phase2": {
                 "entities_extracted": len(entities),
                 "relationships_extracted": len(relationships),
                 "graph_storage": graph_stats,
             },
-            phase3={
+            "phase3": {
                 "original_length": compression_result["original_length"],
                 "compressed_length": compression_result["compressed_length"],
                 "compression_ratio": compression_result["compression_ratio"],
@@ -782,14 +716,116 @@ async def process_url(request: URLRequest):
                 "processing_time": compression_result["processing_time"],
                 "strategy": compression_result["strategy"],
             },
-            phase5={
+            "phase5": {
                 "vector_storage": vector_stats,
             },
+        }
+
+        logger.info(f"[Job {job_id}] Processing completed in {final_processing_time}s")
+        return result
+
+    except Exception as e:
+        logger.error(f"[Job {job_id}] Processing failed: {e}")
+        raise
+
+
+class JobSubmitResponse(BaseModel):
+    """Response for job submission"""
+    job_id: str
+    status: str
+    message: str
+
+
+class JobStatusResponse(BaseModel):
+    """Response for job status"""
+    job_id: str
+    status: str
+    progress: int
+    current_phase: Optional[str] = None
+    document_id: Optional[str] = None
+    title: Optional[str] = None
+    content_type: Optional[str] = None
+    url: Optional[str] = None
+    created_at: float
+    started_at: Optional[float] = None
+    completed_at: Optional[float] = None
+    elapsed_seconds: int
+    error: Optional[str] = None
+
+
+@router.post("/process-async", response_model=JobSubmitResponse)
+async def process_url_async(request: URLRequest):
+    """
+    Submit URL for asynchronous processing (NEW ENDPOINT - Recommended)
+
+    Returns immediately with job_id for status polling.
+    Use /jobs/{job_id}/status to check progress.
+    Use /jobs/{job_id}/result to get final result when complete.
+
+    This endpoint allows concurrent processing and doesn't block the UI.
+    """
+    if not job_manager or not background_worker:
+        raise HTTPException(
+            status_code=503,
+            detail="Job management system is not available"
         )
+
+    url_str = str(request.url)
+    logger.info(f"Submitting URL for async processing: {url_str}")
+
+    try:
+        # Create job
+        job = job_manager.create_job(
+            job_type="url_processing",
+            url=url_str,
+            metadata={"use_semantic_chunking": request.use_semantic_chunking}
+        )
+
+        # Submit to background worker
+        background_worker.submit_job(
+            job.job_id,
+            process_url_background,
+            url_str,
+            request.use_semantic_chunking
+        )
+
+        logger.info(f"Job {job.job_id} submitted successfully for {url_str}")
+
+        return JobSubmitResponse(
+            job_id=job.job_id,
+            status="queued",
+            message=f"Processing started for {url_str}. Poll /jobs/{job.job_id}/status for progress."
+        )
+
+    except Exception as e:
+        logger.error(f"Error submitting job: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/process", response_model=URLProcessResponse)
+async def process_url(request: URLRequest):
+    """
+    Process a URL synchronously (DEPRECATED - Blocks until complete)
+
+    WARNING: This endpoint blocks the request until processing completes.
+    For better UX, use /process-async instead.
+
+    Kept for backward compatibility.
+    """
+    logger.warning("Using deprecated synchronous /process endpoint. Consider migrating to /process-async for better UX.")
+
+    url_str = str(request.url)
+    logger.info(f"Processing URL synchronously: {url_str}")
+
+    try:
+        # Process directly using the background function (but synchronously)
+        result = process_url_background("sync", url_str, request.use_semantic_chunking)
+
+        # Convert result dict to URLProcessResponse
+        return URLProcessResponse(**result)
 
     except ConnectionError as e:
         logger.error(f"TGI connection error: {e}")
-        _is_processing = False
         raise HTTPException(
             status_code=503,
             detail={
@@ -801,7 +837,6 @@ async def process_url(request: URLRequest):
         )
     except TimeoutError as e:
         logger.error(f"TGI timeout error: {e}")
-        _is_processing = False
         raise HTTPException(
             status_code=504,
             detail={
@@ -813,9 +848,6 @@ async def process_url(request: URLRequest):
         )
     except Exception as e:
         logger.error(f"Error processing URL: {e}")
-        # Always reset the processing flag on error
-        _is_processing = False
-
         # Check if it's a rate limit error
         error_str = str(e).lower()
         if any(term in error_str for term in ["rate limit", "quota", "429", "resource exhausted", "requests per"]):
@@ -823,18 +855,109 @@ async def process_url(request: URLRequest):
                 status_code=429,
                 detail=f"Rate limit exceeded. Please wait before trying again. Error: {str(e)}"
             )
-
         raise HTTPException(status_code=500, detail=str(e))
 
-    finally:
-        # Always reset the processing flag when done (success or failure)
-        _is_processing = False
-
-        # Clear processing status from Redis if document_id was created
-        if 'document_id' in locals():
-            clear_processing_status(document_id)
 
 
+
+# Job status and result endpoints
+
+@router.get("/jobs/{job_id}/status", response_model=JobStatusResponse)
+async def get_job_status(job_id: str):
+    """
+    Get the status of a processing job
+
+    Returns current progress, phase, and status.
+    Poll this endpoint to track job progress.
+    """
+    if not job_manager:
+        raise HTTPException(
+            status_code=503,
+            detail="Job management system is not available"
+        )
+
+    job = job_manager.get_job(job_id)
+    if not job:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Job {job_id} not found"
+        )
+
+    return JobStatusResponse(**job.to_dict())
+
+
+@router.get("/jobs/{job_id}/result")
+async def get_job_result(job_id: str):
+    """
+    Get the final result of a completed job
+
+    Returns the full processing result when job status is 'completed'.
+    Returns error if job is still processing or failed.
+    """
+    if not job_manager:
+        raise HTTPException(
+            status_code=503,
+            detail="Job management system is not available"
+        )
+
+    job = job_manager.get_job(job_id)
+    if not job:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Job {job_id} not found"
+        )
+
+    if job.status == JobStatus.PROCESSING or job.status == JobStatus.QUEUED:
+        raise HTTPException(
+            status_code=202,  # Accepted but not ready
+            detail={
+                "message": "Job is still processing",
+                "status": job.status,
+                "progress": job.progress
+            }
+        )
+
+    if job.status == JobStatus.FAILED:
+        raise HTTPException(
+            status_code=500,
+            detail={
+                "message": "Job failed",
+                "error": job.error
+            }
+        )
+
+    if job.status == JobStatus.CANCELLED:
+        raise HTTPException(
+            status_code=410,  # Gone
+            detail="Job was cancelled"
+        )
+
+    # Job completed successfully
+    return job.result
+
+
+@router.get("/jobs/active")
+async def get_active_jobs():
+    """
+    Get all currently active jobs (queued or processing)
+
+    Returns list of jobs with their current status and progress.
+    """
+    if not job_manager:
+        raise HTTPException(
+            status_code=503,
+            detail="Job management system is not available"
+        )
+
+    active_jobs = job_manager.get_active_jobs()
+
+    return {
+        "jobs": [job.to_dict() for job in active_jobs],
+        "count": len(active_jobs)
+    }
+
+
+# Legacy processing status endpoint (kept for compatibility)
 @router.get("/processing-status")
 async def get_processing_status():
     """

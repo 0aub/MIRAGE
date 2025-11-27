@@ -459,6 +459,60 @@ export const urlApi = {
       count: number;
     }>('/url/processing-status');
   },
+
+  // NEW: Async job-based processing
+  processAsync: (url: string, useSemanticChunking: boolean = true) => {
+    return fetchApi<{
+      job_id: string;
+      status: string;
+      message: string;
+    }>('/url/process-async', {
+      method: 'POST',
+      body: JSON.stringify({
+        url,
+        use_semantic_chunking: useSemanticChunking,
+      }),
+    });
+  },
+
+  getJobStatus: (jobId: string) => {
+    return fetchApi<{
+      job_id: string;
+      status: string;
+      progress: number;
+      current_phase?: string;
+      document_id?: string;
+      title?: string;
+      content_type?: string;
+      url?: string;
+      created_at: number;
+      started_at?: number;
+      completed_at?: number;
+      elapsed_seconds: number;
+      error?: string;
+    }>(`/url/jobs/${jobId}/status`);
+  },
+
+  getJobResult: (jobId: string) => {
+    return fetchApi<{
+      document_id: string;
+      url: string;
+      title: string | null;
+      content_type: 'webpage' | 'youtube';
+      processing_time_seconds: number;
+      phase1: any;
+      phase2: any;
+      phase3: any;
+      phase5: any;
+    }>(`/url/jobs/${jobId}/result`);
+  },
+
+  getActiveJobs: () => {
+    return fetchApi<{
+      jobs: any[];
+      count: number;
+    }>('/url/jobs/active');
+  },
 };
 
 // Chat APIs
