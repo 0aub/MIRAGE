@@ -47,9 +47,10 @@ class LLMEntityExtractor:
         """Initialize with auto-detected LLM provider"""
         self.provider = None
         self.model = None
-        # Reduced chunk size for better quality - prioritize thoroughness over speed
-        # Smaller chunks = more detailed extraction, better handling of complex text
-        self.max_tokens_per_request = 1200  # Conservative for quality extraction
+        # GraphRAG best practice: 400-600 tokens per chunk for optimal entity extraction
+        # Research shows smaller chunks detect 50x more entities than 1200+ token chunks
+        # Microsoft GraphRAG: "600 tokens = more precise extraction, higher entity detection"
+        self.max_tokens_per_request = 600  # GraphRAG recommended size
         self.encoding = None
         self.redis_client = None
 
@@ -293,26 +294,49 @@ class LLMEntityExtractor:
             system_prompt = """أنت مستخرج معلومات متخصص في بناء الرسوم البيانية المعرفية الشاملة والغنية بالمعلومات.
 
 **تعليمات استخراج الكيانات:**
-- استخرج فقط الكيانات المحددة والملموسة (أسماء أشخاص، منظمات، أماكن، برامج، مشاريع، منتجات، إلخ)
-- **تجنب تماماً** الكيانات العامة مثل: "فرصة"، "قطاع"، "مجال"، "جانب"، "نقطة"، "شيء"، "موضوع"، "تحدي"
+- **مهم جداً**: استخرج **جميع** الكيانات المحددة والملموسة من النص، وليس فقط الكيانات الرئيسية أو المهمة
+- **لا تتجاهل أي كيان محدد** حتى لو ذُكر مرة واحدة فقط
+- الكيانات المطلوبة: أسماء أشخاص، منظمات، أماكن، برامج، مشاريع، منتجات، فعاليات، جوائز، سياسات، تقنيات، مقاييس، إلخ
+- **تجنب تماماً** الكيانات العامة مثل: "فرصة"، "قطاع"، "مجال"، "جانب"، "نقطة"، "شيء"، "موضوع"، "تحدي"، "أمر"، "حالة"
 - لكل كيان، حدد: الاسم، النوع، درجة الأهمية، وصف مختصر (جملة واحدة)، والسمات الرئيسية
 - السمات يمكن أن تشمل: التواريخ، الأرقام، المناصب، الأدوار، الإنجازات، المواقع، إلخ
 
 **تعليمات استخراج العلاقات:**
-- استخدم أنواع علاقات محددة ووصفية (مثل: يرأس، يدير، شارك_في، أطلق، حصل_على، أسس، يتعاون_مع، يقع_في، عمل_في، فاز_بـ، نظم، استضاف، طور، صمم)
+- استخرج **جميع** العلاقات الواضحة بين الكيانات
+- استخدم أنواع علاقات محددة ووصفية (مثل: يرأس، يدير، شارك_في، أطلق، حصل_على، أسس، يتعاون_مع، يقع_في، عمل_في، فاز_بـ، نظم، استضاف، طور، صمم، تحدث_عن، أعلن_عن)
 - **ممنوع منعاً باتاً** استخدام العلاقات العامة مثل: "مرتبط_بـ"، "له_علاقة_مع"، "متصل_بـ"، "يتعلق_بـ"
 - تأكد أن العلاقة منطقية وواضحة بين الكيانين
 - أضف وصف للعلاقة إذا كان هناك سياق مهم (اختياري)
 - أضف السمات الزمنية أو الكمية إذا توفرت
 
 **أمثلة:**
-1. {"entities": [{"text": "وزارة التعليم", "type": "Organization", "importance": "high", "description": "الجهة الحكومية المسؤولة عن التعليم في المملكة", "attributes": {"sector": "government", "domain": "education"}}, {"text": "الرياض", "type": "Location", "importance": "medium", "description": "عاصمة المملكة العربية السعودية", "attributes": {"type": "capital_city"}}], "relationships": [{"source": "وزارة التعليم", "target": "الرياض", "type": "يقع_في", "description": "المقر الرئيسي"}]}
+1. {"entities": [{"text": "وزارة التعليم", "type": "Organization", "importance": "high", "description": "الجهة الحكومية المسؤولة عن التعليم", "attributes": {"sector": "government", "domain": "education"}}, {"text": "الرياض", "type": "Location", "importance": "medium", "description": "عاصمة المملكة", "attributes": {"type": "capital"}}], "relationships": [{"source": "وزارة التعليم", "target": "الرياض", "type": "يقع_في", "description": "المقر الرئيسي"}]}
 
-2. {"entities": [{"text": "محمد بن سلمان", "type": "Person", "importance": "high", "description": "ولي العهد رئيس مجلس الوزراء", "attributes": {"role": "Crown Prince", "position": "Prime Minister"}}, {"text": "رؤية 2030", "type": "Program", "importance": "high", "description": "خطة استراتيجية لتنويع الاقتصاد السعودي", "attributes": {"launch_year": "2016", "target_year": "2030"}}], "relationships": [{"source": "محمد بن سلمان", "target": "رؤية 2030", "type": "أطلق", "attributes": {"year": "2016"}}]}
+2. {"entities": [{"text": "محمد بن سلمان", "type": "Person", "importance": "high", "description": "ولي العهد رئيس مجلس الوزراء", "attributes": {"role": "Crown Prince"}}, {"text": "رؤية 2030", "type": "Program", "importance": "high", "description": "خطة استراتيجية لتنويع الاقتصاد", "attributes": {"year": "2030"}}], "relationships": [{"source": "محمد بن سلمان", "target": "رؤية 2030", "type": "أطلق", "attributes": {"year": "2016"}}]}
 
-3. {"entities": [{"text": "جائزة التحول الرقمي", "type": "Award", "importance": "high", "description": "جائزة سنوية للابتكار في التحول الرقمي", "attributes": {"frequency": "annual", "category": "digital_innovation"}}, {"text": "وزارة الاتصالات", "type": "Organization", "importance": "high", "description": "وزارة الاتصالات وتقنية المعلومات", "attributes": {"sector": "government", "domain": "telecommunications"}}], "relationships": [{"source": "وزارة الاتصالات", "target": "جائزة التحول الرقمي", "type": "نظم", "description": "تنظيم الجائزة السنوية"}]}"""
+3. {"entities": [{"text": "جائزة التحول الرقمي", "type": "Award", "importance": "high", "description": "جائزة سنوية للابتكار الرقمي", "attributes": {"frequency": "annual"}}, {"text": "وزارة الاتصالات", "type": "Organization", "importance": "high", "description": "وزارة الاتصالات وتقنية المعلومات", "attributes": {"sector": "government"}}], "relationships": [{"source": "وزارة الاتصالات", "target": "جائزة التحول الرقمي", "type": "نظم"}]}
 
-            user_prompt = f"""استخرج الكيانات والعلاقات من النص التالي مع معلومات شاملة ومفصلة. تأكد من تضمين الوصف والسمات لكل كيان.
+4. {"entities": [{"text": "منصة إحسان", "type": "Product", "importance": "high", "description": "منصة وطنية للتبرعات الخيرية", "attributes": {"type": "digital_platform"}}, {"text": "المركز الوطني للتنمية", "type": "Organization", "importance": "medium", "description": "مركز حكومي للتنمية"}], "relationships": [{"source": "المركز الوطني للتنمية", "target": "منصة إحسان", "type": "طور"}]}
+
+5. {"entities": [{"text": "د. أحمد العيسى", "type": "Person", "importance": "high", "description": "وزير التعليم السابق", "attributes": {"position": "former_minister"}}, {"text": "برنامج نافس", "type": "Program", "importance": "medium", "description": "برنامج لدعم القطاع غير الربحي", "attributes": {"sector": "nonprofit"}}], "relationships": [{"source": "د. أحمد العيسى", "target": "برنامج نافس", "type": "أطلق"}]}
+
+6. {"entities": [{"text": "قمة المعرفة 2024", "type": "Event", "importance": "high", "description": "مؤتمر سنوي للمعرفة والابتكار", "attributes": {"year": "2024"}}, {"text": "دبي", "type": "Location", "importance": "medium", "description": "إمارة دبي", "attributes": {"country": "UAE"}}], "relationships": [{"source": "قمة المعرفة 2024", "target": "دبي", "type": "عُقد_في"}]}
+
+7. {"entities": [{"text": "مؤسسة مسك الخيرية", "type": "Organization", "importance": "high", "description": "مؤسسة خيرية غير ربحية", "attributes": {"type": "nonprofit"}}, {"text": "مبادرة مسك", "type": "Program", "importance": "medium", "description": "مبادرة لتمكين الشباب"}], "relationships": [{"source": "مؤسسة مسك الخيرية", "target": "مبادرة مسك", "type": "أطلق"}]}
+
+8. {"entities": [{"text": "الهيئة السعودية للبيانات", "type": "Organization", "importance": "high", "description": "هيئة حكومية لإدارة البيانات", "attributes": {"sector": "government"}}, {"text": "استراتيجية البيانات الوطنية", "type": "Policy", "importance": "high", "description": "استراتيجية وطنية للبيانات"}], "relationships": [{"source": "الهيئة السعودية للبيانات", "target": "استراتيجية البيانات الوطنية", "type": "أعلن_عن"}]}
+
+9. {"entities": [{"text": "نيوم", "type": "Project", "importance": "high", "description": "مشروع مدينة مستقبلية", "attributes": {"location": "تبوك", "size": "26500_km2"}}, {"text": "تبوك", "type": "Location", "importance": "medium", "description": "منطقة في شمال غرب السعودية"}], "relationships": [{"source": "نيوم", "target": "تبوك", "type": "يقع_في"}]}
+
+10. {"entities": [{"text": "برنامج سكني", "type": "Program", "importance": "high", "description": "برنامج إسكان حكومي", "attributes": {"sector": "housing"}}, {"text": "وزارة الإسكان", "type": "Organization", "importance": "high", "description": "وزارة الإسكان السعودية", "attributes": {"sector": "government"}}], "relationships": [{"source": "وزارة الإسكان", "target": "برنامج سكني", "type": "يدير"}]}
+
+11. {"entities": [{"text": "الذكاء الاصطناعي", "type": "Technology", "importance": "high", "description": "تقنية الذكاء الاصطناعي"}, {"text": "الهيئة السعودية للبيانات", "type": "Organization", "importance": "high", "description": "هيئة حكومية"}], "relationships": [{"source": "الهيئة السعودية للبيانات", "target": "الذكاء الاصطناعي", "type": "تستخدم"}]}
+
+12. {"entities": [{"text": "منتدى الاستثمار", "type": "Event", "importance": "high", "description": "منتدى سنوي للاستثمار", "attributes": {"frequency": "annual"}}, {"text": "هيئة الاستثمار", "type": "Organization", "importance": "high", "description": "هيئة حكومية للاستثمار"}], "relationships": [{"source": "هيئة الاستثمار", "target": "منتدى الاستثمار", "type": "نظم"}]}"""
+
+            user_prompt = f"""استخرج **جميع** الكيانات والعلاقات المحددة من النص التالي. لا تتخطى أي كيان محدد حتى لو ذُكر مرة واحدة.
+
+**مهم جداً**: هذا النص جزء من محادثة أو نص أطول وقد يحتوي على جمل غير مكتملة أو متقطعة - هذا طبيعي تماماً! استخرج الكيانات والعلاقات الموجودة حتى لو كان النص غير مكتمل. لا تعتذر أو ترفض الاستخراج - فقط استخرج ما تجده.
 
 النص: {chunk}
 
@@ -322,26 +346,49 @@ JSON:"""
             system_prompt = """You are an expert information extractor specialized in building comprehensive and information-rich knowledge graphs.
 
 **Entity Extraction Instructions:**
-- Extract only specific, concrete entities (person names, organizations, places, programs, projects, products, etc.)
-- **Completely avoid** generic entities like: "opportunity", "sector", "field", "aspect", "point", "thing", "topic", "challenge", "area", "way"
+- **VERY IMPORTANT**: Extract **ALL** specific, concrete entities from the text, not just the main or important ones
+- **Do not skip any specific entity** even if mentioned only once
+- Required entities: person names, organizations, places, programs, projects, products, events, awards, policies, technologies, metrics, etc.
+- **Completely avoid** generic entities like: "opportunity", "sector", "field", "aspect", "point", "thing", "topic", "challenge", "area", "way", "issue", "matter"
 - For each entity, specify: name, type, importance level, brief description (one sentence), and key attributes
 - Attributes can include: dates, numbers, positions, roles, achievements, locations, etc.
 
 **Relationship Extraction Instructions:**
-- Use specific, descriptive relationship types (e.g., "leads", "manages", "participates_in", "launched", "won", "founded", "collaborates_with", "located_in", "works_for", "organized", "hosted", "developed", "designed")
+- Extract **ALL** clear relationships between entities
+- Use specific, descriptive relationship types (e.g., "leads", "manages", "participates_in", "launched", "won", "founded", "collaborates_with", "located_in", "works_for", "organized", "hosted", "developed", "designed", "spoke_about", "announced")
 - **Strictly forbidden** to use generic relationships like: "related_to", "has_relationship_with", "connected_to", "associated_with", "linked_to"
 - Ensure the relationship is logical and clear between the two entities
 - Add relationship description if there's important context (optional)
 - Add temporal or quantitative attributes when available
 
 **Examples:**
-1. {"entities": [{"text": "Ministry of Education", "type": "Organization", "importance": "high", "description": "Government body responsible for education in the Kingdom", "attributes": {"sector": "government", "domain": "education"}}, {"text": "Riyadh", "type": "Location", "importance": "medium", "description": "Capital city of Saudi Arabia", "attributes": {"type": "capital_city"}}], "relationships": [{"source": "Ministry of Education", "target": "Riyadh", "type": "located_in", "description": "Main headquarters"}]}
+1. {"entities": [{"text": "Ministry of Education", "type": "Organization", "importance": "high", "description": "Government body responsible for education", "attributes": {"sector": "government"}}, {"text": "Riyadh", "type": "Location", "importance": "medium", "description": "Capital city", "attributes": {"type": "capital"}}], "relationships": [{"source": "Ministry of Education", "target": "Riyadh", "type": "located_in"}]}
 
-2. {"entities": [{"text": "Bill Gates", "type": "Person", "importance": "high", "description": "Co-founder of Microsoft and philanthropist", "attributes": {"role": "co-founder", "known_for": "Microsoft"}}, {"text": "Microsoft", "type": "Organization", "importance": "high", "description": "Global technology company", "attributes": {"founded": "1975", "industry": "technology"}}], "relationships": [{"source": "Bill Gates", "target": "Microsoft", "type": "founded", "attributes": {"year": "1975"}}]}
+2. {"entities": [{"text": "Bill Gates", "type": "Person", "importance": "high", "description": "Co-founder of Microsoft", "attributes": {"role": "co-founder"}}, {"text": "Microsoft", "type": "Organization", "importance": "high", "description": "Technology company", "attributes": {"founded": "1975"}}], "relationships": [{"source": "Bill Gates", "target": "Microsoft", "type": "founded", "attributes": {"year": "1975"}}]}
 
-3. {"entities": [{"text": "Digital Transformation Award", "type": "Award", "importance": "high", "description": "Annual award for digital innovation excellence", "attributes": {"frequency": "annual", "category": "digital_innovation"}}, {"text": "Ministry of Communications", "type": "Organization", "importance": "high", "description": "Ministry of Communications and Information Technology", "attributes": {"sector": "government", "domain": "telecommunications"}}], "relationships": [{"source": "Ministry of Communications", "target": "Digital Transformation Award", "type": "organized", "description": "Annual award organization"}]}"""
+3. {"entities": [{"text": "Digital Transformation Award", "type": "Award", "importance": "high", "description": "Annual award for innovation", "attributes": {"frequency": "annual"}}, {"text": "Ministry of Communications", "type": "Organization", "importance": "high", "description": "Government ministry", "attributes": {"sector": "government"}}], "relationships": [{"source": "Ministry of Communications", "target": "Digital Transformation Award", "type": "organized"}]}
 
-            user_prompt = f"""Extract entities and relationships from the following text with comprehensive and detailed information. Make sure to include description and attributes for each entity.
+4. {"entities": [{"text": "Ihsan Platform", "type": "Product", "importance": "high", "description": "National charity platform", "attributes": {"type": "digital"}}, {"text": "National Development Center", "type": "Organization", "importance": "medium", "description": "Government development center"}], "relationships": [{"source": "National Development Center", "target": "Ihsan Platform", "type": "developed"}]}
+
+5. {"entities": [{"text": "Dr. Ahmed", "type": "Person", "importance": "high", "description": "Former minister", "attributes": {"position": "minister"}}, {"text": "Nafis Program", "type": "Program", "importance": "medium", "description": "Nonprofit support program"}], "relationships": [{"source": "Dr. Ahmed", "target": "Nafis Program", "type": "launched"}]}
+
+6. {"entities": [{"text": "Knowledge Summit 2024", "type": "Event", "importance": "high", "description": "Annual knowledge conference", "attributes": {"year": "2024"}}, {"text": "Dubai", "type": "Location", "importance": "medium", "description": "UAE emirate"}], "relationships": [{"source": "Knowledge Summit 2024", "target": "Dubai", "type": "held_in"}]}
+
+7. {"entities": [{"text": "Misk Foundation", "type": "Organization", "importance": "high", "description": "Charitable nonprofit", "attributes": {"type": "nonprofit"}}, {"text": "Misk Initiative", "type": "Program", "importance": "medium", "description": "Youth empowerment program"}], "relationships": [{"source": "Misk Foundation", "target": "Misk Initiative", "type": "launched"}]}
+
+8. {"entities": [{"text": "Data Authority", "type": "Organization", "importance": "high", "description": "Government data agency", "attributes": {"sector": "government"}}, {"text": "National Data Strategy", "type": "Policy", "importance": "high", "description": "National data strategy"}], "relationships": [{"source": "Data Authority", "target": "National Data Strategy", "type": "announced"}]}
+
+9. {"entities": [{"text": "NEOM", "type": "Project", "importance": "high", "description": "Future city project", "attributes": {"size": "26500_km2"}}, {"text": "Tabuk", "type": "Location", "importance": "medium", "description": "Northwestern region"}], "relationships": [{"source": "NEOM", "target": "Tabuk", "type": "located_in"}]}
+
+10. {"entities": [{"text": "Sakani Program", "type": "Program", "importance": "high", "description": "Housing program", "attributes": {"sector": "housing"}}, {"text": "Ministry of Housing", "type": "Organization", "importance": "high", "description": "Government ministry", "attributes": {"sector": "government"}}], "relationships": [{"source": "Ministry of Housing", "target": "Sakani Program", "type": "manages"}]}
+
+11. {"entities": [{"text": "Artificial Intelligence", "type": "Technology", "importance": "high", "description": "AI technology"}, {"text": "Data Authority", "type": "Organization", "importance": "high", "description": "Government agency"}], "relationships": [{"source": "Data Authority", "target": "Artificial Intelligence", "type": "uses"}]}
+
+12. {"entities": [{"text": "Investment Forum", "type": "Event", "importance": "high", "description": "Annual investment conference", "attributes": {"frequency": "annual"}}, {"text": "Investment Authority", "type": "Organization", "importance": "high", "description": "Government investment agency"}], "relationships": [{"source": "Investment Authority", "target": "Investment Forum", "type": "organized"}]}"""
+
+            user_prompt = f"""Extract **ALL** specific entities and relationships from the following text. Do not skip any specific entity even if mentioned only once.
+
+**VERY IMPORTANT**: This text is part of a conversation or longer document and may contain incomplete or fragmented sentences - this is completely normal! Extract whatever entities and relationships ARE present, even if the text seems incomplete. Do not apologize or refuse to extract - just extract what you find.
 
 Text: {chunk}
 
@@ -351,7 +398,7 @@ JSON:"""
             # Handle TGI separately (uses /v1/chat/completions for automatic chat template)
             if self.provider == "tgi":
                 # Use OpenAI-compatible endpoint which auto-applies correct chat template
-                # Retry logic with exponential backoff for 422 errors (chunk too large)
+                # FAIL FAST: No retries for connection errors - only retry 422 (chunk too large)
                 max_retries = 3
                 retry_delay = 2
 
@@ -365,34 +412,48 @@ JSON:"""
                                     {"role": "system", "content": system_prompt},
                                     {"role": "user", "content": user_prompt}
                                 ],
-                                "temperature": 0.2,  # Low for consistency
-                                "max_tokens": 2000,  # Reduced for concise JSON
+                                "temperature": 0.1,  # Very low for consistency and valid JSON
+                                "max_tokens": 4096,  # Increased to prevent truncation (Qwen3 handles long responses well)
+                                "top_p": 0.9,  # Nucleus sampling for better quality
                                 # Note: response_format not supported by TGI v3.3.6
                             },
-                            timeout=180  # 3 minute timeout for long extractions
+                            timeout=30  # Reduced timeout: 30 seconds (fail fast!)
                         )
                         tgi_response.raise_for_status()
                         content = tgi_response.json()["choices"][0]["message"]["content"]
                         break  # Success!
 
+                    except requests.exceptions.ConnectionError as e:
+                        # TGI is not running or not reachable - FAIL IMMEDIATELY
+                        logger.error(f"TGI connection failed - TGI container may not be running: {e}")
+                        raise ConnectionError(
+                            f"TGI is not available at {self.tgi_endpoint}. "
+                            "Please start the TGI container with: docker compose up -d tgi"
+                        )
+                    except requests.exceptions.Timeout as e:
+                        # TGI is too slow or overloaded - FAIL IMMEDIATELY
+                        logger.error(f"TGI request timed out after 30 seconds: {e}")
+                        raise TimeoutError(
+                            f"TGI request timed out. The model may be loading or overloaded. "
+                            "Check TGI logs: docker logs mirage-tgi"
+                        )
                     except requests.exceptions.HTTPError as e:
                         if e.response.status_code == 422 and attempt < max_retries - 1:
-                            # Chunk too large - split it smaller and return partial results
+                            # Chunk too large - retry with smaller chunk
                             logger.warning(f"Chunk too large (422 error), attempt {attempt + 1}/{max_retries}. Chunk has ~{self.count_tokens(chunk)} tokens")
-                            # If this is failing, the chunk is still too large even after our chunking
-                            # Return empty to skip this problematic chunk
-                            if attempt == max_retries - 2:
-                                logger.error(f"Giving up on chunk after {max_retries} attempts - chunk may be too large or malformed")
-                                return {"entities": [], "relationships": []}
                             time.sleep(retry_delay * (attempt + 1))  # Exponential backoff
+                        elif e.response.status_code == 422:
+                            # Final 422 attempt - give up on this chunk
+                            logger.error(f"Chunk still too large after {max_retries} attempts - skipping")
+                            return {"entities": [], "relationships": []}
                         else:
-                            raise  # Re-raise other errors or final 422
-                    except Exception as e:
-                        if attempt < max_retries - 1:
-                            logger.warning(f"TGI request failed (attempt {attempt + 1}/{max_retries}): {e}")
-                            time.sleep(retry_delay * (attempt + 1))
-                        else:
+                            # Other HTTP errors (500, 503, etc.) - FAIL IMMEDIATELY
+                            logger.error(f"TGI HTTP error {e.response.status_code}: {e}")
                             raise
+                    except Exception as e:
+                        # Unexpected errors - FAIL IMMEDIATELY
+                        logger.error(f"Unexpected TGI error: {type(e).__name__}: {e}")
+                        raise
             else:
                 # Use LiteLLM for cloud providers
                 response = completion(
@@ -401,8 +462,9 @@ JSON:"""
                         {"role": "system", "content": system_prompt},
                         {"role": "user", "content": user_prompt}
                     ],
-                    temperature=0.1,  # Low temperature for consistency
-                    max_tokens=4000,  # Increased for longer responses
+                    temperature=0.1,  # Very low for consistency and valid JSON
+                    max_tokens=4096,  # Increased to prevent truncation
+                    top_p=0.9,  # Nucleus sampling for better quality
                     response_format={"type": "json_object"},  # Force JSON output
                 )
                 content = response.choices[0].message.content
@@ -414,7 +476,14 @@ JSON:"""
             elif "```" in content:
                 content = content.split("```")[1].split("```")[0]
 
-            result = json.loads(content.strip())
+            content = content.strip()
+
+            # Try to parse JSON with automatic repair
+            result = self._parse_json_with_repair(content)
+
+            if result is None:
+                logger.error("All JSON repair attempts failed")
+                return {"entities": [], "relationships": []}
 
             # Add confidence scores
             for entity in result.get("entities", []):
@@ -426,7 +495,7 @@ JSON:"""
             return result
 
         except json.JSONDecodeError as e:
-            logger.error(f"Failed to parse LLM response as JSON: {e}")
+            logger.error(f"Failed to parse LLM response as JSON after repair: {e}")
             # Log first 500 chars of response for debugging
             logger.error(f"Response preview: {content[:500] if content else 'None'}...")
             return {"entities": [], "relationships": []}
@@ -439,6 +508,84 @@ JSON:"""
                 raise  # Re-raise rate limit errors
             logger.error(f"Error calling LLM: {e}")
             return {"entities": [], "relationships": []}
+
+    def _parse_json_with_repair(self, content: str) -> Optional[Dict[str, Any]]:
+        """
+        Parse JSON with automatic repair for common LLM output errors.
+
+        Tries multiple repair strategies for malformed JSON from Qwen3-4B:
+        - Unterminated strings
+        - Missing/extra commas
+        - Truncated output
+
+        Returns:
+            Parsed JSON dict or None if all repair attempts fail
+        """
+        import re
+
+        # Strategy 1: Try direct parse
+        try:
+            return json.loads(content)
+        except json.JSONDecodeError:
+            pass
+
+        # Strategy 2: Find JSON object boundaries (in case there's extra text)
+        try:
+            # Find first { and last }
+            start = content.find('{')
+            end = content.rfind('}')
+            if start != -1 and end != -1 and end > start:
+                json_content = content[start:end+1]
+                return json.loads(json_content)
+        except json.JSONDecodeError:
+            pass
+
+        # Strategy 3: Fix common issues
+        try:
+            repaired = content
+
+            # Remove trailing commas before } or ]
+            repaired = re.sub(r',(\s*[}\]])', r'\1', repaired)
+
+            # Fix unterminated strings at end (add closing quote if missing)
+            if repaired.count('"') % 2 != 0:
+                # Odd number of quotes - add closing quote before last }
+                last_brace = repaired.rfind('}')
+                if last_brace != -1:
+                    repaired = repaired[:last_brace] + '"' + repaired[last_brace:]
+
+            # Try to parse again
+            return json.loads(repaired)
+        except json.JSONDecodeError:
+            pass
+
+        # Strategy 4: Truncate to last complete entity/relationship and close JSON
+        try:
+            # Find last complete entity or relationship closing brace before truncation
+            last_complete = max(
+                content.rfind('  }'),  # Last complete item with proper indentation
+                content.rfind('}\n'),  # Last item followed by newline
+            )
+
+            if last_complete != -1:
+                truncated = content[:last_complete + 3]  # Include the closing brace
+
+                # Close any open arrays/objects
+                open_braces = truncated.count('{') - truncated.count('}')
+                open_brackets = truncated.count('[') - truncated.count(']')
+
+                for _ in range(open_brackets):
+                    truncated += '\n  ]'
+                for _ in range(open_braces):
+                    truncated += '\n}'
+
+                return json.loads(truncated)
+        except json.JSONDecodeError:
+            pass
+
+        # All repair attempts failed
+        logger.warning("JSON repair failed after 4 strategies")
+        return None
 
     def _deduplicate_entities(self, entities: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """
@@ -732,31 +879,63 @@ JSON:"""
             if not chunk_text.strip():
                 continue
 
-            logger.info(f"Extracting from chunk {current_chunk}/{total_chunks} ({len(chunk_text)} chars)")
+            # Check chunk size - if too large, subdivide into 600-token pieces (GraphRAG best practice)
+            chunk_tokens = self.count_tokens(chunk_text)
+
+            if chunk_tokens > self.max_tokens_per_request:
+                logger.info(f"Chunk {current_chunk}/{total_chunks} is large ({chunk_tokens} tokens, {len(chunk_text)} chars) - subdividing into {self.max_tokens_per_request}-token pieces")
+                # Subdivide large chunk into smaller pieces for better extraction
+                sub_chunks = self.chunk_text(chunk_text, max_tokens=self.max_tokens_per_request)
+                logger.info(f"Subdivided into {len(sub_chunks)} sub-chunks for detailed extraction")
+            else:
+                logger.info(f"Extracting from chunk {current_chunk}/{total_chunks} ({chunk_tokens} tokens, {len(chunk_text)} chars)")
+                sub_chunks = [chunk_text]
 
             # Update progress in Redis
             self._update_progress(document_id, current_chunk, total_chunks)
 
-            try:
-                # Extract from this semantic chunk
-                result = self._extract_from_chunk(chunk_text, language)
+            # Extract from each sub-chunk
+            chunk_entities = []
+            chunk_relationships = []
 
-                entities_found = len(result.get("entities", []))
-                relationships_found = len(result.get("relationships", []))
+            for sub_idx, sub_chunk in enumerate(sub_chunks):
+                if not sub_chunk.strip():
+                    continue
 
-                logger.info(f"Chunk {current_chunk}: Found {entities_found} entities, {relationships_found} relationships")
+                try:
+                    # Extract from this sub-chunk
+                    result = self._extract_from_chunk(sub_chunk, language)
 
-                all_entities.extend(result.get("entities", []))
-                all_relationships.extend(result.get("relationships", []))
+                    entities_found = len(result.get("entities", []))
+                    relationships_found = len(result.get("relationships", []))
 
-            except Exception as e:
-                # Check if it's a rate limit error
-                error_str = str(e).lower()
-                if any(term in error_str for term in ["rate limit", "quota", "429", "resource exhausted", "requests per"]):
-                    logger.error(f"Rate limit exceeded: {e}")
-                    raise Exception(f"Rate limit exceeded: {str(e)}") from e
-                logger.error(f"Error processing chunk {current_chunk}: {e}")
-                continue
+                    if len(sub_chunks) > 1:
+                        logger.info(f"  Sub-chunk {sub_idx+1}/{len(sub_chunks)}: Found {entities_found} entities, {relationships_found} relationships")
+                    else:
+                        logger.info(f"Chunk {current_chunk}: Found {entities_found} entities, {relationships_found} relationships")
+
+                    chunk_entities.extend(result.get("entities", []))
+                    chunk_relationships.extend(result.get("relationships", []))
+
+                except (ConnectionError, TimeoutError) as e:
+                    # TGI connection/timeout errors - FAIL IMMEDIATELY, don't continue processing
+                    logger.error(f"TGI unavailable on chunk {current_chunk}/{total_chunks}: {e}")
+                    raise  # Re-raise to stop processing immediately
+                except Exception as e:
+                    # Check if it's a rate limit error
+                    error_str = str(e).lower()
+                    if any(term in error_str for term in ["rate limit", "quota", "429", "resource exhausted", "requests per"]):
+                        logger.error(f"Rate limit exceeded: {e}")
+                        raise Exception(f"Rate limit exceeded: {str(e)}") from e
+                    logger.error(f"Error processing sub-chunk {sub_idx+1}/{len(sub_chunks)}: {e}")
+                    continue
+
+            # Add chunk results to overall results
+            all_entities.extend(chunk_entities)
+            all_relationships.extend(chunk_relationships)
+
+            if len(sub_chunks) > 1:
+                logger.info(f"Chunk {current_chunk} total: {len(chunk_entities)} entities, {len(chunk_relationships)} relationships from {len(sub_chunks)} sub-chunks")
 
         logger.info(f"Raw extraction complete: {len(all_entities)} entities, {len(all_relationships)} relationships (before deduplication)")
 

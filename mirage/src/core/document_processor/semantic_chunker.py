@@ -42,8 +42,12 @@ class SemanticChunker:
         chunking_config = config_loader.get_semantic_chunking_config()
 
         self.embedder = embedder or JinaEmbedder()
-        self.chunk_size = chunk_size or chunking_config.get("chunk_size", 1000)
-        self.max_chunk_size = max_chunk_size or chunking_config.get("max_chunk_size", 1500)
+        # Optimized chunk sizes for Qwen3-4B-Instruct (128K context window)
+        # Arabic: ~2-3 chars/token, so 1200 chars ≈ 400-600 tokens
+        # With 128K context, we have plenty of room for prompt + chunk + response
+        # Target: 800 chars (~300-400 tokens), Max: 1200 chars (~500-600 tokens)
+        self.chunk_size = chunk_size or chunking_config.get("chunk_size", 800)
+        self.max_chunk_size = max_chunk_size or chunking_config.get("max_chunk_size", 1200)
         self.similarity_threshold = similarity_threshold or chunking_config.get("similarity_threshold", 0.7)
         self.min_sentences_per_chunk = min_sentences_per_chunk or chunking_config.get("min_sentences_per_chunk", 2)
 

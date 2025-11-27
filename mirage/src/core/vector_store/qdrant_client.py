@@ -266,18 +266,51 @@ class QdrantVectorStore:
             logger.error(f"Error deleting from vector store: {e}")
             raise
     
+    def count_chunks(self, document_id: str) -> int:
+        """
+        Count chunks for a specific document
+
+        Args:
+            document_id: Document ID
+
+        Returns:
+            Number of chunks for the document
+        """
+        try:
+            # Count points matching document_id
+            count_result = self.client.count(
+                collection_name=self.collection_name,
+                count_filter=Filter(
+                    must=[
+                        FieldCondition(
+                            key="document_id",
+                            match=MatchValue(value=document_id),
+                        )
+                    ]
+                ),
+            )
+
+            count = count_result.count if count_result else 0
+            logger.debug(f"Document {document_id} has {count} chunks in vector store")
+
+            return count
+
+        except Exception as e:
+            logger.error(f"Error counting chunks for document {document_id}: {e}")
+            return 0
+
     def get_stats(self) -> Dict[str, Any]:
         """Get vector store statistics"""
         try:
             collection_info = self.client.get_collection(self.collection_name)
-            
+
             return {
                 "collection_name": self.collection_name,
                 "vectors_count": collection_info.vectors_count,
                 "points_count": collection_info.points_count,
                 "indexed": collection_info.status,
             }
-            
+
         except Exception as e:
             logger.error(f"Error getting vector store stats: {e}")
             return {}

@@ -15,6 +15,8 @@ from .json_processor import JSONProcessor
 from .text_chunker import TextChunker
 from .semantic_chunker import SemanticChunker
 from .chunker_factory import ChunkerFactory, get_chunker_factory
+from .content_cleaner import ContentCleaner
+from .punctuation_restorer import PunctuationRestorer
 
 __all__ = [
     "PDFProcessor",
@@ -24,4 +26,6 @@ __all__ = [
     "SemanticChunker",
     "ChunkerFactory",
     "get_chunker_factory",
+    "ContentCleaner",
+    "PunctuationRestorer",
 ]

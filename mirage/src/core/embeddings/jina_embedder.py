@@ -177,7 +177,7 @@ class JinaEmbedder:
 
     def _embed_local(self, texts: List[str]) -> List[np.ndarray]:
         """
-        Get embeddings using local Jina model
+        Get embeddings using local sentence-transformers model
 
         Args:
             texts: List of texts
@@ -185,10 +185,41 @@ class JinaEmbedder:
         Returns:
             List of embedding arrays
         """
-        # TODO: Implement local Jina inference
-        # For now, fallback to random embeddings
-        logger.warning("Local inference not implemented, using random embeddings")
-        return [np.random.randn(self.embedding_dim) for _ in texts]
+        try:
+            # Lazy import to avoid loading model at startup
+            from sentence_transformers import SentenceTransformer
+
+            # Initialize model on first use (cached for subsequent calls)
+            if not hasattr(self, '_local_model'):
+                logger.info("Loading local sentence-transformers model (multilingual, supports Arabic)")
+                # Using paraphrase-multilingual-mpnet-base-v2: excellent for Arabic+English
+                # 768-dim embeddings, trained on 50+ languages
+                self._local_model = SentenceTransformer('paraphrase-multilingual-mpnet-base-v2')
+                logger.info("Local embedding model loaded successfully")
+
+            # Generate embeddings
+            embeddings = self._local_model.encode(
+                texts,
+                convert_to_numpy=True,
+                normalize_embeddings=True,  # Already normalized
+                show_progress_bar=False
+            )
+
+            # Pad or truncate to match expected dimension if needed
+            if embeddings.shape[1] != self.embedding_dim:
+                logger.warning(
+                    f"Local model dimension ({embeddings.shape[1]}) != expected ({self.embedding_dim}), "
+                    "using local model dimension"
+                )
+                self.embedding_dim = embeddings.shape[1]
+
+            logger.debug(f"Generated {len(embeddings)} local embeddings")
+            return embeddings.tolist()
+
+        except Exception as e:
+            logger.error(f"Error in local embedding generation: {e}")
+            logger.warning("Falling back to random embeddings")
+            return [np.random.randn(self.embedding_dim).tolist() for _ in texts]
 
     def similarity(
         self,

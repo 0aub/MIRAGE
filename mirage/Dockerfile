@@ -7,15 +7,13 @@ ENV PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1
 
-# Install system dependencies
-# - build-essential, gcc: for compiling Python packages
-# - libpq-dev: for PostgreSQL (if needed later)
-# - git: for installing packages from git repos (like REFRAG)
+# Install system dependencies (required for Python packages and audio processing)
+# Note: ffmpeg is large (~350MB with dependencies) but required for YouTube audio processing
 RUN apt-get update && apt-get install -y \
-    build-essential \
-    gcc \
+    ffmpeg \
     git \
-    curl \
+    gcc \
+    build-essential \
     && rm -rf /var/lib/apt/lists/*
 
 # Set working directory

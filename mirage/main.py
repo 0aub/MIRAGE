@@ -20,6 +20,7 @@ from src.api import (
     url_service,
     benchmark_service,
     graphrag_service,
+    logs_service,
 )
 
 # Configure logger
@@ -142,6 +143,12 @@ app.include_router(
     graphrag_service.router,
     # Prefix already defined in graphrag_service.router
     tags=["GraphRAG Search"],
+)
+
+app.include_router(
+    logs_service.router,
+    prefix="/logs",
+    tags=["System Logs"],
 )
 
 

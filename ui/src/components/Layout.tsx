@@ -1,6 +1,6 @@
 import { ReactNode, useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Moon, Sun, Home, Upload, Network, MessageSquare, Database, Settings } from "lucide-react";
+import { Moon, Sun, Home, Upload, Network, MessageSquare, Database, Settings, Terminal } from "lucide-react";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
 
@@ -38,6 +38,7 @@ export const Layout = ({ children }: LayoutProps) => {
     { path: "/graph", label: "Graph", shortLabel: "Graph", icon: Network },
     { path: "/vectors", label: "Vectors", shortLabel: "Vectors", icon: Database },
     { path: "/chat", label: "Chat", shortLabel: "Chat", icon: MessageSquare },
+    { path: "/logs", label: "Logs", shortLabel: "Logs", icon: Terminal },
   ];
 
   return (

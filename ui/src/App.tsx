@@ -10,6 +10,7 @@ import GraphPage from "./pages/GraphPage";
 import VectorsPage from "./pages/VectorsPage";
 import SettingsPage from "./pages/SettingsPage";
 import ChatPage from "./pages/ChatPage";
+import LogsPage from "./pages/LogsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,8 +27,9 @@ const App = () => (
             <Route path="/data-sources" element={<DataSourcesPage />} />
             <Route path="/graph" element={<GraphPage />} />
             <Route path="/vectors" element={<VectorsPage />} />
-            <Route path="/settings" element={<SettingsPage />} />
             <Route path="/chat" element={<ChatPage />} />
+            <Route path="/logs" element={<LogsPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

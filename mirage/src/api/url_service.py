@@ -28,6 +28,9 @@ from youtube_transcript_api._errors import (
 _is_processing = False
 
 from ..core.document_processor import TextChunker, SemanticChunker, get_chunker_factory
+from ..core.document_processor.content_cleaner import ContentCleaner
+from ..core.document_processor.punctuation_restorer import PunctuationRestorer
+from ..core.media_processor import WhisperTranscriber
 from ..core.graph_builder import EntityExtractor, RelationshipExtractor, Neo4jClient
 from ..core.graph_builder.enhanced_neo4j_client import EnhancedNeo4jClient
 from ..core.graph_builder.content_rewriter import ContentRewriter
@@ -48,6 +51,9 @@ jina_embedder = JinaEmbedder()
 # Get global ChunkerFactory instance (uses content-type-specific strategies)
 chunker_factory = get_chunker_factory()
 content_rewriter = ContentRewriter()
+content_cleaner = ContentCleaner()  # YouTube transcript denoiser
+punctuation_restorer = PunctuationRestorer()  # BERT punctuation restoration for ASR transcripts
+whisper_transcriber = WhisperTranscriber(model_size="large-v3")  # Whisper large-v3 for maximum quality
 entity_extractor = EntityExtractor()
 relationship_extractor = RelationshipExtractor()
 neo4j_client = Neo4jClient()
@@ -254,21 +260,27 @@ def fetch_webpage_content(url: str) -> Dict[str, Any]:
 
 def fetch_youtube_transcript(video_id: str) -> Dict[str, Any]:
     """
-    Fetch transcript from a YouTube video
+    Fetch transcript from YouTube video using DUAL-PATH approach
+    Priority: YouTube API + BERT (speed) → fallback to Whisper large-v3 (quality)
     """
-    logger.info(f"Fetching YouTube transcript for video: {video_id}")
+    logger.info(f"Fetching transcript for video: {video_id}")
 
+    youtube_url = f"https://www.youtube.com/watch?v={video_id}"
+    full_text = None
+    transcript_method = None
+    detected_language = "unknown"
+
+    # PATH 1: Try YouTube API + BERT first (SPEED PRIORITY - 10-30 seconds)
     try:
+        logger.info("PATH 1: Attempting YouTube API + BERT punctuation (fast mode)...")
+
         # Create YouTubeTranscriptApi instance
         api = YouTubeTranscriptApi()
 
-        # Efficient approach: Get any available transcript (don't fetch multiple)
-        # YouTube stores mixed-language content in a single transcript
         transcript = None
-        detected_language = "unknown"
+        last_error = None
 
         # Try to get transcript - priority: any available, then specific languages
-        last_error = None
         try:
             # First, try English (most common)
             logger.debug(f"Attempting to fetch English transcript for {video_id}")
@@ -302,89 +314,198 @@ def fetch_youtube_transcript(video_id: str) -> Dict[str, Any]:
                     last_error = e
 
         if not transcript:
-            error_detail = f"No transcript found for this video. Make sure the video has captions/subtitles enabled."
+            error_detail = f"No transcript found for this video"
             if last_error:
-                logger.error(f"All transcript attempts failed for {video_id}. Last error: {type(last_error).__name__}: {str(last_error)}")
-                error_detail += f" (Error: {type(last_error).__name__})"
-            raise HTTPException(status_code=400, detail=error_detail)
+                logger.debug(f"YouTube API transcript failed: {type(last_error).__name__}: {str(last_error)}")
+                error_detail += f" ({type(last_error).__name__})"
+            raise Exception(error_detail)
 
         # Combine all transcript snippets into text
-        full_text = " ".join([snippet.text for snippet in transcript.snippets])
+        raw_text = " ".join([snippet.text for snippet in transcript.snippets])
 
-        # Get video metadata using requests to YouTube's oEmbed API
+        # Step 1: Clean YouTube transcript noise (music markers, applause, foreign chars)
+        cleaning_result = content_cleaner.clean_youtube_transcript(raw_text)
+        cleaned_text = cleaning_result["cleaned_text"]
+
+        if cleaning_result["noise_percentage"] > 5.0:
+            logger.info(
+                f"Removed {cleaning_result['noise_percentage']:.1f}% noise from transcript "
+                f"({cleaning_result['original_length']} → {cleaning_result['cleaned_length']} chars)"
+            )
+
+        # Step 2: Restore punctuation (CRITICAL for entity extraction)
+        # YouTube transcripts lack punctuation, making it hard for LLM to identify entity boundaries
+        if punctuation_restorer.should_restore(cleaned_text):
+            logger.info("YouTube transcript lacks punctuation - restoring with BERT model")
+            punctuation_result = punctuation_restorer.restore_punctuation(cleaned_text)
+            full_text = punctuation_result["punctuated_text"]
+
+            logger.info(
+                f"Punctuation restored: {punctuation_result['punctuation_marks_added']} marks added "
+                f"({punctuation_result['original_length']} → {punctuation_result['punctuated_length']} chars)"
+            )
+            transcript_method = "youtube_api_bert"
+        else:
+            full_text = cleaned_text
+            transcript_method = "youtube_api"
+            logger.info("Transcript already has punctuation - skipping restoration")
+
+        logger.info(f"✅ YouTube API + BERT successful: {len(full_text)} chars")
+
+    except Exception as youtube_error:
+        logger.warning(f"YouTube API failed: {youtube_error}")
+        logger.info("PATH 2: Falling back to Whisper large-v3 transcription (slow but works without captions)...")
+
+        # PATH 2: Fallback to Whisper (slow but works for any video)
         try:
-            oembed_url = f"https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v={video_id}&format=json"
-            response = requests.get(oembed_url, timeout=10)
-            if response.status_code == 200:
-                video_info = response.json()
-                title = video_info.get('title', 'YouTube Video')
-                author = video_info.get('author_name', 'Unknown')
-            else:
-                title = f"YouTube Video {video_id}"
-                author = "Unknown"
-        except Exception as e:
-            logger.warning(f"Failed to fetch video metadata: {e}")
+            whisper_result = whisper_transcriber.transcribe_youtube(
+                youtube_url,
+                language=None  # Auto-detect (handles both Arabic and English)
+            )
+
+            full_text = whisper_result["text"]
+            detected_language = whisper_result["language"]
+            transcript_method = "whisper_large-v3"
+
+            logger.info(
+                f"✅ Whisper fallback successful: {len(full_text)} chars, "
+                f"language={detected_language}, duration={whisper_result.get('duration', 0):.1f}s, "
+                f"segments={whisper_result.get('segment_count', 0)}"
+            )
+
+        except Exception as whisper_error:
+            logger.error(f"Both YouTube API and Whisper failed: {whisper_error}")
+            raise HTTPException(
+                status_code=400,
+                detail="Failed to fetch transcript. This video has no captions and Whisper transcription failed."
+            )
+
+    # Get video metadata using requests to YouTube's oEmbed API
+    # This executes AFTER either YouTube API (PATH 1) or Whisper (PATH 2) succeeds
+    try:
+        oembed_url = f"https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v={video_id}&format=json"
+        response = requests.get(oembed_url, timeout=10)
+        if response.status_code == 200:
+            video_info = response.json()
+            title = video_info.get('title', 'YouTube Video')
+            author = video_info.get('author_name', 'Unknown')
+        else:
             title = f"YouTube Video {video_id}"
             author = "Unknown"
-
-        return {
-            "text": full_text,
-            "title": title,
-            "description": f"Transcript from YouTube video by {author}",
-            "url": f"https://www.youtube.com/watch?v={video_id}",
-            "metadata": {
-                "video_id": video_id,
-                "author": author,
-                "language": detected_language,
-                "transcript_length": len(full_text),
-            }
-        }
-
-    except TranscriptsDisabled:
-        raise HTTPException(status_code=400, detail="Transcripts are disabled for this video")
-    except VideoUnavailable:
-        raise HTTPException(status_code=404, detail="Video not found or unavailable")
-    except HTTPException:
-        raise
     except Exception as e:
-        logger.error(f"Error fetching YouTube transcript: {e}")
-        raise HTTPException(status_code=400, detail=f"Failed to fetch YouTube transcript: {str(e)}")
+        logger.warning(f"Failed to fetch video metadata: {e}")
+        title = f"YouTube Video {video_id}"
+        author = "Unknown"
+
+    return {
+        "text": full_text,
+        "title": title,
+        "description": f"Transcript from YouTube video by {author}",
+        "url": f"https://www.youtube.com/watch?v={video_id}",
+        "metadata": {
+            "video_id": video_id,
+            "author": author,
+            "language": detected_language,
+            "transcript_length": len(full_text),
+        }
+    }
+
+
+def fetch_youtube_metadata_only(video_id: str) -> Dict[str, Any]:
+    """
+    Fetch ONLY metadata from YouTube video (INSTANT - < 1 second)
+    Does NOT fetch transcript - used for preview
+
+    Args:
+        video_id: YouTube video ID
+
+    Returns:
+        Dict with video metadata (title, author, thumbnail, duration estimate)
+    """
+    logger.info(f"Fetching metadata (instant preview) for video: {video_id}")
+
+    try:
+        # Use YouTube oEmbed API for instant metadata (no API key needed)
+        oembed_url = f"https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v={video_id}&format=json"
+        response = requests.get(oembed_url, timeout=5)
+
+        if response.status_code == 200:
+            video_info = response.json()
+            title = video_info.get('title', 'YouTube Video')
+            author = video_info.get('author_name', 'Unknown')
+            thumbnail = video_info.get('thumbnail_url', '')
+
+            logger.info(f"✅ Fetched metadata: {title} by {author}")
+
+            return {
+                "title": title,
+                "description": f"YouTube video by {author}",
+                "url": f"https://www.youtube.com/watch?v={video_id}",
+                "author": author,
+                "thumbnail": thumbnail,
+                "video_id": video_id,
+                "content_type": "youtube"
+            }
+        else:
+            logger.warning(f"oEmbed API returned {response.status_code} for video {video_id}")
+            raise Exception(f"oEmbed API failed with status {response.status_code}")
+
+    except Exception as e:
+        logger.error(f"Failed to fetch video metadata: {e}")
+        # Return minimal fallback metadata
+        return {
+            "title": f"YouTube Video {video_id}",
+            "description": "YouTube video (metadata unavailable)",
+            "url": f"https://www.youtube.com/watch?v={video_id}",
+            "author": "Unknown",
+            "thumbnail": "",
+            "video_id": video_id,
+            "content_type": "youtube"
+        }
 
 
 # Endpoints
 @router.post("/preview", response_model=URLPreviewResponse)
 async def preview_url_content(request: URLRequest):
     """
-    Preview content from a URL without processing it
-    Supports both web pages and YouTube videos
+    INSTANT preview of content from a URL without fetching full transcript
+    For YouTube: Returns metadata only (< 1 second)
+    For web pages: Returns page title and description
+
+    This allows users to verify the URL before clicking "Process"
     """
     url_str = str(request.url)
-    logger.info(f"Preview request for URL: {url_str}")
+    logger.info(f"INSTANT preview request for URL: {url_str}")
 
     # Check if it's a YouTube URL
     video_id = extract_youtube_video_id(url_str)
 
     if video_id:
-        # Fetch YouTube transcript
-        content_data = fetch_youtube_transcript(video_id)
-        content_type = "youtube"
+        # INSTANT metadata fetch (< 1 second) - NO transcript fetching
+        metadata = fetch_youtube_metadata_only(video_id)
+
+        return URLPreviewResponse(
+            url=url_str,
+            title=metadata.get("title"),
+            description=metadata.get("description"),
+            content_preview=f"YouTube video by {metadata.get('author', 'Unknown')}",
+            estimated_words=0,  # Not estimated until processing
+            content_type="youtube",
+        )
     else:
-        # Fetch web page content
+        # Fetch web page content (still fast for web pages)
         content_data = fetch_webpage_content(url_str)
-        content_type = "webpage"
+        text = content_data["text"]
+        preview = text[:500] + ("..." if len(text) > 500 else "")
 
-    # Create preview
-    text = content_data["text"]
-    preview = text[:500] + ("..." if len(text) > 500 else "")
-
-    return URLPreviewResponse(
-        url=url_str,
-        title=content_data.get("title"),
-        description=content_data.get("description"),
-        content_preview=preview,
-        estimated_words=len(text.split()),
-        content_type=content_type,
-    )
+        return URLPreviewResponse(
+            url=url_str,
+            title=content_data.get("title"),
+            description=content_data.get("description"),
+            content_preview=preview,
+            estimated_words=len(text.split()),
+            content_type="webpage",
+        )
 
 
 @router.post("/process", response_model=URLProcessResponse)
@@ -570,12 +691,13 @@ async def process_url(request: URLRequest):
         logger.info(f"Extracted {len(entities)} unique entities")
 
         # Check if LLM already extracted relationships
-        if "relationships" in entity_result and entity_result.get("extraction_method") == "llm":
+        extraction_method = entity_result.get("extraction_method", "")
+        if "relationships" in entity_result and extraction_method.startswith("llm"):
             relationships = entity_result["relationships"]
-            logger.info(f"LLM extracted {len(relationships)} relationships")
+            logger.info(f"LLM extracted {len(relationships)} relationships (method: {extraction_method})")
         else:
             # Fall back to traditional relationship extraction
-            logger.info("Phase 2: Extracting relationships using co-occurrence")
+            logger.info(f"Phase 2: Extracting relationships using co-occurrence (LLM method was: {extraction_method})")
             relationships = relationship_extractor.extract_relationships(entities, full_text)
             logger.info(f"Extracted {len(relationships)} relationships")
 
@@ -665,6 +787,30 @@ async def process_url(request: URLRequest):
             },
         )
 
+    except ConnectionError as e:
+        logger.error(f"TGI connection error: {e}")
+        _is_processing = False
+        raise HTTPException(
+            status_code=503,
+            detail={
+                "error": "tgi_unavailable",
+                "message": "TGI container is not running or not reachable",
+                "suggestion": "Start TGI with: docker compose up -d tgi",
+                "technical_details": str(e)
+            }
+        )
+    except TimeoutError as e:
+        logger.error(f"TGI timeout error: {e}")
+        _is_processing = False
+        raise HTTPException(
+            status_code=504,
+            detail={
+                "error": "tgi_timeout",
+                "message": "TGI request timed out after 30 seconds",
+                "suggestion": "The ALLaM model may be loading. Check TGI logs: docker logs mirage-tgi",
+                "technical_details": str(e)
+            }
+        )
     except Exception as e:
         logger.error(f"Error processing URL: {e}")
         # Always reset the processing flag on error

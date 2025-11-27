@@ -46,14 +46,14 @@ services:
     volumes:
       - tgi_data:/data
     environment:
-      # Model selection - ALLaM 7B Instruct (IBM's Arabic-specialized model, ~14GB VRAM)
-      # Other options: Qwen2.5-7B (multilingual), SILMA-9B (poor JSON), Phi-3-mini-128k (8GB VRAM)
-      MODEL_ID: ALLaM-AI/ALLaM-7B-Instruct-preview
-      # Performance settings optimized for 24GB VRAM
+      # Model selection - Qwen3-4B-Instruct-2507 (128K context, excellent Arabic support, ~7GB VRAM)
+      # Other options: ALLaM-7B (512 token limit), Qwen2.5-7B (multilingual), Phi-3-mini-128k (8GB VRAM)
+      MODEL_ID: Qwen/Qwen3-4B-Instruct-2507
+      # Performance settings optimized for 128K context window
       NUM_SHARD: 1
-      MAX_INPUT_LENGTH: 2048
-      MAX_TOTAL_TOKENS: 4096
-      MAX_BATCH_PREFILL_TOKENS: 4096
+      MAX_INPUT_LENGTH: 8192
+      MAX_TOTAL_TOKENS: 16384
+      MAX_BATCH_PREFILL_TOKENS: 8192
       # PyTorch memory optimization to reduce fragmentation
       PYTORCH_CUDA_ALLOC_CONF: expandable_segments:True
       # Disable hf_transfer - use standard download for reliability
@@ -102,6 +102,8 @@ services:
       # Mount source code for hot reload in development
       - ./mirage:/app
       - /app/__pycache__
+      # Mount Docker socket for logs streaming
+      - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       - neo4j
       - qdrant

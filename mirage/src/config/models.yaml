@@ -71,7 +71,7 @@ embeddings:
     model: "jina-embeddings-v4"
     use_api: false  # false = local inference, true = Jina API
     api_url: "https://api.jina.ai/v1/embeddings"
-    embedding_dim: 1024  # v4=1024, v3=768
+    embedding_dim: 768  # Local paraphrase-multilingual-mpnet-base-v2=768, Jina v4 API=1024
 
     # Task types for different use cases
     # https://jina.ai/embeddings

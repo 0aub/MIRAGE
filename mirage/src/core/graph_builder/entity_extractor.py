@@ -32,20 +32,30 @@ except ImportError:
     LLM_AVAILABLE = False
     logger.warning("LLM entity extractor not available")
 
+try:
+    from .entity_resolver import EntityResolver
+    RESOLVER_AVAILABLE = True
+except ImportError:
+    RESOLVER_AVAILABLE = False
+    logger.warning("Entity resolver not available")
+
 
 class EntityExtractor:
     """Extract named entities from text in multiple languages"""
 
-    def __init__(self, use_llm: bool = True):
+    def __init__(self, use_llm: bool = True, resolve_duplicates: bool = True, similarity_threshold: float = 0.85):
         """
         Initialize entity extractor
 
         Args:
             use_llm: If True, try to use LLM-based extraction first (recommended)
+            resolve_duplicates: If True, resolve duplicate entities using embedding similarity
+            similarity_threshold: Cosine similarity threshold for merging entities (0.85 recommended)
         """
         self.spacy_model = None
         self.camel_ner = None
         self.llm_extractor = None
+        self.entity_resolver = None
 
         # Initialize models lazily
         self._spacy_loaded = False
@@ -62,6 +72,16 @@ class EntityExtractor:
             except Exception as e:
                 logger.warning(f"Failed to initialize LLM extractor: {e}")
                 self._llm_loaded = False
+
+        # Initialize entity resolver for deduplication
+        self.resolve_duplicates = resolve_duplicates
+        if resolve_duplicates and RESOLVER_AVAILABLE:
+            try:
+                self.entity_resolver = EntityResolver(similarity_threshold=similarity_threshold)
+                logger.info(f"Entity resolver initialized (threshold: {similarity_threshold})")
+            except Exception as e:
+                logger.warning(f"Failed to initialize entity resolver: {e}")
+                self.entity_resolver = None
 
         # Entity type mapping
         self.entity_type_map = {
@@ -335,13 +355,39 @@ class EntityExtractor:
         try:
             result = self.llm_extractor.extract_from_chunks(chunks, language, document_id)
 
+            entities = result.get("entities", [])
+            relationships = result.get("relationships", [])
+
+            # Resolve duplicate entities using embedding-based clustering
+            if self.resolve_duplicates and self.entity_resolver and entities:
+                logger.info(f"Resolving {len(entities)} entities using embedding similarity")
+
+                # Import embedder here to avoid circular dependency
+                from ..embeddings import JinaEmbedder
+                embedder = JinaEmbedder()
+
+                # Compute embeddings for all entity texts
+                entity_texts = [e["text"] for e in entities]
+                embeddings = embedder.embed(entity_texts)
+
+                # Resolve duplicates
+                entities_before = len(entities)
+                entities = self.entity_resolver.resolve_entities(entities, embeddings)
+                entities_after = len(entities)
+
+                reduction_pct = (1 - entities_after / entities_before) * 100 if entities_before > 0 else 0
+                logger.info(
+                    f"Entity resolution: {entities_before} → {entities_after} entities "
+                    f"({reduction_pct:.1f}% reduction)"
+                )
+
             # LLM extractor returns both entities and relationships
             return {
                 "status": "success",
-                "entities": result.get("entities", []),
-                "relationships": result.get("relationships", []),
-                "total_entities": len(result.get("entities", [])),
-                "extraction_method": "llm"
+                "entities": entities,
+                "relationships": relationships,
+                "total_entities": len(entities),
+                "extraction_method": "llm_with_resolution" if self.resolve_duplicates else "llm"
             }
         except Exception as e:
             logger.error(f"LLM extraction failed: {e}")

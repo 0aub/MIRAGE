@@ -32,8 +32,8 @@ qdrant:
   # Vector configuration
   vector_config:
     # Embedding dimension (must match embedding model)
-    # Jina v4 = 1024, Jina v3 = 768
-    dimension: 1024
+    # Jina v4 API = 1024, Local paraphrase-multilingual-mpnet-base-v2 = 768
+    dimension: 768
 
     # Distance metric for similarity search
     # Options: COSINE, EUCLIDEAN, DOT
