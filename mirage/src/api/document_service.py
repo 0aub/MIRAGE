@@ -90,13 +90,9 @@ async def list_all_documents(
             created_at = doc.get("created_at")
             document_id = doc.get("document_id", "")
 
-            # Get chunk count from vector store
-            chunk_count = None
-            if document_id:
-                try:
-                    chunk_count = vector_store.count_chunks(document_id)
-                except Exception as e:
-                    logger.debug(f"Could not get chunk count for {document_id}: {e}")
+            # Note: Removed chunk_count query from list endpoint for performance
+            # It was making individual Qdrant queries per document (slow)
+            # Chunk count can be fetched on-demand in detail view if needed
 
             documents.append(DocumentMetadata(
                 document_id=document_id,
@@ -107,7 +103,7 @@ async def list_all_documents(
                 language=doc.get("language"),
                 entity_count=doc.get("entity_count", 0),
                 relationship_count=doc.get("relationship_count", 0),
-                chunk_count=chunk_count,
+                chunk_count=None,  # Removed for performance - use total_words instead
                 created_at=created_at,
                 total_chars=doc.get("total_chars"),
                 total_words=doc.get("total_words"),
