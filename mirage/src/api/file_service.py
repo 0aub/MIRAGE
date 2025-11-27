@@ -15,8 +15,14 @@ from datetime import datetime
 import mimetypes
 
 from ..config import settings
+from ..core.graph_builder import Neo4jClient
+from ..core.vector_store import QdrantVectorStore
 
 router = APIRouter()
+
+# Initialize database clients for cleanup
+neo4j_client = Neo4jClient()
+vector_store = QdrantVectorStore()
 
 # File storage configuration
 UPLOAD_DIR = Path(settings.upload_dir if hasattr(settings, 'upload_dir') else "/data/uploads")
@@ -257,13 +263,18 @@ async def delete_file(file_id: str):
         if not deleted:
             raise HTTPException(status_code=404, detail=f"File {file_id} not found")
 
-        # TODO: Also delete from vector store and graph database
-        # This should be coordinated with document_service
+        # Delete from vector store and graph database
+        try:
+            neo4j_client.delete_by_document(file_id)
+            vector_store.delete_by_document(file_id)
+            logger.info(f"Deleted {file_id} from vector store and graph database")
+        except Exception as e:
+            logger.warning(f"Error cleaning up databases for {file_id}: {e}")
 
         return FileDeleteResponse(
             file_id=file_id,
             filename=deleted_filename,
-            message=f"File {deleted_filename} deleted successfully",
+            message=f"File {deleted_filename} deleted successfully from all systems",
         )
 
     except HTTPException:
@@ -296,6 +307,14 @@ async def delete_multiple_files(file_ids: List[str]):
                     break
 
             if deleted:
+                # Delete from vector store and graph database
+                try:
+                    neo4j_client.delete_by_document(file_id)
+                    vector_store.delete_by_document(file_id)
+                    logger.info(f"Deleted {file_id} from databases")
+                except Exception as e:
+                    logger.warning(f"Error cleaning up databases for {file_id}: {e}")
+
                 results.append({
                     "file_id": file_id,
                     "filename": deleted_filename,

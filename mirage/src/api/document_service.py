@@ -173,7 +173,7 @@ async def get_document_content(document_id: str):
 @router.delete("/documents/{document_id}")
 async def delete_document(document_id: str):
     """
-    Delete a document and all its associated data from the graph
+    Delete a document and all its associated data from both graph and vector stores
     """
     # Validate document_id
     if not document_id or not document_id.strip():
@@ -186,14 +186,22 @@ async def delete_document(document_id: str):
 
     try:
         # Delete from Neo4j
-        stats = neo4j_client.delete_by_document(document_id)
+        graph_stats = neo4j_client.delete_by_document(document_id)
+        logger.info(f"Deleted from Neo4j: {graph_stats}")
 
-        logger.info(f"Deleted document {document_id}: {stats}")
+        # Delete from Qdrant vector store
+        vector_stats = vector_store.delete_by_document(document_id)
+        logger.info(f"Deleted from vector store: {vector_stats}")
+
+        logger.info(f"Fully deleted document {document_id} from both databases")
 
         return {
             "document_id": document_id,
-            "message": "Document deleted successfully",
-            "stats": stats,
+            "message": "Document deleted successfully from both databases",
+            "stats": {
+                "graph": graph_stats,
+                "vector": vector_stats,
+            },
         }
 
     except Exception as e:
