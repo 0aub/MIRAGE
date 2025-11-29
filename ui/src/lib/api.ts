@@ -14,18 +14,36 @@ class ApiError extends Error {
 
 async function fetchApi<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const url = `${API_BASE_URL}${endpoint}`;
+  console.log(`[API] Fetching: ${url}`);
 
   try {
+    const startTime = Date.now();
+
+    // Add 30-second timeout to prevent browser connection stalling
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => {
+      console.error(`[API] Request timeout after 30s: ${url}`);
+      controller.abort();
+    }, 30000);
+
     const response = await fetch(url, {
       ...options,
       headers: {
         'Content-Type': 'application/json',
         ...options.headers,
       },
+      signal: controller.signal,
+      // Force new connection, don't reuse keep-alive connections that might be stale
+      cache: 'no-store',
     });
+
+    clearTimeout(timeoutId);
+    const elapsed = Date.now() - startTime;
+    console.log(`[API] Response received in ${elapsed}ms, status: ${response.status}`);
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
+      console.error(`[API] Error response:`, errorData);
       throw new ApiError(
         response.status,
         errorData.message || errorData.detail || `HTTP ${response.status}`,
@@ -33,10 +51,17 @@ async function fetchApi<T>(endpoint: string, options: RequestInit = {}): Promise
       );
     }
 
-    return await response.json();
+    const data = await response.json();
+    console.log(`[API] Parsed JSON response:`, data);
+    return data;
   } catch (error) {
+    console.error(`[API] Fetch error for ${url}:`, error);
     if (error instanceof ApiError) {
       throw error;
+    }
+    // Handle abort/timeout
+    if (error.name === 'AbortError') {
+      throw new ApiError(0, `Request timeout: The server took too long to respond`);
     }
     throw new ApiError(0, `Network error: ${error.message}`);
   }
