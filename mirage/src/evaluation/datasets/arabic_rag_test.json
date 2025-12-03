@@ -1,0 +1,114 @@
+{
+  "name": "Arabic RAG Evaluation Dataset",
+  "version": "1.0",
+  "description": "Test dataset for evaluating Arabic RAG system with bilingual queries",
+  "created": "2025-12-03",
+  "samples": [
+    {
+      "id": "ar_factual_001",
+      "query": "ما هو الذكاء الاصطناعي؟",
+      "query_type": "factual",
+      "language": "ar",
+      "ground_truth_answer": "الذكاء الاصطناعي هو فرع من علوم الحاسوب يهدف إلى إنشاء أنظمة قادرة على محاكاة الذكاء البشري، بما في ذلك التعلم والاستنتاج وحل المشكلات.",
+      "ground_truth_chunks": ["ai_definition_chunk_1", "ai_overview_chunk_2"],
+      "expected_entities": ["الذكاء الاصطناعي", "التعلم الآلي"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "ar_factual_002",
+      "query": "ما هي فوائد التعلم الآلي؟",
+      "query_type": "factual",
+      "language": "ar",
+      "ground_truth_answer": "فوائد التعلم الآلي تشمل: أتمتة المهام المتكررة، تحسين دقة التنبؤات، اكتشاف الأنماط في البيانات الكبيرة، وتخصيص تجربة المستخدم.",
+      "ground_truth_chunks": ["ml_benefits_chunk_1"],
+      "expected_entities": ["التعلم الآلي", "الأتمتة"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "ar_entity_001",
+      "query": "من هو مؤسس شركة أبل؟",
+      "query_type": "entity",
+      "language": "ar",
+      "ground_truth_answer": "ستيف جوبز هو المؤسس المشارك لشركة أبل، أسسها مع ستيف وزنياك ورونالد واين في عام 1976.",
+      "ground_truth_chunks": ["apple_history_chunk_1"],
+      "expected_entities": ["ستيف جوبز", "أبل", "ستيف وزنياك"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "en_factual_001",
+      "query": "What is machine learning?",
+      "query_type": "factual",
+      "language": "en",
+      "ground_truth_answer": "Machine learning is a subset of artificial intelligence that enables systems to learn and improve from experience without being explicitly programmed.",
+      "ground_truth_chunks": ["ml_definition_chunk_1"],
+      "expected_entities": ["machine learning", "artificial intelligence"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "en_comparative_001",
+      "query": "What is the difference between supervised and unsupervised learning?",
+      "query_type": "comparative",
+      "language": "en",
+      "ground_truth_answer": "Supervised learning uses labeled data to train models for prediction, while unsupervised learning finds patterns in unlabeled data without predefined outputs.",
+      "ground_truth_chunks": ["ml_types_chunk_1", "supervised_chunk_1", "unsupervised_chunk_1"],
+      "expected_entities": ["supervised learning", "unsupervised learning"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "en_explanatory_001",
+      "query": "How does natural language processing work?",
+      "query_type": "explanatory",
+      "language": "en",
+      "ground_truth_answer": "NLP works by combining computational linguistics with machine learning to analyze, understand, and generate human language through tokenization, parsing, and semantic analysis.",
+      "ground_truth_chunks": ["nlp_overview_chunk_1"],
+      "expected_entities": ["NLP", "natural language processing", "tokenization"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "ar_explanatory_001",
+      "query": "كيف تعمل الشبكات العصبية العميقة؟",
+      "query_type": "explanatory",
+      "language": "ar",
+      "ground_truth_answer": "الشبكات العصبية العميقة تتكون من طبقات متعددة من العقد الاصطناعية التي تعالج البيانات بشكل تسلسلي، حيث تتعلم كل طبقة تمثيلات أكثر تجريداً من الطبقة السابقة.",
+      "ground_truth_chunks": ["deep_learning_chunk_1"],
+      "expected_entities": ["الشبكات العصبية", "التعلم العميق"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "ar_comparative_001",
+      "query": "ما الفرق بين التعلم الآلي والتعلم العميق؟",
+      "query_type": "comparative",
+      "language": "ar",
+      "ground_truth_answer": "التعلم الآلي يشمل خوارزميات تتعلم من البيانات، بينما التعلم العميق هو فرع منه يستخدم شبكات عصبية متعددة الطبقات لتعلم تمثيلات معقدة تلقائياً.",
+      "ground_truth_chunks": ["ml_vs_dl_chunk_1"],
+      "expected_entities": ["التعلم الآلي", "التعلم العميق"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "en_entity_001",
+      "query": "Who invented the transformer architecture?",
+      "query_type": "entity",
+      "language": "en",
+      "ground_truth_answer": "The transformer architecture was introduced by Vaswani et al. in the 2017 paper 'Attention Is All You Need' at Google.",
+      "ground_truth_chunks": ["transformer_history_chunk_1"],
+      "expected_entities": ["transformer", "Vaswani", "attention mechanism"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "bilingual_001",
+      "query": "What is الذكاء الاصطناعي used for?",
+      "query_type": "factual",
+      "language": "mixed",
+      "ground_truth_answer": "Artificial intelligence (الذكاء الاصطناعي) is used for automation, prediction, image recognition, natural language processing, and decision support systems.",
+      "ground_truth_chunks": ["ai_applications_chunk_1"],
+      "expected_entities": ["الذكاء الاصطناعي", "artificial intelligence"],
+      "difficulty": "medium"
+    }
+  ],
+  "metadata": {
+    "total_samples": 10,
+    "languages": {"ar": 5, "en": 4, "mixed": 1},
+    "query_types": {"factual": 4, "entity": 2, "comparative": 2, "explanatory": 2},
+    "difficulty_distribution": {"easy": 3, "medium": 5, "hard": 2}
+  }
+}

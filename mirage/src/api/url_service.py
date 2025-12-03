@@ -29,7 +29,13 @@ from ..core.jobs import JobManager, BackgroundWorker, JobStatus, ProcessingPhase
 from ..core.document_processor.content_cleaner import ContentCleaner
 from ..core.document_processor.punctuation_restorer import PunctuationRestorer
 from ..core.media_processor import WhisperTranscriber
-from ..core.graph_builder import EntityExtractor, RelationshipExtractor, Neo4jClient
+from ..core.graph_builder import (
+    EntityExtractor,
+    RelationshipExtractor,
+    Neo4jClient,
+    CooccurrenceExtractor,
+    SemanticSimilarityExtractor,
+)
 from ..core.graph_builder.enhanced_neo4j_client import EnhancedNeo4jClient
 from ..core.graph_builder.content_rewriter import ContentRewriter
 from ..core.embeddings import JinaEmbedder
@@ -52,8 +58,10 @@ content_rewriter = ContentRewriter()
 content_cleaner = ContentCleaner()  # YouTube transcript denoiser
 punctuation_restorer = PunctuationRestorer()  # BERT punctuation restoration for ASR transcripts
 whisper_transcriber = WhisperTranscriber(model_size="large-v3")  # Whisper large-v3 for maximum quality
-entity_extractor = EntityExtractor()
+entity_extractor = EntityExtractor(embedder=jina_embedder)  # Pass embedder for entity embeddings
 relationship_extractor = RelationshipExtractor()
+cooccurrence_extractor = CooccurrenceExtractor(min_frequency=2)  # Co-occurrence relationships
+semantic_similarity_extractor = SemanticSimilarityExtractor(similarity_threshold=0.75, top_k=5)  # Semantic similarity
 neo4j_client = Neo4jClient()
 compression_policy = CompressionPolicy()
 compression_cache = CompressionCache()
@@ -572,10 +580,10 @@ def process_url_background(job_id: str, url: str, use_semantic_chunking: bool = 
 
         if use_semantic_chunking:
             chunker = chunker_factory.get_chunker(content_type, embedder=jina_embedder)
-            chunks = chunker.chunk_text(full_text, metadata)
+            chunks = chunker.chunk_text(full_text, metadata, document_id)  # Pass document_id for chunk IDs
             chunking_method = chunker_factory.get_strategy_info(content_type).get("strategy", "semantic")
         else:
-            document = {"text": full_text, "metadata": metadata}
+            document = {"text": full_text, "metadata": metadata, "document_id": document_id}
             chunked_doc = text_chunker.chunk_document(document)
             chunks = chunked_doc.get("chunks", [])
             chunking_method = "fixed"
@@ -613,11 +621,11 @@ def process_url_background(job_id: str, url: str, use_semantic_chunking: bool = 
             extraction_chunks = chunks
             processed_text = full_text
 
-        # Phase 3: Extract entities
+        # Phase 3: Extract entities with chunk references (Hybrid Vector-Graph Architecture)
         job_manager.update_job(job_id, progress=40, current_phase=ProcessingPhase.EXTRACTING)
-        logger.info(f"[Job {job_id}] Phase 3: Extracting entities and relationships")
+        logger.info(f"[Job {job_id}] Phase 3: Extracting entities with chunk references (hybrid architecture)")
 
-        entity_result = entity_extractor.extract_from_chunks(extraction_chunks, document_id=document_id)
+        entity_result = entity_extractor.extract_with_chunk_references(extraction_chunks, document_id=document_id)
 
         # Check extraction status
         extraction_status = entity_result.get("status", "success")
@@ -628,19 +636,41 @@ def process_url_background(job_id: str, url: str, use_semantic_chunking: bool = 
         elif extraction_status == "error":
             raise Exception(entity_result.get("message", "Entity extraction failed"))
 
-        entities = entity_result.get("entities", [])
+        # Extract entities and relationships from hybrid result
+        entities_with_chunks = entity_result.get("entities_with_chunks", [])
+        all_entities = entity_result.get("all_entities", [])
+        relationships = entity_result.get("relationships", [])
         extraction_method = entity_result.get("extraction_method", "")
 
-        if "relationships" in entity_result and extraction_method.startswith("llm"):
-            relationships = entity_result["relationships"]
-        else:
-            relationships = relationship_extractor.extract_relationships(entities, full_text)
+        # Fallback to co-occurrence relationships if LLM didn't extract them
+        if not relationships and all_entities:
+            relationships = relationship_extractor.extract_relationships(all_entities, full_text)
 
-        logger.info(f"[Job {job_id}] Extracted {len(entities)} entities, {len(relationships)} relationships")
+        logger.info(
+            f"[Job {job_id}] Extracted {len(entities_with_chunks)} unique entities "
+            f"({len(all_entities)} total mentions), {len(relationships)} LLM relationships"
+        )
 
-        # Phase 4: Store in Neo4j
+        # Extract co-occurrence relationships (entities appearing together in chunks)
+        logger.info(f"[Job {job_id}] Extracting co-occurrence relationships...")
+        cooccurrence_relationships = cooccurrence_extractor.extract_cooccurrences(entities_with_chunks)
+        logger.info(f"[Job {job_id}] Extracted {len(cooccurrence_relationships)} co-occurrence relationships")
+
+        # Extract semantic similarity relationships (based on entity embeddings)
+        logger.info(f"[Job {job_id}] Extracting semantic similarity relationships...")
+        semantic_relationships = semantic_similarity_extractor.extract_similarities(entities_with_chunks)
+        logger.info(f"[Job {job_id}] Extracted {len(semantic_relationships)} semantic similarity relationships")
+
+        # Combine all relationship types
+        all_relationships = relationships + cooccurrence_relationships + semantic_relationships
+        logger.info(
+            f"[Job {job_id}] Total relationships: {len(all_relationships)} "
+            f"(LLM: {len(relationships)}, co-occurrence: {len(cooccurrence_relationships)}, semantic: {len(semantic_relationships)})"
+        )
+
+        # Phase 4: Store in Neo4j (Hybrid Vector-Graph Architecture)
         job_manager.update_job(job_id, progress=60, current_phase=ProcessingPhase.STORING_GRAPH)
-        logger.info(f"[Job {job_id}] Phase 4: Storing in Neo4j")
+        logger.info(f"[Job {job_id}] Phase 4: Storing chunks + entities in Neo4j (hybrid architecture)")
 
         try:
             processing_time_seconds = int(time.time() - start_time)
@@ -653,16 +683,19 @@ def process_url_background(job_id: str, url: str, use_semantic_chunking: bool = 
                 "processing_time_seconds": processing_time_seconds,
             })
 
-            graph_stats = neo4j_client.store_graph(
-                entities=entities,
-                relationships=relationships,
+            # Store chunks as nodes with MENTIONS relationships to entities
+            # Include all relationship types: LLM, co-occurrence, and semantic similarity
+            graph_stats = neo4j_client.store_chunks_with_entities(
+                chunks=chunks,
+                entities=entities_with_chunks,
+                relationships=all_relationships,  # Use combined relationships
                 document_id=document_id,
                 document_title=content_data.get("title"),
                 document_type=content_type,
                 document_metadata=enhanced_metadata,
                 enhanced_neo4j_client=enhanced_neo4j_client
             )
-            logger.info(f"[Job {job_id}] Stored graph: {graph_stats}")
+            logger.info(f"[Job {job_id}] Stored graph (hybrid): {graph_stats}")
         except Exception as e:
             logger.error(f"[Job {job_id}] Error storing graph: {e}")
             graph_stats = {"error": str(e)}
@@ -703,8 +736,10 @@ def process_url_background(job_id: str, url: str, use_semantic_chunking: bool = 
                 "chunking_method": chunking_method,
             },
             "phase2": {
-                "entities_extracted": len(entities),
+                "entities_extracted": len(entities_with_chunks),
+                "entity_mentions": len(all_entities),
                 "relationships_extracted": len(relationships),
+                "chunks_stored": len(chunks),
                 "graph_storage": graph_stats,
             },
             "phase3": {

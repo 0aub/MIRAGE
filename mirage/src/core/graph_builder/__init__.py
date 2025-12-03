@@ -30,6 +30,8 @@ from .community_summarizer import CommunitySummarizer, CommunitySummary
 from .global_search import GlobalSearchEngine, SearchResult
 from .local_search import LocalSearchEngine, LocalSearchResult
 from .hybrid_search import HybridSearchEngine, HybridSearchResult, QueryRouter
+from .cooccurrence_extractor import CooccurrenceExtractor
+from .semantic_similarity import SemanticSimilarityExtractor
 
 __all__ = [
     # Original components
@@ -59,4 +61,7 @@ __all__ = [
     "HybridSearchEngine",
     "HybridSearchResult",
     "QueryRouter",
+    # Relationship extractors
+    "CooccurrenceExtractor",
+    "SemanticSimilarityExtractor",
 ]

@@ -22,12 +22,12 @@ router = APIRouter()
 # Initialize Neo4j client
 neo4j_client = Neo4jClient()
 
-# Initialize components for reprocessing
-entity_extractor = EntityExtractor()
+# Initialize components for reprocessing (order matters!)
+jina_embedder = JinaEmbedder()  # Initialize embedder first
+entity_extractor = EntityExtractor(embedder=jina_embedder)  # Pass embedder for entity embeddings
 relationship_extractor = RelationshipExtractor()
 text_chunker = TextChunker(chunk_size=settings.chunk_size, chunk_overlap=settings.chunk_overlap)
 chunker_factory = get_chunker_factory()
-jina_embedder = JinaEmbedder()
 vector_store = QdrantVectorStore()
 
 
@@ -66,11 +66,14 @@ async def list_all_documents(
     List all processed documents from Neo4j
     Includes files, web pages, and YouTube videos
     """
+    start_time = time.time()
     logger.info(f"Listing documents: skip={skip}, limit={limit}, type={content_type}")
 
     try:
         # Get all documents from Neo4j
+        t1 = time.time()
         all_docs = neo4j_client.get_all_documents()
+        logger.info(f"Neo4j query took {time.time() - t1:.3f}s, returned {len(all_docs)} docs")
 
         # Filter out documents with empty document_id (orphaned data from failed processing)
         all_docs = [doc for doc in all_docs if doc.get("document_id", "").strip()]
@@ -112,7 +115,8 @@ async def list_all_documents(
                 processing_time_seconds=doc.get("processing_time_seconds"),
             ))
 
-        logger.info(f"Found {total} documents, returning {len(documents)}")
+        elapsed = time.time() - start_time
+        logger.info(f"Found {total} documents, returning {len(documents)} - Total time: {elapsed:.3f}s")
 
         return DocumentListResponse(
             total=total,

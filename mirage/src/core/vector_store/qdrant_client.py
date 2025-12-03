@@ -121,12 +121,23 @@ class QdrantVectorStore:
             if not embedding:
                 logger.warning(f"Chunk {i} missing embedding, skipping")
                 continue
-            
-            # Create point
-            point_id = str(uuid.uuid4())
-            
+
+            # Handle chunk ID (for hybrid vector-graph architecture)
+            # Qdrant only accepts UUID or integer IDs, so we convert string IDs to UUIDs
+            chunk_id = chunk.get("id")
+            if chunk_id:
+                # Generate deterministic UUID from string chunk ID (UUID v5)
+                # This ensures same chunk ID always produces same UUID
+                namespace = uuid.UUID('6ba7b810-9dad-11d1-80b4-00c04fd430c8')  # URL namespace
+                point_id = str(uuid.uuid5(namespace, chunk_id))
+            else:
+                # Backward compatibility: generate random UUID
+                chunk_id = str(uuid.uuid4())
+                point_id = chunk_id
+
             # Prepare payload (metadata)
             payload = {
+                "chunk_id": chunk_id,  # Store original chunk ID for Neo4j mapping
                 "document_id": document_id,
                 "chunk_index": chunk.get("chunk_index", i),
                 "text": chunk.get("text", ""),
@@ -214,7 +225,7 @@ class QdrantVectorStore:
             chunks = []
             for result in results:
                 chunk = {
-                    "id": result.id,
+                    "id": result.payload.get("chunk_id", result.id),  # Use original chunk_id from payload
                     "score": result.score,
                     "text": result.payload.get("text", ""),
                     "chunk_index": result.payload.get("chunk_index", 0),

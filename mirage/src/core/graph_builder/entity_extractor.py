@@ -43,7 +43,7 @@ except ImportError:
 class EntityExtractor:
     """Extract named entities from text in multiple languages"""
 
-    def __init__(self, use_llm: bool = True, resolve_duplicates: bool = True, similarity_threshold: float = 0.85):
+    def __init__(self, use_llm: bool = True, resolve_duplicates: bool = True, similarity_threshold: float = 0.85, embedder=None):
         """
         Initialize entity extractor
 
@@ -51,11 +51,13 @@ class EntityExtractor:
             use_llm: If True, try to use LLM-based extraction first (recommended)
             resolve_duplicates: If True, resolve duplicate entities using embedding similarity
             similarity_threshold: Cosine similarity threshold for merging entities (0.85 recommended)
+            embedder: Optional embedder for generating entity embeddings (for semantic relationships)
         """
         self.spacy_model = None
         self.camel_ner = None
         self.llm_extractor = None
         self.entity_resolver = None
+        self.embedder = embedder  # Store embedder for entity embedding generation
 
         # Initialize models lazily
         self._spacy_loaded = False
@@ -411,3 +413,111 @@ class EntityExtractor:
                     "total_entities": 0,
                     "extraction_method": "none"
                 }
+
+    def extract_with_chunk_references(
+        self,
+        chunks: List[Dict[str, Any]],
+        language: Optional[str] = None,
+        document_id: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """
+        Extract entities and track which chunks mention them (for Hybrid Vector-Graph)
+
+        This is a wrapper around extract_from_chunks that adds chunk references to each entity.
+        Required format: {name, type, chunks: [chunk_ids], confidence}
+
+        Args:
+            chunks: List of chunks with 'id' and 'text' fields
+            language: Language code
+            document_id: Document ID
+
+        Returns:
+            Dict with:
+            - entities_by_name: {entity_name: {name, type, chunks: [ids], confidence}}
+            - all_entities: Original flat list
+            - relationships: Entity relationships
+        """
+        # First, extract entities normally
+        result = self.extract_from_chunks(chunks, language, document_id)
+
+        if result.get("status") != "success":
+            return result  # Return error/unavailable status as-is
+
+        entities = result.get("entities", [])
+        relationships = result.get("relationships", [])
+
+        # Build mapping: entity_name -> [chunk_ids where it appears]
+        entity_chunk_map = {}
+
+        for chunk in chunks:
+            chunk_id = chunk.get("id") or chunk.get("chunk_id")
+            chunk_text = chunk.get("text", "")
+
+            # Find which entities appear in this chunk (simple text matching)
+            # Note: LLM extractor extracts per-chunk, so we need to re-map
+            for entity in entities:
+                entity_name = entity.get("name") or entity.get("text")
+
+                # Simple heuristic: if entity text appears in chunk, mark it
+                if entity_name.lower() in chunk_text.lower():
+                    if entity_name not in entity_chunk_map:
+                        entity_chunk_map[entity_name] = {
+                            "name": entity_name,
+                            "type": entity.get("type", "Unknown"),
+                            "chunks": [],
+                            "confidence_scores": []
+                        }
+                    entity_chunk_map[entity_name]["chunks"].append(chunk_id)
+                    entity_chunk_map[entity_name]["confidence_scores"].append(
+                        entity.get("confidence", 1.0)
+                    )
+
+        # Calculate average confidence per entity and generate embeddings
+        entities_with_chunks = []
+        entity_names = list(entity_chunk_map.keys())
+
+        # Batch generate embeddings for all entity names (more efficient)
+        entity_embeddings = []
+        if entity_names and hasattr(self, 'embedder') and self.embedder:
+            try:
+                logger.info(f"Generating embeddings for {len(entity_names)} entities...")
+                entity_embeddings = self.embedder.embed(entity_names, task="retrieval.query")
+                logger.info(f"Generated {len(entity_embeddings)} entity embeddings")
+            except Exception as e:
+                logger.warning(f"Failed to generate entity embeddings: {e}")
+                entity_embeddings = []
+
+        for idx, (entity_name, data) in enumerate(entity_chunk_map.items()):
+            avg_confidence = (
+                sum(data["confidence_scores"]) / len(data["confidence_scores"])
+                if data["confidence_scores"] else 0.5
+            )
+
+            entity_dict = {
+                "name": entity_name,
+                "type": data["type"],
+                "chunks": list(set(data["chunks"])),  # Deduplicate
+                "confidence": avg_confidence
+            }
+
+            # Add embedding if available
+            if idx < len(entity_embeddings):
+                entity_dict["embedding"] = entity_embeddings[idx]
+
+            entities_with_chunks.append(entity_dict)
+
+        logger.info(
+            f"Mapped {len(entities_with_chunks)} unique entities to chunks "
+            f"(avg {sum(len(e['chunks']) for e in entities_with_chunks) / len(entities_with_chunks):.1f} chunks per entity)"
+            if entities_with_chunks else "No entities found"
+        )
+
+        return {
+            "status": "success",
+            "entities_by_name": {e["name"]: e for e in entities_with_chunks},
+            "entities_with_chunks": entities_with_chunks,  # For Neo4j storage
+            "all_entities": entities,  # Original flat list
+            "relationships": relationships,
+            "total_entities": len(entities_with_chunks),
+            "extraction_method": result.get("extraction_method")
+        }

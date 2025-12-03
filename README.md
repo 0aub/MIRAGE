@@ -1,240 +1,148 @@
-# MIRAGE
+# MIRAGE V2
 
 **M**ultilingual **I**nformation **R**etrieval with **A**ccelerated **G**raph **E**mbeddings
 
-A sophisticated knowledge graph and retrieval system combining vector search with graph-based reasoning for enhanced information retrieval and analysis.
+A sophisticated GraphRAG system combining vector search with knowledge graph reasoning for enhanced Arabic/English information retrieval.
 
-![MIRAGE Logo](logo.png)
+## Status
 
-## Overview
+**Current Grade: A-** (4/5 retrieval tests passed, 100% relevance rate)
 
-MIRAGE is an advanced Retrieval-Augmented Generation (RAG) system that implements GraphRAG principles by combining:
-- **Vector Database** (Qdrant) for semantic similarity search
-- **Knowledge Graph** (Neo4j) for relationship-based reasoning
-- **Multi-modal Processing** for various content types (text, PDF, YouTube, URLs)
-- **Intelligent Chunking** with content-type-specific strategies
-- **LLM-powered Analysis** for entity extraction and relationship mapping
-
-## Features
-
-### Core Capabilities
-- **Multi-source Ingestion**: Process PDFs, web URLs, YouTube videos, and text documents
-- **Hybrid Search**: Combine vector similarity with graph-based reasoning
-- **Entity Extraction**: Automatic identification of entities and relationships
-- **Content-Aware Chunking**: Specialized strategies for different content types
-- **Interactive Chat**: Query your knowledge base with conversational AI
-- **Graph Visualization**: Explore knowledge graphs with Neo4j Browser
-
-### Advanced Processing
-- Semantic chunking for coherent context windows
-- Entity and relationship extraction using LLMs
-- Multi-hop reasoning through graph traversal
-- Configurable chunking strategies per content type
-- Support for multiple LLM providers (OpenAI, Anthropic, TGI)
+| Component | Status |
+|-----------|--------|
+| Vector Search (Qdrant) | ✅ Operational |
+| Knowledge Graph (Neo4j) | ✅ 810 entities, 3,223 relationships |
+| Query Routing | ✅ 5 modes (naive/local/global/hybrid/mix) |
+| LLM Generation (TGI) | ✅ Qwen3-4B local inference |
+| Arabic Support | ✅ Full Arabic NLP |
 
 ## Architecture
 
 ```
-┌─────────────────┐
-│   Web UI        │  React + TypeScript + shadcn/ui
-│   (Port 3000)   │
-└────────┬────────┘
-         │
-┌────────▼────────┐
-│   FastAPI       │  Python REST API
-│   (Port 8000)   │
-└────────┬────────┘
-         │
-    ┌────┴────────────────────┐
-    │                         │
-┌───▼─────┐            ┌──────▼──────┐
-│ Qdrant  │            │   Neo4j     │
-│ Vectors │            │   Graph     │
-│ (6333)  │            │   (7474)    │
-└─────────┘            └─────────────┘
+                    Query
+                      │
+              ┌───────▼───────┐
+              │ Query Router  │ (Arabic/English pattern matching)
+              └───────┬───────┘
+                      │
+        ┌─────────────┼─────────────┐
+        ↓             ↓             ↓
+    ┌───────┐    ┌────────┐    ┌────────┐
+    │ Naive │    │ Local  │    │ Global │
+    │Vector │    │Entity  │    │Relation│
+    │Search │    │Search  │    │Search  │
+    └───┬───┘    └───┬────┘    └───┬────┘
+        └─────────────┼─────────────┘
+                      ↓
+              ┌───────────────┐
+              │ RRF Fusion    │
+              └───────┬───────┘
+                      ↓
+              ┌───────────────┐
+              │ TGI (Qwen3)   │
+              └───────┬───────┘
+                      ↓
+                   Answer
 ```
 
 ## Quick Start
 
-### Prerequisites
-- Docker and Docker Compose
-- At least one LLM API key (OpenAI, Anthropic, or TGI endpoint)
+```bash
+# Start all services
+docker compose up -d
 
-### Setup
+# Access interfaces
+open http://localhost:3000      # Web UI
+open http://localhost:8000/docs # API Docs
+open http://localhost:7474      # Neo4j Browser
+```
 
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd MIRAGE
-   ```
+## API Endpoints
 
-2. **Configure environment**
-   ```bash
-   cp .env.example .env
-   # Edit .env and add your API keys
-   ```
+### Chat/Ask (V2)
+```bash
+curl -X POST http://localhost:8000/chat/ask \
+  -H "Content-Type: application/json" \
+  -d '{
+    "message": "ما هي جائزة الحكومة الرقمية؟",
+    "retrieval_mode": "auto",
+    "top_k": 5
+  }'
+```
 
-3. **Start services**
-   ```bash
-   docker compose up -d
-   ```
+### Retrieval Modes
+- `auto` - Automatic mode selection based on query
+- `naive` - Simple vector similarity
+- `local` - Entity-focused (query → entities → chunks)
+- `global` - Relationship-focused (query → relationships → entities → chunks)
+- `hybrid` - Combines local + global
+- `mix` - All modes with RRF fusion
 
-4. **Access the interfaces**
-   - Web UI: http://localhost:3000
-   - API Docs: http://localhost:8000/docs
-   - Neo4j Browser: http://localhost:7474
-   - Qdrant Dashboard: http://localhost:6333/dashboard
+### Ingest Content
+```bash
+# YouTube Video
+curl -X POST http://localhost:8000/url/process-async \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://www.youtube.com/watch?v=VIDEO_ID"}'
+
+# Web URL
+curl -X POST http://localhost:8000/url/process-async \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://example.com/article"}'
+```
 
 ## Project Structure
 
 ```
 MIRAGE/
-├── mirage/              # Backend Python application
-│   ├── src/
-│   │   ├── api/         # FastAPI routes and services
-│   │   ├── core/        # Core processing logic
-│   │   ├── models/      # Data models
-│   │   ├── config/      # Configuration and prompts
-│   │   └── utils/       # Utility functions
-│   └── tests/           # Backend tests
-├── ui/                  # Frontend React application
-│   ├── src/
-│   │   ├── components/  # React components
-│   │   ├── pages/       # Page components
-│   │   └── lib/         # Utilities
-│   └── public/          # Static assets
-├── docs/                # Documentation
-│   ├── archives/        # Historical documentation
-│   ├── ARCHITECTURE_REDESIGN.md
-│   ├── DOCKER_SETUP.md
-│   ├── GRAPHRAG_ENHANCEMENTS.md
-│   └── ...
-├── scripts/             # Utility scripts
-├── docker-compose.yml   # Docker orchestration
-└── README.md           # This file
+├── mirage/                    # Backend Python application
+│   └── src/
+│       ├── api/              # FastAPI routes
+│       ├── core/
+│       │   ├── retrieval/    # V2 retrieval engine
+│       │   ├── generation/   # Prompt management
+│       │   ├── graph_builder/# Neo4j integration
+│       │   └── vector_store/ # Qdrant integration
+│       └── config/           # Settings
+├── ui/                       # React frontend
+├── docs/                     # Documentation
+│   ├── graphrag/            # GraphRAG research & plans
+│   └── archives/            # Historical docs
+├── docker-compose.yml
+└── EVALUATION_REPORT.md      # Latest evaluation results
 ```
-
-## Configuration
-
-### LLM Providers
-Configure in `mirage/src/config/settings.yaml`:
-- OpenAI (GPT-3.5, GPT-4)
-- Anthropic (Claude)
-- Text Generation Inference (TGI) for local models
-
-### Chunking Strategies
-Customize chunking per content type:
-- **Text**: Semantic chunking with configurable overlap
-- **PDF**: Structure-aware chunking
-- **YouTube**: Timestamp-based semantic chunking
-- **URL**: Content-aware chunking
-
-### Processing Pipeline
-Configure in settings:
-- Entity extraction prompts
-- Relationship extraction rules
-- Content rewriting options
-- Token constraints
-
-## Usage
-
-### Adding Documents
-
-**Via UI:**
-1. Navigate to http://localhost:3000
-2. Select content type (Text, PDF, URL, YouTube)
-3. Enter content or upload file
-4. Process and wait for completion
-
-**Via API:**
-```bash
-curl -X POST http://localhost:8000/db/process \
-  -H "Content-Type: application/json" \
-  -d '{
-    "content": "Your text here",
-    "content_type": "text"
-  }'
-```
-
-### Querying
-
-**Chat Interface:**
-```bash
-curl -X POST http://localhost:8000/db/chat \
-  -H "Content-Type: application/json" \
-  -d '{
-    "messages": [{"role": "user", "content": "What is...?"}]
-  }'
-```
-
-### Viewing the Graph
-
-Visit http://localhost:7474 and run Cypher queries:
-```cypher
-MATCH (n)-[r]->(m) RETURN n, r, m LIMIT 50
-```
-
-## Development
-
-### Backend Development
-```bash
-cd mirage
-pip install -r requirements.txt
-uvicorn src.api.main:app --reload
-```
-
-### Frontend Development
-```bash
-cd ui
-npm install
-npm run dev
-```
-
-### Running Tests
-```bash
-cd mirage
-pytest tests/
-```
-
-## Documentation
-
-- [Architecture Overview](docs/ARCHITECTURE_REDESIGN.md)
-- [Docker Setup Guide](docs/DOCKER_SETUP.md)
-- [GraphRAG Enhancements](docs/GRAPHRAG_ENHANCEMENTS.md)
-- [Implementation Plan](docs/IMPLEMENTATION_PLAN.md)
-- [TGI Setup](docs/TGI_SETUP.md)
-- [UI Integration](docs/UI_INTEGRATION_GUIDE.md)
 
 ## Technology Stack
 
-**Backend:**
-- FastAPI
-- Python 3.11+
-- Neo4j (Graph Database)
-- Qdrant (Vector Database)
-- Redis (Caching)
+| Component | Technology |
+|-----------|------------|
+| Backend | FastAPI, Python 3.11 |
+| Vector DB | Qdrant |
+| Graph DB | Neo4j |
+| LLM | TGI (Qwen3-4B) |
+| Embeddings | paraphrase-multilingual-mpnet |
+| Frontend | React, TypeScript, Vite |
+| Cache | Redis |
 
-**Frontend:**
-- React 18
-- TypeScript
-- Vite
-- shadcn/ui
-- TailwindCSS
+## Documentation
 
-**AI/ML:**
-- OpenAI API
-- Anthropic API
-- Text Generation Inference
-- Sentence Transformers
+- [Docker Setup](docs/DOCKER_SETUP.md)
+- [TGI Setup](docs/TGI_SETUP.md)
+- [UI Integration](docs/UI_INTEGRATION_GUIDE.md)
+- [GraphRAG Research](docs/graphrag/)
+- [Evaluation Report](EVALUATION_REPORT.md)
 
-## Contributing
+## Development
 
-Contributions are welcome! Please read the contribution guidelines before submitting PRs.
+```bash
+# Backend
+cd mirage && pip install -r requirements.txt
+uvicorn src.api.main:app --reload
+
+# Frontend
+cd ui && npm install && npm run dev
+```
 
 ## License
 
-[Specify your license here]
-
-## Acknowledgments
-
-Built with inspiration from Microsoft's GraphRAG and modern RAG architectures.
+MIT

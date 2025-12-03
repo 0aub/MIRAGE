@@ -67,6 +67,7 @@ class SemanticChunker:
         self,
         text: str,
         metadata: Dict[str, Any] = None,
+        document_id: str = None,
     ) -> List[Dict[str, Any]]:
         """
         Split text into semantic chunks
@@ -74,9 +75,10 @@ class SemanticChunker:
         Args:
             text: Text to chunk
             metadata: Optional metadata to attach to each chunk
+            document_id: Optional document ID for generating deterministic chunk IDs
 
         Returns:
-            List of chunk dictionaries with text, embeddings, and metadata
+            List of chunk dictionaries with text, embeddings, metadata, and unique IDs
         """
         if not text or not text.strip():
             return []
@@ -91,7 +93,7 @@ class SemanticChunker:
 
         # If very few sentences, just return as single chunk
         if len(sentences) < self.min_sentences_per_chunk:
-            return self._create_single_chunk(sentences, metadata)
+            return self._create_single_chunk(sentences, metadata, document_id)
 
         # Compute embeddings for all sentences
         logger.debug(f"Computing embeddings for {len(sentences)} sentences")
@@ -111,7 +113,7 @@ class SemanticChunker:
         chunk_dicts = []
         for i, chunk_sentences in enumerate(chunks):
             chunk_text = ' '.join(chunk_sentences)
-            
+
             # Compute chunk embedding (average of sentence embeddings)
             chunk_indices = self._get_sentence_indices(chunk_sentences, sentences)
             chunk_embedding = np.mean(
@@ -119,7 +121,16 @@ class SemanticChunker:
                 axis=0,
             )
 
+            # Generate deterministic chunk ID for hybrid vector-graph architecture
+            # Format: {document_id}_chunk_{index} or fallback to uuid if no document_id
+            if document_id:
+                chunk_id = f"{document_id}_chunk_{i}"
+            else:
+                import uuid
+                chunk_id = str(uuid.uuid4())
+
             chunk_dict = {
+                "id": chunk_id,  # Unique ID for linking to Neo4j graph
                 "text": chunk_text,
                 "char_count": len(chunk_text),
                 "word_count": len(chunk_text.split()),
@@ -286,10 +297,16 @@ class SemanticChunker:
         self,
         sentences: List[str],
         metadata: Dict[str, Any],
+        document_id: str = None,
     ) -> List[Dict[str, Any]]:
         """
         Create a single chunk from all sentences
         If total length exceeds max_chunk_size, split into multiple chunks
+
+        Args:
+            sentences: List of sentences to chunk
+            metadata: Metadata to attach to chunks
+            document_id: Optional document ID for generating chunk IDs
         """
         chunk_text = ' '.join(sentences)
 
@@ -378,6 +395,14 @@ class SemanticChunker:
                 for chunk in chunks:
                     chunk["metadata"] = metadata
 
+            # Add deterministic chunk IDs for hybrid vector-graph architecture
+            for i, chunk in enumerate(chunks):
+                if document_id:
+                    chunk["id"] = f"{document_id}_chunk_{i}"
+                else:
+                    import uuid
+                    chunk["id"] = str(uuid.uuid4())
+
             return chunks
 
         # Normal case: fits in single chunk
@@ -394,6 +419,13 @@ class SemanticChunker:
 
         if metadata:
             chunk["metadata"] = metadata
+
+        # Add deterministic chunk ID for hybrid vector-graph architecture
+        if document_id:
+            chunk["id"] = f"{document_id}_chunk_0"
+        else:
+            import uuid
+            chunk["id"] = str(uuid.uuid4())
 
         return [chunk]
 

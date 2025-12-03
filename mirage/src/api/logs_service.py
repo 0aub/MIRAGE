@@ -110,43 +110,106 @@ async def stream_docker_logs(
         yield f"data: {json.dumps({'timestamp': datetime.now().isoformat(), 'level': 'ERROR', 'message': error_msg})}\n\n"
         return
 
+    # Use threading to prevent blocking the event loop
+    import queue
+    import threading
+
     try:
-        # Get container
+        # Get container (quick operation, OK to block briefly)
         cont = docker_client.containers.get(container)
         logger.info(f"Starting log stream from container: {container}")
 
-        # Stream logs
-        log_stream = cont.logs(
-            stream=True,
-            follow=follow,
-            tail=tail,
-            stdout=True,
-            stderr=True
-        )
+        # Create queue for thread-safe communication
+        log_queue = queue.Queue(maxsize=100)
+        stop_event = threading.Event()
+
+        def log_reader_thread():
+            """
+            Blocking thread that reads Docker logs and puts them in queue.
+            This runs in a separate thread to avoid blocking the event loop.
+            """
+            try:
+                log_stream = cont.logs(
+                    stream=True,
+                    follow=follow,
+                    tail=tail,
+                    stdout=True,
+                    stderr=True
+                )
+
+                for log_bytes in log_stream:
+                    if stop_event.is_set():
+                        break
+
+                    try:
+                        # Decode bytes to string
+                        line = log_bytes.decode('utf-8', errors='replace').strip()
+
+                        if not line:
+                            continue
+
+                        # Put in queue (blocks if queue is full - backpressure)
+                        log_queue.put(line, timeout=1.0)
+                    except queue.Full:
+                        # Skip this log line if queue is full (client too slow)
+                        logger.warning("Log queue full, dropping log line")
+                        continue
+                    except Exception as e:
+                        logger.error(f"Error processing log line: {e}")
+                        continue
+
+            except Exception as e:
+                logger.error(f"Error in log reader thread: {e}")
+                log_queue.put(None)  # Signal error
+            finally:
+                log_queue.put(None)  # Signal completion
+
+        # Start the log reader thread
+        reader_thread = threading.Thread(target=log_reader_thread, daemon=True)
+        reader_thread.start()
 
         try:
-            for log_bytes in log_stream:
-                # Decode bytes to string
-                line = log_bytes.decode('utf-8', errors='replace').strip()
+            # Read from queue and yield to client
+            while True:
+                try:
+                    # Non-blocking check with timeout to allow yielding control
+                    line = await asyncio.wait_for(
+                        asyncio.to_thread(log_queue.get, timeout=0.5),
+                        timeout=1.0
+                    )
 
-                if not line:
-                    continue
+                    # None signals completion or error
+                    if line is None:
+                        break
 
-                # Format log entry
-                entry = format_log_entry(line)
+                    # Format log entry
+                    entry = format_log_entry(line)
 
-                # Apply level filter if specified
-                if level_filter and entry["level"] != level_filter:
-                    continue
+                    # Apply level filter if specified
+                    if level_filter and entry["level"] != level_filter:
+                        continue
 
-                # Yield as SSE event
-                yield f"data: {json.dumps(entry)}\n\n"
+                    # Yield as SSE event
+                    yield f"data: {json.dumps(entry)}\n\n"
 
-                # Allow other tasks to run
-                await asyncio.sleep(0.01)
+                    # Allow other tasks to run
+                    await asyncio.sleep(0.001)
+
+                except asyncio.TimeoutError:
+                    # No logs available, send keepalive comment
+                    yield ": keepalive\n\n"
+                    await asyncio.sleep(0.1)
+                except Exception as e:
+                    logger.error(f"Error yielding log: {e}")
+                    break
 
         except GeneratorExit:
             logger.info("Client disconnected from log stream")
+        finally:
+            # Cleanup: stop the reader thread
+            logger.info("Cleaning up log stream")
+            stop_event.set()
+            reader_thread.join(timeout=2.0)
 
     except docker.errors.NotFound:
         error_msg = f"Container '{container}' not found"

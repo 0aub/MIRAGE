@@ -28,16 +28,17 @@ class TextChunker:
             r'[.!?؟।।\u0964\u0965]+[\s\n]+'  # Period, !, ?, Arabic question mark, etc.
         )
 
-    def chunk_text(self, text: str, metadata: Dict[str, Any] = None) -> List[Dict[str, Any]]:
+    def chunk_text(self, text: str, metadata: Dict[str, Any] = None, document_id: str = None) -> List[Dict[str, Any]]:
         """
         Split text into chunks
 
         Args:
             text: Text to chunk
             metadata: Optional metadata to attach to each chunk
+            document_id: Optional document ID for generating deterministic chunk IDs
 
         Returns:
-            List of chunk dictionaries with text, position, and metadata
+            List of chunk dictionaries with text, position, metadata, and unique IDs
         """
         if not text or not text.strip():
             return []
@@ -94,6 +95,14 @@ class TextChunker:
         if metadata:
             for chunk in chunks:
                 chunk["metadata"] = metadata
+
+        # Add deterministic chunk IDs for hybrid vector-graph architecture
+        for i, chunk in enumerate(chunks):
+            if document_id:
+                chunk["id"] = f"{document_id}_chunk_{i}"
+            else:
+                import uuid
+                chunk["id"] = str(uuid.uuid4())
 
         logger.info(f"Created {len(chunks)} chunks from {len(sentences)} sentences")
 
@@ -216,8 +225,11 @@ class TextChunker:
             "structure": document.get("structure", {}),
         }
 
+        # Extract document_id if available for chunk ID generation
+        document_id = document.get("document_id") or document.get("id")
+
         # Create chunks
-        chunks = self.chunk_text(text, metadata)
+        chunks = self.chunk_text(text, metadata, document_id)
 
         # Add to document
         document["chunks"] = chunks

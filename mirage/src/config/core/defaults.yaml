@@ -1,0 +1,347 @@
+# =============================================================================
+# MIRAGE V2 - Core Configuration Defaults
+# =============================================================================
+# This file contains all default configuration values for the MIRAGE RAG system.
+# Values can be overridden by environment variables using ${VAR_NAME} syntax.
+# =============================================================================
+
+# =============================================================================
+# SYSTEM CONFIGURATION
+# =============================================================================
+system:
+  environment: "development"  # development | production
+  debug: true
+  models_cache: "/data/models_cache"
+  data_dir: "/data"
+  log_level: "INFO"
+
+# =============================================================================
+# DATABASE CONFIGURATION
+# =============================================================================
+databases:
+  qdrant:
+    host: "${QDRANT_HOST:qdrant}"
+    port: "${QDRANT_PORT:6333}"
+    collections:
+      chunks: "mirage_chunks"
+      entities: "mirage_entities"
+      relationships: "mirage_relationships"
+    vector_config:
+      distance: "Cosine"
+      on_disk: false
+    search:
+      default_limit: 10
+      score_threshold: 0.5
+      hnsw_ef: 128
+
+  neo4j:
+    uri: "${NEO4J_URI:bolt://neo4j:7687}"
+    user: "${NEO4J_USER:neo4j}"
+    password: "${NEO4J_PASSWORD:password}"
+    max_connection_pool_size: 50
+    connection_timeout: 30
+
+  redis:
+    url: "${REDIS_URL:redis://redis:6379}"
+    db: 0
+
+# =============================================================================
+# MODEL CONFIGURATION
+# =============================================================================
+models:
+  # LLM Configuration
+  llm:
+    # HuggingFace model ID - will be auto-downloaded to models_cache
+    model_id: "ALLaM-AI/ALLaM-7B-Instruct-preview"
+    backend: "tgi"  # Only TGI supported
+    endpoint: "${TGI_ENDPOINT:http://tgi:8765}"
+    quantization: null  # null | "4bit" | "8bit"
+    max_tokens: 2048
+    temperature: 0.1
+    top_p: 0.95
+    timeout: 60  # Request timeout in seconds
+
+  # Embedding Configuration
+  embedding:
+    # Primary embedding model (HuggingFace ID)
+    model_id: "sentence-transformers/paraphrase-multilingual-mpnet-base-v2"
+    # Alternative: "jinaai/jina-embeddings-v3" for higher quality
+    dimensions: 768  # Must match Qdrant collection config
+    normalize: true
+    batch_size: 32
+    device: "cuda"  # cuda | cpu | auto
+    # Task-specific prefixes (for models that support them)
+    tasks:
+      passage: "retrieval.passage"
+      query: "retrieval.query"
+      entity: "classification"
+
+  # Reranker Configuration (optional)
+  reranker:
+    enabled: false
+    model_id: "cross-encoder/ms-marco-MiniLM-L-6-v2"
+    top_k: 10
+
+# =============================================================================
+# ARABIC PROCESSING CONFIGURATION
+# =============================================================================
+arabic:
+  enabled: true
+  processor: "camel"  # "camel" | "stanza" | "none"
+
+  # CAMeL Tools Configuration
+  camel:
+    morphological_analysis: true
+    diacritization: false  # Expensive, enable for high accuracy
+    dialect_identification: true
+    supported_dialects:
+      - "MSA"      # Modern Standard Arabic
+      - "EGY"      # Egyptian
+      - "GLF"      # Gulf
+      - "LEV"      # Levantine
+    ner:
+      enabled: true
+      model: "camel-ner"
+    normalization:
+      alef: true           # أ إ آ → ا
+      yaa: true            # ى → ي
+      taa_marbuta: false   # ة → ه (usually disabled)
+      remove_diacritics: true
+      remove_tatweel: true  # ـــ
+
+  # Stanza Configuration (alternative)
+  stanza:
+    language: "ar"
+    processors: "tokenize,mwt,pos,lemma,ner"
+
+  # Entity Normalization (Arabic-specific)
+  entity_normalization:
+    remove_titles:
+      - "الدكتور"
+      - "الأستاذ"
+      - "المهندس"
+      - "الشيخ"
+      - "السيد"
+      - "الحاج"
+      - "الأمير"
+      - "الملك"
+    organization_suffixes:
+      - "المحدودة"
+      - "للتجارة"
+      - "القابضة"
+
+# =============================================================================
+# CHUNKING CONFIGURATION
+# =============================================================================
+chunking:
+  strategy: "semantic"  # token | semantic | sentence | recursive | late
+
+  strategies:
+    token:
+      max_tokens: 600
+      overlap_tokens: 50
+      tokenizer: "cl100k_base"
+
+    semantic:
+      similarity_threshold: 0.7
+      min_chunk_tokens: 100
+      max_chunk_tokens: 800
+
+    sentence:
+      sentences_per_chunk: 5
+      overlap_sentences: 1
+      respect_paragraphs: true
+
+    recursive:
+      chunk_size: 1000
+      chunk_overlap: 200
+      separators:
+        - "\n\n"
+        - "\n"
+        - ". "
+        - " "
+
+    late:
+      max_document_tokens: 8192
+      chunk_after_embedding: true
+      boundary_tokens: 256
+
+# =============================================================================
+# EXTRACTION CONFIGURATION
+# =============================================================================
+extraction:
+  entity_method: "llm"  # "llm" | "ner" | "hybrid"
+
+  llm:
+    max_tokens_per_chunk: 600
+    gleaning:
+      enabled: true
+      max_retries: 2
+    entity_types:
+      - Person
+      - Organization
+      - Location
+      - Event
+      - Technology
+      - Policy
+      - Product
+      - Date
+      - Money
+    relationship_types:
+      - leads
+      - manages
+      - founded
+      - works_for
+      - located_in
+      - participated_in
+      - developed
+      - announced
+      - invested_in
+      - partnered_with
+
+  filters:
+    min_entity_length: 2
+    max_entity_length: 100
+    min_confidence: 0.5
+    blacklisted_entities:
+      - "something"
+      - "thing"
+      - "aspect"
+      - "way"
+      - "شيء"
+      - "موضوع"
+    blacklisted_relationships:
+      - "related_to"
+      - "associated_with"
+      - "connected_to"
+
+# =============================================================================
+# GRAPH CONFIGURATION
+# =============================================================================
+graph:
+  # Community detection (Leiden algorithm)
+  community_detection:
+    enabled: true
+    algorithm: "leiden"
+    resolution: 1.0
+    min_community_size: 3
+
+  # Hierarchical summaries
+  hierarchical_summaries:
+    enabled: true
+    levels: 3  # Document → Community → Global
+    summary_max_tokens: 500
+
+  # Temporal relationships
+  temporal:
+    enabled: true
+    track_creation_time: true
+    track_mention_time: true
+    enable_temporal_queries: true
+
+  # Confidence decay
+  confidence_decay:
+    enabled: true
+    decay_function: "exponential"  # "linear" | "exponential"
+    half_life_days: 30
+    min_confidence: 0.1
+    reinforcement_boost: 0.2
+
+# =============================================================================
+# RETRIEVAL CONFIGURATION
+# =============================================================================
+retrieval:
+  default_mode: "mix"
+
+  modes:
+    naive:
+      enabled: true
+      description: "Vector search on chunks only (traditional RAG)"
+      top_k: 10
+      score_threshold: 0.5
+
+    local:
+      enabled: true
+      description: "Entity-focused with graph expansion"
+      entity_top_k: 5
+      chunks_per_entity: 3
+      graph_hops: 2
+      use_communities: true
+
+    global:
+      enabled: true
+      description: "Relationship-focused across communities"
+      relationship_top_k: 10
+      use_hierarchical_summaries: true
+      community_top_k: 3
+
+    hybrid:
+      enabled: true
+      description: "Local + Global combined"
+      local_weight: 0.5
+      global_weight: 0.5
+      fusion_method: "rrf"
+
+    mix:
+      enabled: true
+      description: "All modes combined (most comprehensive)"
+      naive_weight: 0.2
+      local_weight: 0.4
+      global_weight: 0.4
+      fusion_method: "rrf"
+
+    semantic:
+      enabled: true
+      description: "Deep semantic matching with reranking"
+      initial_top_k: 20
+      rerank_top_k: 5
+      use_cross_encoder: true
+
+    bypass:
+      enabled: true
+      description: "No retrieval, direct LLM (for baseline)"
+
+  # Temporal filtering
+  temporal_filter:
+    enabled: false
+    default_window_days: null
+
+  # Confidence filtering
+  confidence_filter:
+    min_entity_confidence: 0.3
+    min_relationship_confidence: 0.3
+
+# =============================================================================
+# GENERATION CONFIGURATION
+# =============================================================================
+generation:
+  prompt_version: "v1"
+
+  chain_of_thought:
+    enabled: true
+    steps:
+      - "understand_query"
+      - "identify_relevant_context"
+      - "synthesize_answer"
+      - "cite_sources"
+
+  few_shot:
+    enabled: true
+    num_examples: 2
+    language: "bilingual"  # ar | en | bilingual
+
+  output:
+    include_citations: true
+    citation_style: "inline"  # inline | footnote | section
+    include_confidence: true
+    include_sources: true
+    debug_mode: false  # Include retrieval details
+
+# =============================================================================
+# DATA VERSIONING
+# =============================================================================
+versioning:
+  enabled: true
+  track_documents: true
+  track_config_changes: true
+  track_experiments: true

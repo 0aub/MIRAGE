@@ -158,6 +158,9 @@ class Neo4jClient:
         """
         Create a relationship between two entities
 
+        For LLM-extracted relationships, stores as RELATED_TO with the semantic type as a property.
+        For co-occurrence and semantic relationships, uses specific relationship types.
+
         Args:
             relationship: Relationship dict
             document_id: Source document ID
@@ -168,21 +171,41 @@ class Neo4jClient:
         if not self._connected:
             self.connect()
 
-        # Dynamic relationship type (sanitize for Cypher)
-        # Support both "type" and "relationship" keys for backwards compatibility
-        rel_type = relationship.get("type", relationship.get("relationship", "RELATED_TO")).upper().replace(" ", "_").replace("-", "_")
+        # Determine relationship storage strategy based on source
+        rel_source = relationship.get("source_type", "llm")  # Default to "llm" for backward compatibility
+
+        # For LLM relationships: Store as RELATED_TO with semantic type as property
+        # For co-occurrence/semantic: Use specific relationship types (COOCCURS_WITH, SIMILAR_TO)
+        if rel_source == "llm":
+            cypher_rel_type = "RELATED_TO"
+            semantic_type = relationship.get("type", "RELATED_TO").lower().replace(" ", "_").replace("-", "_")
+        elif rel_source == "cooccurrence":
+            cypher_rel_type = "COOCCURS_WITH"
+            semantic_type = None
+        elif rel_source == "semantic":
+            cypher_rel_type = "SIMILAR_TO"
+            semantic_type = None
+        else:
+            # Fallback for unknown sources
+            cypher_rel_type = relationship.get("type", "RELATED_TO").upper().replace(" ", "_").replace("-", "_")
+            semantic_type = None
 
         query = f"""
         MATCH (source:Entity {{name: $source_name}})
         MATCH (target:Entity {{name: $target_name}})
-        MERGE (source)-[r:{rel_type}]->(target)
+        MERGE (source)-[r:{cypher_rel_type}]->(target)
         ON CREATE SET
             r.created_at = timestamp(),
             r.confidence = $confidence,
             r.method = $method,
+            r.source = $source_type,
             r.source_documents = [$document_id],
             r.description = $description,
-            r.attributes = $attributes
+            r.attributes = $attributes,
+            r.relationship_type = $semantic_type,
+            r.frequency = $frequency,
+            r.score = $score,
+            r.chunks = $chunks
         ON MATCH SET
             r.confidence = CASE
                 WHEN $confidence > r.confidence THEN $confidence
@@ -195,6 +218,14 @@ class Neo4jClient:
             r.attributes = CASE
                 WHEN r.attributes IS NULL AND $attributes <> '' THEN $attributes
                 ELSE r.attributes
+            END,
+            r.frequency = CASE
+                WHEN $frequency IS NOT NULL THEN r.frequency + $frequency
+                ELSE r.frequency
+            END,
+            r.chunks = CASE
+                WHEN $chunks IS NOT NULL THEN r.chunks + $chunks
+                ELSE r.chunks
             END,
             r.source_documents = CASE
                 WHEN NOT $document_id IN r.source_documents
@@ -214,8 +245,13 @@ class Neo4jClient:
             "target_name": relationship["target"],
             "confidence": relationship.get("confidence", 0.5),
             "method": relationship.get("method", "llm"),
+            "source_type": rel_source,
+            "semantic_type": semantic_type,
             "description": relationship.get("description", ""),
             "attributes": attributes_json,
+            "frequency": relationship.get("frequency"),  # For co-occurrence
+            "score": relationship.get("score"),  # For semantic similarity
+            "chunks": relationship.get("chunks"),  # For co-occurrence (list of chunk IDs)
             "document_id": document_id,
         }
 
@@ -410,6 +446,137 @@ class Neo4jClient:
             "edges_created": edges_created,
             "document_id": document_id,
         }
+
+    def store_chunks_with_entities(
+        self,
+        chunks: List[Dict[str, Any]],
+        entities: List[Dict[str, Any]],
+        relationships: List[Dict[str, Any]],
+        document_id: str,
+        document_title: str = None,
+        document_type: str = None,
+        document_metadata: Dict[str, Any] = None,
+        enhanced_neo4j_client: Any = None
+    ) -> Dict[str, Any]:
+        """
+        Store chunks as nodes and link them to entities (Hybrid Vector-Graph Architecture)
+
+        This creates the topology:
+        (:Chunk)-[:MENTIONS]->(:Entity)-[:RELATED_TO]->(:Entity)
+
+        Chunks are also stored in Qdrant with the same IDs for vector search.
+
+        Args:
+            chunks: List of chunk dicts with {id, text, index, char_count, word_count}
+            entities: List of entity dicts with {name, type, chunks: [chunk_ids], confidence}
+            relationships: List of relationship dicts
+            document_id: Source document ID
+            document_title: Document title
+            document_type: Document type (webpage, youtube, file)
+            document_metadata: Additional metadata
+            enhanced_neo4j_client: Optional enhanced client for enrichment
+
+        Returns:
+            Statistics about created nodes and relationships
+        """
+        if not self._connected:
+            self.connect()
+
+        logger.info(f"Storing {len(chunks)} chunks and {len(entities)} entities for document {document_id}")
+
+        # Single transaction for atomicity
+        query = """
+        // 1. Create chunk nodes
+        UNWIND $chunks AS chunk
+        MERGE (c:Chunk {id: chunk.id})
+        SET c.text = chunk.text,
+            c.document_id = $document_id,
+            c.chunk_index = chunk.index,
+            c.char_count = chunk.char_count,
+            c.word_count = chunk.word_count,
+            c.created_at = timestamp()
+
+        WITH count(c) as chunks_created
+
+        // 2. Create entity nodes
+        UNWIND $entities AS ent
+        MERGE (e:Entity {name: ent.name})
+        ON CREATE SET
+            e.type = ent.type,
+            e.created_at = timestamp(),
+            e.source_documents = [$document_id],
+            e.confidence = ent.confidence,
+            e.embedding = CASE
+                WHEN ent.embedding IS NOT NULL THEN ent.embedding
+                ELSE NULL
+            END
+        ON MATCH SET
+            e.source_documents = CASE
+                WHEN NOT $document_id IN e.source_documents
+                THEN e.source_documents + [$document_id]
+                ELSE e.source_documents
+            END,
+            e.embedding = CASE
+                WHEN ent.embedding IS NOT NULL THEN ent.embedding
+                ELSE e.embedding
+            END,
+            e.updated_at = timestamp()
+
+        WITH chunks_created, count(DISTINCT e) as entities_created
+
+        // 3. Create MENTIONS relationships (Chunk -> Entity)
+        UNWIND $entities AS ent
+        MATCH (e:Entity {name: ent.name})
+        UNWIND ent.chunks AS chunk_id
+        MATCH (c:Chunk {id: chunk_id})
+        MERGE (c)-[m:MENTIONS]->(e)
+        ON CREATE SET
+            m.confidence = ent.confidence,
+            m.created_at = timestamp()
+
+        WITH chunks_created, entities_created, count(m) as mentions_created
+
+        RETURN chunks_created, entities_created, mentions_created
+        """
+
+        try:
+            with self.driver.session() as session:
+                result = session.run(query, {
+                    "chunks": chunks,
+                    "entities": entities,
+                    "document_id": document_id
+                })
+                record = result.single()
+
+                stats = {
+                    "chunks_created": record["chunks_created"] if record else 0,
+                    "entities_created": record["entities_created"] if record else 0,
+                    "mentions_created": record["mentions_created"] if record else 0,
+                    "document_id": document_id
+                }
+
+                # Store entity-to-entity relationships (RELATED_TO, COOCCURS_WITH, SIMILAR_TO)
+                edges_created = 0
+                if relationships:
+                    logger.info(f"Storing {len(relationships)} entity-to-entity relationships...")
+                    for relationship in relationships:
+                        try:
+                            self.create_relationship(relationship, document_id)
+                            edges_created += 1
+                        except Exception as e:
+                            logger.error(f"Failed to create relationship {relationship.get('source')} -> {relationship.get('target')}: {e}")
+
+                    logger.info(f"Successfully stored {edges_created}/{len(relationships)} relationships")
+
+                # Add relationships count to stats
+                stats["relationships_created"] = edges_created
+
+                logger.info(f"Stored chunks: {stats}")
+                return stats
+
+        except Exception as e:
+            logger.error(f"Error storing chunks and entities: {e}")
+            raise
 
     def get_graph_stats(self) -> Dict[str, Any]:
         """
@@ -724,14 +891,17 @@ class Neo4jClient:
 
         try:
             with self.driver.session() as session:
+                # OPTIMIZED: Only match relationships FROM entities belonging to this document
+                # OLD SLOW QUERY: MATCH ()-[r]->() scanned ALL relationships in graph!
                 query = """
                 MATCH (d:Document)
                 OPTIONAL MATCH (e:Entity)
                 WHERE d.document_id IN e.source_documents
-                WITH d, count(e) as entity_count
-                OPTIONAL MATCH ()-[r]->()
-                WHERE d.document_id IN r.source_documents
-                WITH d, entity_count, count(r) as rel_count
+                WITH d, count(DISTINCT e) as entity_count
+                OPTIONAL MATCH (e2:Entity)-[r]->(e3:Entity)
+                WHERE d.document_id IN e2.source_documents
+                  AND d.document_id IN r.source_documents
+                WITH d, entity_count, count(DISTINCT r) as rel_count
                 RETURN d, entity_count, rel_count
                 ORDER BY d.created_at DESC
                 """
@@ -810,3 +980,120 @@ class Neo4jClient:
                 "relationship_count": 0,
                 "created_at": None,
             }
+
+    def search_entities_by_name(
+        self,
+        name: str,
+        limit: int = 10
+    ) -> List[Dict[str, Any]]:
+        """
+        Search for entities by name (partial match)
+
+        Args:
+            name: Entity name to search for
+            limit: Maximum results
+
+        Returns:
+            List of matching entities with name, type, confidence
+        """
+        return self.search_entities(query=name, limit=limit)
+
+    def get_entity_chunks(
+        self,
+        entity_name: str,
+        limit: int = 5
+    ) -> List[Dict[str, Any]]:
+        """
+        Get chunks that mention a specific entity
+
+        Args:
+            entity_name: Name of the entity
+            limit: Maximum chunks to return
+
+        Returns:
+            List of chunks with chunk_id, document_id, text
+        """
+        if not self._connected:
+            self.connect()
+
+        try:
+            with self.driver.session() as session:
+                # Find entity and get chunks that MENTION it
+                # Schema: Chunk -[:MENTIONS]-> Entity (direction matters!)
+                # Chunk has: id, document_id, text
+                cypher_query = """
+                MATCH (c:Chunk)-[:MENTIONS]->(e:Entity)
+                WHERE toLower(e.name) CONTAINS toLower($entity_name)
+                RETURN c.id as chunk_id,
+                       c.document_id as document_id,
+                       c.text as text
+                LIMIT $limit
+                """
+                result = session.run(
+                    cypher_query,
+                    {"entity_name": entity_name, "limit": limit}
+                )
+
+                chunks = []
+                for record in result:
+                    chunks.append({
+                        "chunk_id": record["chunk_id"],
+                        "document_id": record["document_id"],
+                        "text": record["text"] or ""
+                    })
+
+                return chunks
+
+        except Exception as e:
+            logger.error(f"Error getting entity chunks: {e}")
+            return []
+
+    def get_entity_relationships(
+        self,
+        entity_name: str,
+        limit: int = 10
+    ) -> List[Dict[str, Any]]:
+        """
+        Get relationships involving a specific entity
+
+        Args:
+            entity_name: Name of the entity
+            limit: Maximum relationships to return
+
+        Returns:
+            List of relationships with source, target, type
+        """
+        if not self._connected:
+            self.connect()
+
+        try:
+            with self.driver.session() as session:
+                # Get outgoing relationships
+                cypher_query = """
+                MATCH (e:Entity)-[r]->(t:Entity)
+                WHERE toLower(e.name) CONTAINS toLower($entity_name)
+                RETURN e.name as source, t.name as target, type(r) as type
+                UNION
+                MATCH (s:Entity)-[r]->(e:Entity)
+                WHERE toLower(e.name) CONTAINS toLower($entity_name)
+                RETURN s.name as source, e.name as target, type(r) as type
+                LIMIT $limit
+                """
+                result = session.run(
+                    cypher_query,
+                    {"entity_name": entity_name, "limit": limit}
+                )
+
+                relationships = []
+                for record in result:
+                    relationships.append({
+                        "source": record["source"],
+                        "target": record["target"],
+                        "type": record["type"]
+                    })
+
+                return relationships
+
+        except Exception as e:
+            logger.error(f"Error getting entity relationships: {e}")
+            return []

@@ -92,11 +92,14 @@ export default function DataSourcesPage() {
   // Initial data load - fetch documents only (async jobs handle their own progress tracking)
   useEffect(() => {
     const loadInitialData = async () => {
+      console.log('[DataSourcesPage] Starting loadInitialData...');
       try {
+        console.log('[DataSourcesPage] Setting isLoading to true');
         setIsLoading(true);
 
-        // Fetch completed documents
+        console.log('[DataSourcesPage] Fetching documents from API...');
         const documentsResponse = await documentsApi.list({ limit: 100 });
+        console.log('[DataSourcesPage] Received response:', documentsResponse);
 
         // Convert to DataSource format
         const sources: DataSource[] = documentsResponse.documents.map(doc => {
@@ -130,19 +133,23 @@ export default function DataSourcesPage() {
           };
         });
 
+        console.log('[DataSourcesPage] Mapped sources:', sources.length, 'documents');
         setDataSources(sources);
+        console.log('[DataSourcesPage] Successfully set data sources');
       } catch (error) {
-        console.error('Error loading data sources:', error);
+        console.error('[DataSourcesPage] ERROR loading data sources:', error);
         toast({
           title: "Error",
           description: "Failed to load data sources",
           variant: "destructive",
         });
       } finally {
+        console.log('[DataSourcesPage] Finally block - setting isLoading to false');
         setIsLoading(false);
       }
     };
 
+    console.log('[DataSourcesPage] useEffect triggered, calling loadInitialData');
     loadInitialData();
   }, [toast]);
 
