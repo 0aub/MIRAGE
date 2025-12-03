@@ -1097,3 +1097,234 @@ class Neo4jClient:
         except Exception as e:
             logger.error(f"Error getting entity relationships: {e}")
             return []
+
+    def get_entities_by_type(
+        self,
+        entity_types: List[str],
+        limit: int = 50
+    ) -> List[Dict[str, Any]]:
+        """
+        Get entities filtered by type(s)
+
+        Args:
+            entity_types: List of entity types (e.g., ['Organization', 'Person'])
+            limit: Maximum results
+
+        Returns:
+            List of entities with name, type, confidence
+        """
+        if not self._connected:
+            self.connect()
+
+        try:
+            with self.driver.session() as session:
+                cypher_query = """
+                MATCH (e:Entity)
+                WHERE e.type IN $entity_types
+                RETURN e.name as name, e.type as type, e.confidence as confidence
+                ORDER BY e.confidence DESC
+                LIMIT $limit
+                """
+                result = session.run(
+                    cypher_query,
+                    {"entity_types": entity_types, "limit": limit}
+                )
+
+                entities = []
+                for record in result:
+                    entities.append({
+                        "name": record["name"],
+                        "type": record["type"],
+                        "confidence": record["confidence"] or 0.5
+                    })
+
+                return entities
+
+        except Exception as e:
+            logger.error(f"Error getting entities by type: {e}")
+            return []
+
+    def get_entities_from_chunks(
+        self,
+        chunk_ids: List[str],
+        entity_types: Optional[List[str]] = None,
+        limit: int = 50
+    ) -> List[Dict[str, Any]]:
+        """
+        Get entities mentioned in specific chunks
+
+        Args:
+            chunk_ids: List of chunk IDs
+            entity_types: Optional filter for entity types
+            limit: Maximum results
+
+        Returns:
+            List of entities with name, type, chunks
+        """
+        if not self._connected:
+            self.connect()
+
+        if not chunk_ids:
+            return []
+
+        try:
+            with self.driver.session() as session:
+                if entity_types:
+                    cypher_query = """
+                    MATCH (c:Chunk)-[:MENTIONS]->(e:Entity)
+                    WHERE c.id IN $chunk_ids AND e.type IN $entity_types
+                    WITH e, collect(DISTINCT c.id) as chunks
+                    RETURN e.name as name, e.type as type, e.confidence as confidence, chunks
+                    ORDER BY size(chunks) DESC, e.confidence DESC
+                    LIMIT $limit
+                    """
+                    params = {"chunk_ids": chunk_ids, "entity_types": entity_types, "limit": limit}
+                else:
+                    cypher_query = """
+                    MATCH (c:Chunk)-[:MENTIONS]->(e:Entity)
+                    WHERE c.id IN $chunk_ids
+                    WITH e, collect(DISTINCT c.id) as chunks
+                    RETURN e.name as name, e.type as type, e.confidence as confidence, chunks
+                    ORDER BY size(chunks) DESC, e.confidence DESC
+                    LIMIT $limit
+                    """
+                    params = {"chunk_ids": chunk_ids, "limit": limit}
+
+                result = session.run(cypher_query, params)
+
+                entities = []
+                for record in result:
+                    entities.append({
+                        "name": record["name"],
+                        "type": record["type"],
+                        "confidence": record["confidence"] or 0.5,
+                        "chunks": list(record["chunks"])
+                    })
+
+                return entities
+
+        except Exception as e:
+            logger.error(f"Error getting entities from chunks: {e}")
+            return []
+
+    def find_related_entities(
+        self,
+        entity_name: str,
+        depth: int = 1,
+        limit: int = 20
+    ) -> List[Dict[str, Any]]:
+        """
+        Find entities related to a given entity through relationships
+
+        Args:
+            entity_name: Starting entity name
+            depth: How many hops to traverse
+            limit: Maximum results
+
+        Returns:
+            List of related entities with relationship info
+        """
+        if not self._connected:
+            self.connect()
+
+        try:
+            with self.driver.session() as session:
+                cypher_query = f"""
+                MATCH (e:Entity)-[r*1..{depth}]-(related:Entity)
+                WHERE toLower(e.name) CONTAINS toLower($entity_name)
+                WITH related, min(length(r)) as distance
+                RETURN DISTINCT related.name as name, related.type as type,
+                       related.confidence as confidence, distance
+                ORDER BY distance, related.confidence DESC
+                LIMIT $limit
+                """
+                result = session.run(
+                    cypher_query,
+                    {"entity_name": entity_name, "limit": limit}
+                )
+
+                entities = []
+                for record in result:
+                    entities.append({
+                        "name": record["name"],
+                        "type": record["type"],
+                        "confidence": record["confidence"] or 0.5,
+                        "distance": record["distance"]
+                    })
+
+                return entities
+
+        except Exception as e:
+            logger.error(f"Error finding related entities: {e}")
+            return []
+
+    def search_entities_semantic(
+        self,
+        query_terms: List[str],
+        entity_types: Optional[List[str]] = None,
+        limit: int = 20
+    ) -> List[Dict[str, Any]]:
+        """
+        Search entities using multiple query terms with OR logic
+
+        Args:
+            query_terms: List of terms to search for
+            entity_types: Optional filter for entity types
+            limit: Maximum results
+
+        Returns:
+            List of matching entities with match count
+        """
+        if not self._connected:
+            self.connect()
+
+        if not query_terms:
+            return []
+
+        try:
+            with self.driver.session() as session:
+                # Build regex pattern for any term match
+                patterns = "|".join([f"(?i){term}" for term in query_terms if len(term) > 2])
+                if not patterns:
+                    return []
+
+                if entity_types:
+                    cypher_query = """
+                    MATCH (e:Entity)
+                    WHERE e.type IN $entity_types
+                    WITH e, [term IN $query_terms WHERE toLower(e.name) CONTAINS toLower(term)] as matches
+                    WHERE size(matches) > 0
+                    RETURN e.name as name, e.type as type, e.confidence as confidence,
+                           size(matches) as match_count
+                    ORDER BY match_count DESC, e.confidence DESC
+                    LIMIT $limit
+                    """
+                    params = {"query_terms": query_terms, "entity_types": entity_types, "limit": limit}
+                else:
+                    cypher_query = """
+                    MATCH (e:Entity)
+                    WITH e, [term IN $query_terms WHERE toLower(e.name) CONTAINS toLower(term)] as matches
+                    WHERE size(matches) > 0
+                    RETURN e.name as name, e.type as type, e.confidence as confidence,
+                           size(matches) as match_count
+                    ORDER BY match_count DESC, e.confidence DESC
+                    LIMIT $limit
+                    """
+                    params = {"query_terms": query_terms, "limit": limit}
+
+                result = session.run(cypher_query, params)
+
+                entities = []
+                for record in result:
+                    entities.append({
+                        "name": record["name"],
+                        "type": record["type"],
+                        "confidence": record["confidence"] or 0.5,
+                        "match_count": record["match_count"]
+                    })
+
+                return entities
+
+        except Exception as e:
+            logger.error(f"Error searching entities semantically: {e}")
+            return []

@@ -455,7 +455,20 @@ async def ask_v2(request: ChatRequest):
                 "total_time_ms": (time.time() - start_time) * 1000
             }
 
-        # 4. Create prompt
+        # 4. Create prompt (with entity names for LOCAL mode)
+        # Extract entity names from retrieval metadata for L2 entity lookup queries
+        entity_names = response.metadata.get("entity_names", []) if response.metadata else []
+
+        # If we have entity names and using LOCAL mode, inject them into context
+        if entity_names and response.mode == RetrievalMode.LOCAL:
+            # Add entity list as a special context entry
+            entity_context = {
+                "text": f"الكيانات المستخرجة (Extracted Entities): {', '.join(entity_names[:15])}",
+                "document_id": "entity_list",
+                "chunk_id": "entities"
+            }
+            context = [entity_context] + context
+
         prompt = prompt_manager.create_qa_prompt(
             question=request.message,
             context=context
@@ -506,7 +519,7 @@ async def ask_v2(request: ChatRequest):
             for i, ctx in enumerate(context[:5])
         ]
 
-        return {
+        result = {
             "query": request.message,
             "answer": answer,
             "sources": sources,
@@ -516,6 +529,13 @@ async def ask_v2(request: ChatRequest):
             "generation_time_ms": round(generation_time, 1),
             "total_time_ms": round(total_time, 1)
         }
+
+        # Add entity names for LOCAL mode
+        if entity_names:
+            result["entities_found"] = entity_names[:20]
+            result["entity_count"] = len(entity_names)
+
+        return result
 
     except Exception as e:
         logger.error(f"V2 RAG error: {e}")

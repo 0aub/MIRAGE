@@ -289,26 +289,46 @@ class RetrievalEngine:
         top_k: int,
         **kwargs
     ) -> RetrievalResponse:
-        """Entity-focused retrieval: query → entities → chunks (via Neo4j)"""
+        """
+        Entity-focused retrieval: query → chunks → entities → enriched context
+
+        Improved L2 strategy:
+        1. Get relevant chunks via vector search
+        2. Extract entities from those chunks
+        3. Filter entities by type based on query patterns
+        4. Include entity names in retrieval metadata for better answers
+        """
         if query_embedding is None or self.index_manager is None:
             return self._naive_retrieve(query, query_embedding, top_k, **kwargs)
 
         # 1. First get naive results as base
         naive_response = self._naive_retrieve(query, query_embedding, top_k * 2, **kwargs)
 
-        # 2. Try to find entities in Neo4j related to the query
-        entity_chunks = []
-        if self.graph_client:
-            try:
-                # Extract key terms from query for entity matching
-                query_terms = [t for t in query.split() if len(t) > 2]
+        # 2. Detect entity types from query patterns
+        entity_types = self._detect_entity_types(query)
 
-                # Search for entities matching query terms
-                for term in query_terms[:3]:  # Limit terms to search
-                    entities = self.graph_client.search_entities_by_name(term, limit=3)
-                    for entity in entities:
-                        # Get chunks connected to this entity
-                        chunks = self.graph_client.get_entity_chunks(entity.get("name", ""), limit=2)
+        # 3. Extract entities from retrieved chunks
+        extracted_entities = []
+        entity_chunks = []
+        if self.graph_client and naive_response.results:
+            try:
+                # Get chunk IDs from naive results
+                chunk_ids = [r.chunk_id for r in naive_response.results if r.chunk_id]
+
+                # Get entities mentioned in these chunks
+                if chunk_ids:
+                    entities = self.graph_client.get_entities_from_chunks(
+                        chunk_ids=chunk_ids,
+                        entity_types=entity_types if entity_types else None,
+                        limit=20
+                    )
+                    extracted_entities = entities
+
+                    # For each entity, get its associated chunks
+                    for entity in entities[:10]:
+                        chunks = self.graph_client.get_entity_chunks(
+                            entity.get("name", ""), limit=2
+                        )
                         for chunk in chunks:
                             entity_chunks.append({
                                 "chunk_id": chunk.get("chunk_id", ""),
@@ -317,16 +337,36 @@ class RetrievalEngine:
                                 "entity": entity.get("name", ""),
                                 "entity_type": entity.get("type", "")
                             })
+
+                # Also try direct term matching for backup
+                query_terms = [t for t in query.split() if len(t) > 2]
+                for term in query_terms[:3]:
+                    entities = self.graph_client.search_entities_by_name(term, limit=3)
+                    for entity in entities:
+                        if entity not in extracted_entities:
+                            extracted_entities.append(entity)
+                        chunks = self.graph_client.get_entity_chunks(
+                            entity.get("name", ""), limit=2
+                        )
+                        for chunk in chunks:
+                            entity_chunks.append({
+                                "chunk_id": chunk.get("chunk_id", ""),
+                                "document_id": chunk.get("document_id", ""),
+                                "text": chunk.get("text", ""),
+                                "entity": entity.get("name", ""),
+                                "entity_type": entity.get("type", "")
+                            })
+
             except Exception as e:
                 logger.warning(f"Neo4j entity search failed: {e}")
 
-        # 3. Combine with naive results, prioritizing entity-connected chunks
+        # 4. Combine with naive results, prioritizing entity-connected chunks
         results = []
         seen_chunks = set()
 
         # First add entity-connected chunks
         for ec in entity_chunks[:top_k // 2]:
-            if ec["chunk_id"] not in seen_chunks:
+            if ec["chunk_id"] and ec["chunk_id"] not in seen_chunks:
                 seen_chunks.add(ec["chunk_id"])
                 results.append(RetrievalResult(
                     chunk_id=ec["chunk_id"],
@@ -345,13 +385,66 @@ class RetrievalEngine:
                 r.retrieval_mode = "local"
                 results.append(r)
 
+        # Extract entity names for metadata
+        entity_names = list({e.get("name", "") for e in extracted_entities if e.get("name")})
+
         return RetrievalResponse(
             results=results[:top_k],
             query=query,
             mode=RetrievalMode.LOCAL,
             total_candidates=len(entity_chunks) + len(naive_response.results),
-            metadata={"entities_found": len(entity_chunks)}
+            metadata={
+                "entities_found": len(extracted_entities),
+                "entity_names": entity_names[:20],  # Top 20 entity names
+                "entity_types_filtered": entity_types or [],
+            }
         )
+
+    def _detect_entity_types(self, query: str) -> List[str]:
+        """
+        Detect which entity types to filter based on query patterns
+
+        Args:
+            query: User query string
+
+        Returns:
+            List of entity types to filter for (empty = no filter)
+        """
+        query_lower = query.lower()
+
+        # Check for combined patterns first (who are the nominees/partners = typically orgs)
+        if "من هم" in query_lower or "من هي" in query_lower:
+            # If asking about nominees, partners, organizations - return both types
+            if any(p in query_lower for p in ["مرشح", "شريك", "جهة", "هيئة", "وزارة", "جائزة"]):
+                return ["Organization", "Person"]
+
+        # Arabic patterns for organization queries (check first as more specific)
+        org_patterns = [
+            "الجهات", "المؤسسات", "الشركات",  # Organizations, institutions, companies
+            "الوزارات", "الهيئات", "المرشحون",  # Ministries, authorities, nominees
+            "شريك", "الشركاء", "جائزة",  # Partner(s), award
+        ]
+
+        # Check for organization queries
+        if any(p in query_lower for p in org_patterns):
+            return ["Organization"]
+
+        # Arabic patterns for person queries
+        person_patterns = [
+            "من هو", "من هي",  # Who is (singular)
+            "الأشخاص", "الشخص", "المسؤول",  # People, person, responsible
+            "المدير", "الرئيس", "الوزير",  # Director, president, minister
+        ]
+
+        # Check for person queries
+        if any(p in query_lower for p in person_patterns):
+            return ["Person"]
+
+        # Generic "who are" without specific context - include both
+        if "من هم" in query_lower:
+            return ["Organization", "Person"]
+
+        return []  # No filter
 
     def _global_retrieve(
         self,
