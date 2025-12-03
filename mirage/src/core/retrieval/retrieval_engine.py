@@ -582,18 +582,78 @@ class RetrievalEngine:
         top_k: int,
         **kwargs
     ) -> RetrievalResponse:
-        """Deep semantic matching with re-ranking"""
+        """
+        Deep semantic matching with cross-encoder re-ranking.
+
+        Strategy:
+        1. Retrieve top_k * 3 candidates via naive vector search
+        2. Re-rank using cross-encoder for improved precision
+        3. Return top_k highest scoring results
+        """
         # Start with naive retrieval but with more candidates
         naive_response = self._naive_retrieve(
             query, query_embedding, top_k * 3, **kwargs
         )
 
-        # Would apply cross-encoder re-ranking here
-        # For now, just return naive results
-        naive_response.mode = RetrievalMode.SEMANTIC
-        naive_response.results = naive_response.results[:top_k]
+        # Apply cross-encoder re-ranking
+        try:
+            from .reranker import get_reranker
 
-        return naive_response
+            reranker = get_reranker()
+
+            # Convert results to candidates for reranker
+            candidates = [
+                {
+                    "chunk_id": r.chunk_id,
+                    "document_id": r.document_id,
+                    "text": r.text,
+                    "score": r.score,
+                    "metadata": r.metadata
+                }
+                for r in naive_response.results
+            ]
+
+            # Rerank
+            reranked = reranker.rerank(query, candidates, top_k=top_k)
+
+            # Convert back to RetrievalResult
+            results = [
+                RetrievalResult(
+                    chunk_id=r.chunk_id,
+                    document_id=r.document_id,
+                    text=r.text,
+                    score=r.rerank_score,  # Use rerank score
+                    retrieval_mode="semantic",
+                    metadata={
+                        "original_score": r.original_score,
+                        "rank_change": r.rank_change
+                    }
+                )
+                for r in reranked
+            ]
+
+            logger.info(
+                f"Semantic reranking: {len(candidates)} candidates -> {len(results)} results"
+            )
+
+            return RetrievalResponse(
+                results=results,
+                query=query,
+                mode=RetrievalMode.SEMANTIC,
+                total_candidates=len(naive_response.results),
+                metadata={
+                    "reranked": True,
+                    "reranker_model": reranker.model_id
+                }
+            )
+
+        except Exception as e:
+            logger.warning(f"Reranking failed, falling back to naive: {e}")
+            # Fallback to naive results
+            naive_response.mode = RetrievalMode.SEMANTIC
+            naive_response.results = naive_response.results[:top_k]
+            naive_response.metadata = {"reranked": False, "fallback_reason": str(e)}
+            return naive_response
 
     def _retrieve_mix(
         self,

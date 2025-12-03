@@ -60,6 +60,18 @@ try:
 except ImportError:
     HybridRetriever = None
 
+# Cross-encoder reranker
+try:
+    from .reranker import (
+        CrossEncoderReranker,
+        RerankResult,
+        get_reranker,
+    )
+except ImportError:
+    CrossEncoderReranker = None
+    RerankResult = None
+    get_reranker = None
+
 __all__ = [
     # Base classes
     "BaseRetriever",
@@ -80,6 +92,10 @@ __all__ = [
     "RetrievalEngine",
     "RetrievalEngineConfig",
     "get_retrieval_engine",
+    # Reranking
+    "CrossEncoderReranker",
+    "RerankResult",
+    "get_reranker",
     # Legacy
     "HybridRetriever",
 ]
