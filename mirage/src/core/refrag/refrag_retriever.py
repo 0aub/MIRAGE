@@ -28,8 +28,8 @@ from loguru import logger
 
 from .chunk_embedder import ChunkEmbedder, REFRAGDocument, REFRAGChunk, get_chunk_embedder
 
-# Import centralized constants
-from core.config.constants import (
+# Import centralized constants (relative import for package compatibility)
+from ..config.constants import (
     MAX_CONTEXT_TOKENS,
     RETRIEVAL_TOP_K_DEFAULT,
     RETRIEVAL_MIN_SCORE,

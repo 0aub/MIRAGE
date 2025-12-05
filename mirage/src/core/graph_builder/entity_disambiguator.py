@@ -17,8 +17,8 @@ from dataclasses import dataclass, field
 from collections import defaultdict
 from loguru import logger
 
-# Import centralized constants
-from core.config.constants import (
+# Import centralized constants (relative import for package compatibility)
+from ..config.constants import (
     ENTITY_SIMILARITY_THRESHOLD,
     ENTITY_MAX_CONFIDENCE,
     MAX_ENTITIES_IN_CONTEXT,

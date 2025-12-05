@@ -27,8 +27,8 @@ from typing import Optional, Tuple
 from dataclasses import dataclass
 import logging
 
-# Import centralized constants
-from core.config.constants import TGI_ENDPOINT_DEFAULT
+# Import centralized constants (relative import for package compatibility)
+from ..config.constants import TGI_ENDPOINT_DEFAULT
 
 logger = logging.getLogger(__name__)
 

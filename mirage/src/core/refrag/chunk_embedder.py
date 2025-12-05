@@ -29,8 +29,8 @@ import hashlib
 import time
 from loguru import logger
 
-# Import centralized constants
-from core.config.constants import (
+# Import centralized constants (relative import for package compatibility)
+from ..config.constants import (
     REFRAG_CHUNK_SIZE_TOKENS,
     EMBEDDING_DIM,
     EMBEDDING_BATCH_SIZE,

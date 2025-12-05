@@ -25,8 +25,8 @@ from dataclasses import dataclass
 import logging
 import requests
 
-# Import centralized constants
-from core.config.constants import (
+# Import centralized constants (relative import for package compatibility)
+from ..config.constants import (
     MAX_COMMUNITIES_TO_SEARCH,
     GLOBAL_SEARCH_MIN_RELEVANCE,
     LLM_TEMPERATURE_FACTUAL,

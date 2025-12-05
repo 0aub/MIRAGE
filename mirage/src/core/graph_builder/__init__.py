@@ -67,6 +67,21 @@ from .relationship_enricher import (
     enrich_relationship,
 )
 
+# MIRAGE V5: Incremental Graph Updates
+from .incremental_updater import (
+    IncrementalGraphUpdater,
+    UpdateResult,
+    AffectedCommunity,
+    get_incremental_updater,
+)
+
+# MIRAGE V5: Coreference Resolution
+from .coreference_resolver import (
+    CoreferenceResolver,
+    ResolvedEntity,
+    get_coreference_resolver,
+)
+
 __all__ = [
     # Original components
     "EntityExtractor",
@@ -117,4 +132,13 @@ __all__ = [
     "EnrichedRelationship",
     "get_relationship_enricher",
     "enrich_relationship",
+    # MIRAGE V5: Incremental Graph Updates
+    "IncrementalGraphUpdater",
+    "UpdateResult",
+    "AffectedCommunity",
+    "get_incremental_updater",
+    # MIRAGE V5: Coreference Resolution
+    "CoreferenceResolver",
+    "ResolvedEntity",
+    "get_coreference_resolver",
 ]

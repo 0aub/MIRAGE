@@ -14,8 +14,8 @@ from dataclasses import dataclass
 import logging
 import requests
 
-# Import centralized constants
-from core.config.constants import (
+# Import centralized constants (relative import for package compatibility)
+from ..config.constants import (
     MAX_ENTITIES_IN_SUMMARY,
     MAX_RELATIONSHIPS_IN_SUMMARY,
     MAX_SUMMARY_TOKENS,
