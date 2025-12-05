@@ -10,6 +10,7 @@ from loguru import logger
 import sys
 
 from src.config import settings
+from src.core.retrieval import preload_reranker
 from src.api import (
     document_service,
     chat_service,
@@ -179,6 +180,16 @@ async def startup_event():
     # await init_neo4j()
     # await init_qdrant()
     # await init_redis()
+
+    # Preload cross-encoder model for semantic mode (eliminates 35s cold-start)
+    try:
+        logger.info("Loading cross-encoder model for semantic mode...")
+        if preload_reranker():
+            logger.info("✅ Cross-encoder model preloaded successfully")
+        else:
+            logger.warning("⚠️ Cross-encoder preload failed - semantic mode may have cold-start")
+    except Exception as e:
+        logger.warning(f"⚠️ Cross-encoder preload error: {e}")
 
     logger.info("✅ MIRAGE API started successfully")
 

@@ -212,6 +212,29 @@ class CrossEncoderReranker:
             "available": CROSSENCODER_AVAILABLE
         }
 
+    def preload(self) -> bool:
+        """
+        Preload the cross-encoder model to avoid cold-start latency.
+        Call this on application startup for semantic mode.
+
+        Returns:
+            True if model loaded successfully
+        """
+        logger.info("Preloading cross-encoder model...")
+        self._load_model()
+
+        if self._loaded:
+            # Warm up with a test query
+            try:
+                self._model.predict([("test query", "test document")])
+                logger.info("Cross-encoder preloaded and warmed up")
+                return True
+            except Exception as e:
+                logger.warning(f"Cross-encoder warmup failed: {e}")
+                return self._loaded
+
+        return False
+
 
 # Global instance
 _reranker: Optional[CrossEncoderReranker] = None
@@ -225,3 +248,15 @@ def get_reranker(**kwargs) -> CrossEncoderReranker:
         _reranker = CrossEncoderReranker(**kwargs)
 
     return _reranker
+
+
+def preload_reranker(**kwargs) -> bool:
+    """
+    Preload the reranker model on application startup.
+    Call this to eliminate cold-start latency for semantic mode.
+
+    Returns:
+        True if preload successful
+    """
+    reranker = get_reranker(**kwargs)
+    return reranker.preload()

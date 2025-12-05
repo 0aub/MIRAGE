@@ -76,6 +76,7 @@ from .reranker import (
     CrossEncoderReranker,
     RerankResult,
     get_reranker,
+    preload_reranker,
 )
 
 # Global search (GraphRAG map-reduce) (required, no fallback)
@@ -209,6 +210,7 @@ __all__ = [
     "CrossEncoderReranker",
     "RerankResult",
     "get_reranker",
+    "preload_reranker",
     # Global Search (GraphRAG)
     "GlobalSearchEngine",
     "GlobalSearchResult",
