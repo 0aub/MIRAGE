@@ -408,6 +408,49 @@ async def list_retrieval_modes():
     }
 
 
+def _clean_llm_response(answer: str) -> str:
+    """
+    Clean up LLM response artifacts:
+    - Remove citation markers like [1], [2], etc.
+    - Remove repeated content (question echo, etc.)
+    - Clean up "I cannot find" patterns
+    """
+    import re
+
+    if not answer:
+        return answer
+
+    # Remove citation markers like [1], [2], etc.
+    answer = re.sub(r'\[\d+\]', '', answer)
+
+    # Truncate at prompt echo patterns (model repeating the conversation)
+    for pattern in ["Human:", "Question:", "Context:"]:
+        if pattern in answer:
+            answer = answer.split(pattern)[0].strip()
+
+    # Remove "I cannot find" patterns
+    if "I cannot find" in answer:
+        parts = answer.split("I cannot find")
+        answer = parts[0].strip()
+        if not answer:
+            return "لا أجد هذه المعلومات في السياق المقدم."
+
+    # Clean up multiple spaces
+    answer = re.sub(r'[ \t]+', ' ', answer).strip()
+
+    # Remove trailing incomplete sentences (ends with comma or nothing)
+    if answer and not answer[-1] in '.؟!':
+        # Find last complete sentence
+        for end_marker in ['. ', '؟ ', '! ']:
+            if end_marker in answer:
+                last_idx = answer.rfind(end_marker)
+                if last_idx > len(answer) * 0.5:  # Only if we keep >50% of content
+                    answer = answer[:last_idx + 1]
+                    break
+
+    return answer
+
+
 @router.post("/ask", response_model=Dict[str, Any])
 async def ask_v2(request: ChatRequest):
     """
@@ -528,21 +571,21 @@ async def ask_v2(request: ChatRequest):
                     json={
                         "inputs": f"{prompt.system_message}\n\n{prompt.user_message}",
                         "parameters": {
-                            "max_new_tokens": 256,
+                            "max_new_tokens": 200,
                             "temperature": 0.3,
                             "do_sample": True,
                             "top_p": 0.9,
+                            "repetition_penalty": 1.15,
                             "return_full_text": False,
-                            "stop": ["\n\n\n", "Question:", "Context:", "---"]
+                            "stop": ["\n\n\n", "Human:", "---", "Question:"]
                         }
                     }
                 )
                 tgi_result = tgi_response.json()
-                answer = tgi_result.get("generated_text", "").strip()
-                # Clean up repetitions
-                if "I cannot find" in answer:
-                    parts = answer.split("I cannot find")
-                    answer = parts[0].strip() + (" لا أجد هذه المعلومات في السياق المقدم." if not parts[0].strip() else "")
+                raw_answer = tgi_result.get("generated_text", "").strip()
+
+                # Clean up LLM artifacts (citation markers, prompt echoes, etc.)
+                answer = _clean_llm_response(raw_answer)
         except Exception as e:
             logger.error(f"TGI generation error: {e}")
             # Fallback to showing retrieved context
