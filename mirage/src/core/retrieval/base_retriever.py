@@ -16,6 +16,7 @@ class RetrievalMode(Enum):
     NAIVE = "naive"          # Basic vector search only
     LOCAL = "local"          # Entity-focused (entity → chunks)
     GLOBAL = "global"        # Relationship-focused (relationships → entities → chunks)
+    GLOBAL_SEARCH = "global_search"  # Map-reduce over community summaries (GraphRAG)
     HYBRID = "hybrid"        # Combines local + global
     MIX = "mix"             # All modes combined with RRF
     SEMANTIC = "semantic"    # Deep semantic matching

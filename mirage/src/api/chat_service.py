@@ -455,7 +455,35 @@ async def ask_v2(request: ChatRequest):
                 "total_time_ms": (time.time() - start_time) * 1000
             }
 
-        # 4. Create prompt (with entity names for LOCAL mode)
+        # 4. Check for global search (GraphRAG) - uses pre-generated answer
+        if response.metadata and response.metadata.get("is_global_search"):
+            global_answer = response.metadata.get("global_answer", "")
+            if global_answer:
+                generation_time = 0  # Already generated in global search
+                return {
+                    "query": request.message,
+                    "answer": global_answer,
+                    "sources": [
+                        {
+                            "document_id": r.document_id,
+                            "chunk_id": r.chunk_id,
+                            "text": r.text[:200] + "..." if len(r.text) > 200 else r.text
+                        }
+                        for r in response.results[:5]
+                    ],
+                    "retrieval_mode": "global_search",
+                    "retrieval_time_ms": retrieval_time,
+                    "generation_time_ms": generation_time,
+                    "total_time_ms": (time.time() - start_time) * 1000,
+                    "metadata": {
+                        "communities_searched": response.metadata.get("communities_searched", 0),
+                        "total_communities": response.metadata.get("total_communities", 0),
+                        "themes": response.metadata.get("themes", []),
+                        "confidence": response.metadata.get("confidence", 0)
+                    }
+                }
+
+        # 5. Create prompt (with entity names for LOCAL mode)
         # Extract entity names from retrieval metadata for L2 entity lookup queries
         entity_names = response.metadata.get("entity_names", []) if response.metadata else []
 
@@ -474,7 +502,7 @@ async def ask_v2(request: ChatRequest):
             context=context
         )
 
-        # 5. Call TGI for generation
+        # 6. Call TGI for generation
         generation_start = time.time()
         try:
             async with httpx.AsyncClient(timeout=60.0) as client:

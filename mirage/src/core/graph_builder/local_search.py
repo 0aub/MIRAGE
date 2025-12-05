@@ -1,6 +1,12 @@
 """
 Local Search Module for GraphRAG
 
+DEPRECATED: This module is maintained for backward compatibility.
+For new code, use the unified RetrievalEngine which provides:
+- LOCAL mode for entity-centric search
+- Better integration with other retrieval modes
+- Consistent API across all search types
+
 Implements entity-centric search using multi-hop graph traversal.
 Answers specific questions about entities and their relationships.
 
@@ -12,12 +18,30 @@ Uses graph traversal (Phase 1) + Allam LLM for answer generation.
 """
 
 import json
+import warnings
 from typing import List, Dict, Optional, Tuple
 from dataclasses import dataclass
 import logging
 import requests
 
+# Import centralized constants
+from core.config.constants import (
+    MAX_ENTITIES_IN_CONTEXT,
+    MAX_RELATIONSHIPS_IN_CONTEXT,
+    LLM_TEMPERATURE_FACTUAL,
+    LLM_MAX_TOKENS_DEFAULT,
+    TGI_ENDPOINT_DEFAULT,
+)
+
 logger = logging.getLogger(__name__)
+
+# Emit deprecation warning on import
+warnings.warn(
+    "core.graph_builder.local_search is deprecated. "
+    "Use core.retrieval.RetrievalEngine with LOCAL mode.",
+    DeprecationWarning,
+    stacklevel=2
+)
 
 
 @dataclass
@@ -72,10 +96,10 @@ class LocalSearchEngine:
         self,
         neo4j_client,
         graph_traversal,
-        llm_endpoint: str = "http://tgi:8765",
+        llm_endpoint: str = None,
         max_hops: int = 2,
-        max_tokens: int = 600,
-        temperature: float = 0.3
+        max_tokens: int = None,
+        temperature: float = None
     ):
         """
         Initialize local search engine.
@@ -83,17 +107,19 @@ class LocalSearchEngine:
         Args:
             neo4j_client: Neo4j client instance
             graph_traversal: GraphTraversal instance (from Phase 1)
-            llm_endpoint: TGI endpoint for Allam
+            llm_endpoint: TGI endpoint for Allam (default: from constants)
             max_hops: Maximum hops for graph traversal (1-3 recommended)
-            max_tokens: Maximum tokens for answer
-            temperature: LLM temperature
+            max_tokens: Maximum tokens for answer (default: from constants)
+            temperature: LLM temperature (default: from constants)
         """
         self.neo4j_client = neo4j_client
         self.graph_traversal = graph_traversal
-        self.llm_endpoint = llm_endpoint
+        self.llm_endpoint = llm_endpoint or TGI_ENDPOINT_DEFAULT
         self.max_hops = max_hops
-        self.max_tokens = max_tokens
-        self.temperature = temperature
+        self.max_tokens = max_tokens or LLM_MAX_TOKENS_DEFAULT
+        self.temperature = temperature if temperature is not None else LLM_TEMPERATURE_FACTUAL
+        self.max_entities = MAX_ENTITIES_IN_CONTEXT
+        self.max_relationships = MAX_RELATIONSHIPS_IN_CONTEXT
 
     def search(
         self,
@@ -145,11 +171,11 @@ class LocalSearchEngine:
             f"{traversal_result.total_edges} edges"
         )
 
-        # Step 3: Format context for LLM
+        # Step 3: Format context for LLM (using configured limits)
         context = self._format_context(
             seed_entities=seed_entities,
-            discovered_entities=traversal_result.discovered_entities[:15],  # Limit for Allam 2K
-            relationships=traversal_result.relationships[:15]
+            discovered_entities=traversal_result.discovered_entities[:self.max_entities],
+            relationships=traversal_result.relationships[:self.max_relationships]
         )
 
         # Step 4: Generate answer using LLM
@@ -232,7 +258,7 @@ class LocalSearchEngine:
         for entity in seed_entities:
             context_parts.append(f"- {entity}")
 
-        # Discovered entities (limit to 15 for Allam 2K)
+        # Discovered entities (limited by configured max)
         if discovered_entities:
             context_parts.append("\nالكيانات المرتبطة:")
             for entity in discovered_entities:
@@ -240,7 +266,7 @@ class LocalSearchEngine:
                 entity_type = entity.get('type', 'Unknown')
                 context_parts.append(f"- {name} ({entity_type})")
 
-        # Relationships (limit to 15)
+        # Relationships (limited by configured max)
         if relationships:
             context_parts.append("\nالعلاقات:")
             for rel in relationships:

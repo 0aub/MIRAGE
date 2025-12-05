@@ -2,6 +2,11 @@
 Neo4j Client
 Dynamic graph storage without predefined schemas
 Nodes and relationships emerge from the data
+
+MIRAGE V4 Enhancement:
+- Dynamic relationship types (not just RELATED_TO)
+- Relationship type normalization (Arabic/English)
+- Semantic relationship categories
 """
 
 from typing import List, Dict, Any, Optional
@@ -9,6 +14,11 @@ from neo4j import GraphDatabase, Driver
 from loguru import logger
 
 from ...config import settings
+from .relationship_normalizer import (
+    get_relationship_normalizer,
+    to_cypher_relationship_type,
+    RelationshipTypeNormalizer
+)
 
 
 class Neo4jClient:
@@ -158,8 +168,10 @@ class Neo4jClient:
         """
         Create a relationship between two entities
 
-        For LLM-extracted relationships, stores as RELATED_TO with the semantic type as a property.
-        For co-occurrence and semantic relationships, uses specific relationship types.
+        MIRAGE V4: Uses dynamic relationship types from LLM extraction.
+        - LLM relationships: Normalized to standard Cypher types (FOUNDED, LEADS, WORKS_AT, etc.)
+        - Co-occurrence: COOCCURS_WITH
+        - Semantic similarity: SIMILAR_TO
 
         Args:
             relationship: Relationship dict
@@ -171,24 +183,36 @@ class Neo4jClient:
         if not self._connected:
             self.connect()
 
+        # Get relationship normalizer
+        normalizer = get_relationship_normalizer()
+
         # Determine relationship storage strategy based on source
         rel_source = relationship.get("source_type", "llm")  # Default to "llm" for backward compatibility
 
-        # For LLM relationships: Store as RELATED_TO with semantic type as property
-        # For co-occurrence/semantic: Use specific relationship types (COOCCURS_WITH, SIMILAR_TO)
+        # MIRAGE V4: Use dynamic relationship types for LLM-extracted relationships
+        # This enables powerful graph queries like MATCH (p:Person)-[:FOUNDED]->(o:Organization)
         if rel_source == "llm":
-            cypher_rel_type = "RELATED_TO"
-            semantic_type = relationship.get("type", "RELATED_TO").lower().replace(" ", "_").replace("-", "_")
+            # Normalize and convert to Cypher type
+            original_type = relationship.get("type", "RELATED_TO")
+            normalized = normalizer.normalize(original_type)
+            cypher_rel_type = normalizer.to_cypher_type(original_type)
+            semantic_type = normalized.normalized_type
+            # Apply confidence modifier from normalizer
+            type_confidence = normalized.confidence
         elif rel_source == "cooccurrence":
             cypher_rel_type = "COOCCURS_WITH"
             semantic_type = None
+            type_confidence = 0.7
         elif rel_source == "semantic":
             cypher_rel_type = "SIMILAR_TO"
             semantic_type = None
+            type_confidence = 0.8
         else:
-            # Fallback for unknown sources
-            cypher_rel_type = relationship.get("type", "RELATED_TO").upper().replace(" ", "_").replace("-", "_")
-            semantic_type = None
+            # For unknown sources, normalize the type
+            original_type = relationship.get("type", "RELATED_TO")
+            cypher_rel_type = normalizer.to_cypher_type(original_type)
+            semantic_type = normalizer.normalize(original_type).normalized_type
+            type_confidence = 0.6
 
         query = f"""
         MATCH (source:Entity {{name: $source_name}})
@@ -240,10 +264,14 @@ class Neo4jClient:
         import json
         attributes_json = json.dumps(relationship.get("attributes", {})) if relationship.get("attributes") else ""
 
+        # Calculate final confidence: combine LLM confidence with type specificity
+        base_confidence = relationship.get("confidence", 0.5)
+        final_confidence = base_confidence * type_confidence
+
         parameters = {
             "source_name": relationship["source"],
             "target_name": relationship["target"],
-            "confidence": relationship.get("confidence", 0.5),
+            "confidence": final_confidence,
             "method": relationship.get("method", "llm"),
             "source_type": rel_source,
             "semantic_type": semantic_type,

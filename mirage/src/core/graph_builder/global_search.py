@@ -1,6 +1,13 @@
 """
 Global Search Module for GraphRAG
 
+DEPRECATED: This module is maintained for backward compatibility.
+For new code, use core.retrieval.global_search which provides:
+- Async support
+- Better error handling
+- More detailed result types (PartialAnswer, GlobalSearchResult)
+- Integration with RetrievalEngine
+
 Implements map-reduce search over community summaries to answer
 high-level, holistic questions about the knowledge base.
 
@@ -12,12 +19,30 @@ Uses Allam LLM for map-reduce query answering.
 """
 
 import json
+import warnings
 from typing import List, Dict, Optional, Tuple
 from dataclasses import dataclass
 import logging
 import requests
 
+# Import centralized constants
+from core.config.constants import (
+    MAX_COMMUNITIES_TO_SEARCH,
+    GLOBAL_SEARCH_MIN_RELEVANCE,
+    LLM_TEMPERATURE_FACTUAL,
+    MAX_SUMMARY_TOKENS,
+    TGI_ENDPOINT_DEFAULT,
+)
+
 logger = logging.getLogger(__name__)
+
+# Emit deprecation warning on import
+warnings.warn(
+    "core.graph_builder.global_search is deprecated. "
+    "Use core.retrieval.global_search for new code.",
+    DeprecationWarning,
+    stacklevel=2
+)
 
 
 @dataclass
@@ -73,26 +98,26 @@ class GlobalSearchEngine:
     def __init__(
         self,
         neo4j_client,
-        llm_endpoint: str = "http://tgi:8765",
-        max_tokens_per_answer: int = 400,
-        temperature: float = 0.3,
-        max_communities: int = 20
+        llm_endpoint: str = None,
+        max_tokens_per_answer: int = None,
+        temperature: float = None,
+        max_communities: int = None
     ):
         """
         Initialize global search engine.
 
         Args:
             neo4j_client: Neo4j client instance
-            llm_endpoint: TGI endpoint for Allam
-            max_tokens_per_answer: Maximum tokens per answer
-            temperature: LLM temperature (0.3 = more deterministic)
-            max_communities: Maximum communities to search (limit for performance)
+            llm_endpoint: TGI endpoint for Allam (default: from constants)
+            max_tokens_per_answer: Maximum tokens per answer (default: from constants)
+            temperature: LLM temperature (default: from constants, 0.3 = more deterministic)
+            max_communities: Maximum communities to search (default: from constants)
         """
         self.neo4j_client = neo4j_client
-        self.llm_endpoint = llm_endpoint
-        self.max_tokens_per_answer = max_tokens_per_answer
-        self.temperature = temperature
-        self.max_communities = max_communities
+        self.llm_endpoint = llm_endpoint or TGI_ENDPOINT_DEFAULT
+        self.max_tokens_per_answer = max_tokens_per_answer or MAX_SUMMARY_TOKENS
+        self.temperature = temperature if temperature is not None else LLM_TEMPERATURE_FACTUAL
+        self.max_communities = max_communities or MAX_COMMUNITIES_TO_SEARCH
 
     def search(
         self,

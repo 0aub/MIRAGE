@@ -18,6 +18,7 @@ class QueryType(Enum):
     EXPLANATORY = "explanatory"    # How, why
     COMPARATIVE = "comparative"    # Compare X and Y
     EXPLORATORY = "exploratory"    # What are the main themes...
+    HOLISTIC = "holistic"          # Global themes, summaries, patterns (GraphRAG global search)
     ENTITY_CENTRIC = "entity"      # About specific entity
     RELATIONSHIP = "relationship"  # About connections
     UNKNOWN = "unknown"
@@ -74,16 +75,42 @@ class QueryRouter:
     ]
 
     EXPLORATORY_PATTERNS = [
-        r"الموضوعات الرئيسية",     # Main themes (Arabic)
-        r"أهم|الرئيسية",           # Most important/main (Arabic)
+        r"أهم",                     # Most important (Arabic)
         r"الإنجازات",              # Achievements (Arabic)
         r"النتائج المحققة",         # Achieved results (Arabic)
-        r"main themes",
-        r"key topics",
         r"overview of",
-        r"summarize",
-        r"what are the main",
         r"achievements",
+    ]
+
+    # Holistic patterns - for GraphRAG global search (map-reduce over communities)
+    HOLISTIC_PATTERNS = [
+        # Arabic patterns for holistic queries
+        r"ما هي الموضوعات الرئيسية",    # What are the main themes
+        r"الموضوعات الرئيسية",           # Main themes
+        r"المواضيع الرئيسية",            # Main topics
+        r"لخص|تلخيص|ملخص",              # Summarize/summary
+        r"ما الأنماط",                   # What patterns
+        r"الاتجاهات العامة",             # General trends
+        r"بشكل عام|إجمالاً",             # In general/overall
+        r"عبر جميع|عبر كل",              # Across all
+        r"في قاعدة البيانات",            # In the database
+        r"ما هي أبرز",                   # What are the most prominent
+        r"ما هي أهم النقاط",             # What are the most important points
+        r"استعرض",                       # Review/overview
+
+        # English patterns for holistic queries
+        r"what are the main themes",
+        r"what are the key topics",
+        r"summarize (?:the|all|everything)",
+        r"summary of (?:the|all)",
+        r"what patterns",
+        r"what trends",
+        r"across all (?:documents|data)",
+        r"in general",
+        r"overall",
+        r"key takeaways",
+        r"main insights",
+        r"what can you tell me about",
     ]
 
     COMPARATIVE_PATTERNS = [
@@ -129,6 +156,7 @@ class QueryRouter:
         self._entity_re = self._compile_patterns(self.ENTITY_PATTERNS)
         self._relationship_re = self._compile_patterns(self.RELATIONSHIP_PATTERNS)
         self._exploratory_re = self._compile_patterns(self.EXPLORATORY_PATTERNS)
+        self._holistic_re = self._compile_patterns(self.HOLISTIC_PATTERNS)
         self._comparative_re = self._compile_patterns(self.COMPARATIVE_PATTERNS)
         self._explanatory_re = self._compile_patterns(self.EXPLANATORY_PATTERNS)
 
@@ -176,6 +204,10 @@ class QueryRouter:
     def _classify_query_type(self, query: str) -> Tuple[QueryType, float]:
         """Classify the query type"""
         # Check patterns in order of specificity
+        # HOLISTIC first - these are the global search queries (GraphRAG)
+        if self._holistic_re.search(query):
+            return QueryType.HOLISTIC, 0.92
+
         if self._comparative_re.search(query):
             return QueryType.COMPARATIVE, 0.9
 
@@ -243,6 +275,13 @@ class QueryRouter:
             )
 
         # Route based on query type
+        if query_type == QueryType.HOLISTIC:
+            return (
+                RetrievalMode.GLOBAL_SEARCH,
+                type_confidence,
+                "Holistic query - using GraphRAG global search (map-reduce over communities)"
+            )
+
         if query_type == QueryType.COMPARATIVE:
             return (
                 RetrievalMode.MIX,
@@ -325,6 +364,8 @@ class QueryRouter:
             alternatives.append((RetrievalMode.NAIVE, 0.5))
         elif primary_mode == RetrievalMode.GLOBAL:
             alternatives.append((RetrievalMode.LOCAL, 0.5))
+        elif primary_mode == RetrievalMode.GLOBAL_SEARCH:
+            alternatives.append((RetrievalMode.GLOBAL, 0.6))  # Fallback to relationship-based
         elif primary_mode == RetrievalMode.NAIVE:
             alternatives.append((RetrievalMode.LOCAL, 0.6))
 

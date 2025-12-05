@@ -1,0 +1,727 @@
+"""
+Global Search Engine - Map-Reduce over Community Summaries
+
+This is THE killer feature of GraphRAG that enables answering:
+- "What are the main themes across all documents?"
+- "Summarize the key topics in this knowledge base"
+- "What patterns emerge from this data?"
+
+Algorithm:
+1. MAP: Query each community summary in parallel
+   - Each community generates a partial answer
+   - Scored by relevance to query
+
+2. FILTER: Keep top-k most relevant partial answers
+   - Based on relevance score threshold
+
+3. REDUCE: Combine partial answers into final answer
+   - Synthesize coherent response
+   - Preserve key insights from each community
+
+Optimized for Arabic + English bilingual support.
+"""
+
+import asyncio
+import json
+import re
+from typing import List, Dict, Optional, Tuple
+from dataclasses import dataclass, field
+from concurrent.futures import ThreadPoolExecutor
+import requests
+from loguru import logger
+
+
+@dataclass
+class PartialAnswer:
+    """Partial answer from a single community."""
+    community_id: str
+    level: int
+    summary: str
+    answer: str
+    relevance_score: float
+    key_points: List[str] = field(default_factory=list)
+    entities: List[str] = field(default_factory=list)
+
+
+@dataclass
+class GlobalSearchResult:
+    """Result of global search across all communities."""
+    query: str
+    answer: str
+    partial_answers: List[PartialAnswer]
+    communities_searched: int
+    total_communities: int
+    search_level: int
+    confidence: float = 0.0
+    themes: List[str] = field(default_factory=list)
+
+    def to_dict(self) -> Dict:
+        return {
+            "query": self.query,
+            "answer": self.answer,
+            "communities_searched": self.communities_searched,
+            "total_communities": self.total_communities,
+            "search_level": self.search_level,
+            "confidence": self.confidence,
+            "themes": self.themes,
+            "partial_answers": [
+                {
+                    "community_id": pa.community_id,
+                    "relevance_score": pa.relevance_score,
+                    "key_points": pa.key_points
+                }
+                for pa in self.partial_answers
+            ]
+        }
+
+
+class GlobalSearchEngine:
+    """
+    Global search using map-reduce over community summaries.
+
+    This enables answering holistic queries that require understanding
+    across the entire knowledge base, not just specific documents.
+
+    Features:
+    - Parallel community querying (map phase)
+    - Relevance-based filtering
+    - Coherent answer synthesis (reduce phase)
+    - Multi-level community search
+    - Bilingual support (Arabic + English)
+    """
+
+    def __init__(
+        self,
+        neo4j_client,
+        llm_endpoint: str = "http://tgi:80",
+        max_communities: int = 30,
+        min_relevance: float = 0.3,
+        parallel_workers: int = 5,
+        community_level: int = 0,
+        max_tokens: int = 400,
+        temperature: float = 0.3
+    ):
+        """
+        Initialize global search engine.
+
+        Args:
+            neo4j_client: Neo4j client for community data
+            llm_endpoint: TGI endpoint for LLM calls
+            max_communities: Maximum communities to query in map phase
+            min_relevance: Minimum relevance score to keep partial answer
+            parallel_workers: Number of parallel LLM calls
+            community_level: Which hierarchy level to search (0=fine, 1+=coarse)
+            max_tokens: Max tokens per LLM response
+            temperature: LLM temperature
+        """
+        self.neo4j_client = neo4j_client
+        self.llm_endpoint = llm_endpoint
+        self.max_communities = max_communities
+        self.min_relevance = min_relevance
+        self.parallel_workers = parallel_workers
+        self.community_level = community_level
+        self.max_tokens = max_tokens
+        self.temperature = temperature
+
+        self._executor = ThreadPoolExecutor(max_workers=parallel_workers)
+
+        logger.info(
+            f"GlobalSearchEngine initialized: level={community_level}, "
+            f"max_communities={max_communities}, workers={parallel_workers}"
+        )
+
+    def search(self, query: str) -> GlobalSearchResult:
+        """
+        Execute global search using map-reduce pattern.
+
+        Steps:
+        1. Get all community summaries at target level
+        2. MAP: Generate partial answer for each (parallel)
+        3. FILTER: Keep relevant partial answers
+        4. REDUCE: Synthesize final answer
+
+        Args:
+            query: User query string
+
+        Returns:
+            GlobalSearchResult with synthesized answer
+        """
+        logger.info(f"Global search: '{query[:50]}...' at level {self.community_level}")
+
+        # Step 1: Get communities at target level
+        communities = self._get_communities_at_level(self.community_level)
+
+        if not communities:
+            logger.warning("No communities found for global search")
+            return GlobalSearchResult(
+                query=query,
+                answer="لا توجد معلومات متاحة للإجابة على هذا السؤال.",
+                partial_answers=[],
+                communities_searched=0,
+                total_communities=0,
+                search_level=self.community_level
+            )
+
+        total_communities = len(communities)
+        communities = communities[:self.max_communities]
+
+        logger.info(f"Querying {len(communities)} communities (of {total_communities} total)")
+
+        # Step 2: MAP phase - generate partial answers in parallel
+        partial_answers = self._map_phase(query, communities)
+
+        logger.info(f"Map phase complete: {len(partial_answers)} partial answers")
+
+        # Step 3: FILTER phase - keep relevant answers
+        relevant_answers = self._filter_phase(partial_answers)
+
+        logger.info(f"Filter phase complete: {len(relevant_answers)} relevant answers")
+
+        if not relevant_answers:
+            return GlobalSearchResult(
+                query=query,
+                answer="لم يتم العثور على معلومات ذات صلة بالسؤال في قاعدة البيانات.",
+                partial_answers=[],
+                communities_searched=len(communities),
+                total_communities=total_communities,
+                search_level=self.community_level
+            )
+
+        # Step 4: REDUCE phase - synthesize final answer
+        final_answer, themes, confidence = self._reduce_phase(query, relevant_answers)
+
+        return GlobalSearchResult(
+            query=query,
+            answer=final_answer,
+            partial_answers=relevant_answers,
+            communities_searched=len(communities),
+            total_communities=total_communities,
+            search_level=self.community_level,
+            confidence=confidence,
+            themes=themes
+        )
+
+    def _get_communities_at_level(self, level: int) -> List[Dict]:
+        """Get all communities with summaries at a specific level."""
+        query = """
+        MATCH (c:Community {level: $level})
+        WHERE c.summary IS NOT NULL AND c.summary <> ''
+        RETURN
+            c.id as community_id,
+            c.level as level,
+            c.summary as summary,
+            c.size as size,
+            c.key_entities as key_entities,
+            c.themes as themes
+        ORDER BY c.size DESC
+        """
+
+        try:
+            results = self.neo4j_client.execute_query(query, {'level': level})
+            return results
+        except Exception as e:
+            logger.error(f"Error getting communities at level {level}: {e}")
+            return []
+
+    def _map_phase(
+        self,
+        query: str,
+        communities: List[Dict]
+    ) -> List[PartialAnswer]:
+        """
+        MAP phase: Generate partial answer for each community.
+
+        Uses parallel execution for efficiency.
+        """
+        partial_answers = []
+
+        # Process in parallel using thread pool
+        futures = []
+        for community in communities:
+            future = self._executor.submit(
+                self._generate_partial_answer,
+                query,
+                community
+            )
+            futures.append((community, future))
+
+        # Collect results
+        for community, future in futures:
+            try:
+                result = future.result(timeout=30)  # 30s timeout per community
+                if result:
+                    partial_answers.append(result)
+            except Exception as e:
+                logger.warning(
+                    f"Failed to get partial answer for {community.get('community_id')}: {e}"
+                )
+
+        return partial_answers
+
+    def _generate_partial_answer(
+        self,
+        query: str,
+        community: Dict
+    ) -> Optional[PartialAnswer]:
+        """Generate partial answer from a single community."""
+
+        community_id = community.get('community_id', '')
+        summary = community.get('summary', '')
+        key_entities = community.get('key_entities', []) or []
+        level = community.get('level', 0)
+
+        if not summary:
+            return None
+
+        # Build prompt
+        prompt = self._build_map_prompt(query, summary, key_entities)
+
+        # Call LLM
+        try:
+            response = requests.post(
+                f"{self.llm_endpoint}/generate",
+                json={
+                    "inputs": prompt,
+                    "parameters": {
+                        "max_new_tokens": self.max_tokens,
+                        "temperature": self.temperature,
+                        "top_p": 0.95,
+                        "do_sample": True,
+                    }
+                },
+                timeout=25
+            )
+
+            if response.status_code != 200:
+                logger.warning(f"LLM call failed for {community_id}: {response.status_code}")
+                return None
+
+            result = response.json()
+            generated_text = result.get('generated_text', '').strip()
+
+            # Parse response
+            answer, relevance, key_points = self._parse_map_response(generated_text)
+
+            if relevance < 0.1:  # Too low relevance, skip
+                return None
+
+            return PartialAnswer(
+                community_id=community_id,
+                level=level,
+                summary=summary[:200],  # Truncate for storage
+                answer=answer,
+                relevance_score=relevance,
+                key_points=key_points,
+                entities=key_entities[:5] if key_entities else []
+            )
+
+        except Exception as e:
+            logger.warning(f"Error generating partial answer for {community_id}: {e}")
+            return None
+
+    def _build_map_prompt(
+        self,
+        query: str,
+        summary: str,
+        key_entities: List[str]
+    ) -> str:
+        """Build prompt for generating partial answer from community summary."""
+
+        entities_text = ", ".join(key_entities[:10]) if key_entities else "غير محدد"
+
+        prompt = f"""أنت محلل بيانات. استخدم الملخص التالي للإجابة على السؤال.
+
+ملخص المجموعة:
+{summary}
+
+الكيانات الرئيسية: {entities_text}
+
+السؤال: {query}
+
+التعليمات:
+1. إذا كان الملخص يحتوي على معلومات ذات صلة، اكتب إجابة موجزة (2-3 جمل)
+2. قيّم مدى صلة الملخص بالسؤال (0.0 = لا صلة، 1.0 = صلة كاملة)
+3. اذكر النقاط الرئيسية (1-3 نقاط)
+
+الإجابة بالتنسيق التالي:
+الصلة: [رقم بين 0 و 1]
+الإجابة: [إجابتك هنا]
+النقاط: [نقطة 1 | نقطة 2 | نقطة 3]
+
+إذا لم تكن هناك معلومات ذات صلة، اكتب:
+الصلة: 0.0
+الإجابة: لا توجد معلومات ذات صلة
+النقاط: لا يوجد"""
+
+        return prompt
+
+    def _parse_map_response(
+        self,
+        response: str
+    ) -> Tuple[str, float, List[str]]:
+        """Parse LLM response from map phase."""
+
+        answer = ""
+        relevance = 0.0
+        key_points = []
+
+        lines = response.strip().split('\n')
+
+        for line in lines:
+            line = line.strip()
+
+            # Parse relevance
+            if line.startswith('الصلة:') or line.startswith('Relevance:'):
+                try:
+                    score_text = line.split(':')[1].strip()
+                    # Extract number from text
+                    match = re.search(r'(\d+\.?\d*)', score_text)
+                    if match:
+                        relevance = float(match.group(1))
+                        relevance = min(1.0, max(0.0, relevance))
+                except:
+                    pass
+
+            # Parse answer
+            elif line.startswith('الإجابة:') or line.startswith('Answer:'):
+                answer = line.split(':', 1)[1].strip() if ':' in line else ""
+
+            # Parse key points
+            elif line.startswith('النقاط:') or line.startswith('Points:'):
+                points_text = line.split(':', 1)[1].strip() if ':' in line else ""
+                if '|' in points_text:
+                    key_points = [p.strip() for p in points_text.split('|') if p.strip()]
+                elif '،' in points_text:
+                    key_points = [p.strip() for p in points_text.split('،') if p.strip()]
+
+        # If no structured response, try to extract from raw text
+        if not answer and response:
+            # Use first substantial sentence as answer
+            sentences = response.split('.')
+            for sent in sentences:
+                if len(sent.strip()) > 20:
+                    answer = sent.strip()
+                    break
+
+            # Estimate relevance based on content
+            if "لا توجد" in response or "لا يوجد" in response or "no relevant" in response.lower():
+                relevance = 0.1
+            else:
+                relevance = 0.5  # Default moderate relevance
+
+        return answer, relevance, key_points[:3]
+
+    def _filter_phase(
+        self,
+        partial_answers: List[PartialAnswer]
+    ) -> List[PartialAnswer]:
+        """FILTER phase: Keep only relevant partial answers."""
+
+        # Filter by minimum relevance
+        relevant = [
+            pa for pa in partial_answers
+            if pa.relevance_score >= self.min_relevance
+        ]
+
+        # Sort by relevance (descending)
+        relevant.sort(key=lambda x: x.relevance_score, reverse=True)
+
+        # Keep top answers - limit to 6 to keep reduce prompt manageable
+        # for smaller LLMs with 2K context limit
+        max_answers = 6
+        return relevant[:max_answers]
+
+    def _reduce_phase(
+        self,
+        query: str,
+        partial_answers: List[PartialAnswer]
+    ) -> Tuple[str, List[str], float]:
+        """
+        REDUCE phase: Combine partial answers into final coherent answer.
+
+        Returns:
+            (final_answer, themes, confidence)
+        """
+
+        # Format partial answers for synthesis
+        answers_text = self._format_partial_answers(partial_answers)
+
+        prompt = self._build_reduce_prompt(query, answers_text, len(partial_answers))
+
+        try:
+            response = requests.post(
+                f"{self.llm_endpoint}/generate",
+                json={
+                    "inputs": prompt,
+                    "parameters": {
+                        "max_new_tokens": 600,  # Longer for final answer
+                        "temperature": self.temperature,
+                        "top_p": 0.95,
+                        "do_sample": True,
+                    }
+                },
+                timeout=45
+            )
+
+            if response.status_code != 200:
+                logger.error(f"Reduce phase LLM call failed: {response.status_code}")
+                # Fallback: concatenate top answers
+                return self._fallback_reduce(partial_answers), [], 0.5
+
+            result = response.json()
+            generated_text = result.get('generated_text', '').strip()
+
+            logger.debug(f"Reduce phase raw response: {generated_text[:300]}...")
+
+            # Parse and clean response
+            final_answer = self._clean_reduce_response(generated_text)
+
+            # If cleaning resulted in empty/too short, use fallback
+            if not final_answer or len(final_answer) < 30:
+                logger.warning("Reduce phase produced insufficient answer, using fallback")
+                final_answer = self._fallback_reduce(partial_answers)
+
+            # Extract themes
+            themes = self._extract_themes(final_answer, partial_answers)
+
+            # Calculate confidence based on coverage and relevance
+            avg_relevance = sum(pa.relevance_score for pa in partial_answers) / len(partial_answers)
+            coverage = len(partial_answers) / 10  # Normalize by max expected
+            confidence = (avg_relevance * 0.7) + (min(coverage, 1.0) * 0.3)
+
+            return final_answer, themes, confidence
+
+        except Exception as e:
+            logger.error(f"Error in reduce phase: {e}")
+            return self._fallback_reduce(partial_answers), [], 0.4
+
+    def _format_partial_answers(self, partial_answers: List[PartialAnswer]) -> str:
+        """Format partial answers for reduce prompt - keep concise for 2K context LLM."""
+
+        lines = []
+        for i, pa in enumerate(partial_answers, 1):
+            # Truncate to 150 chars to keep total prompt under 2K tokens
+            answer = pa.answer[:150].strip()
+            if len(pa.answer) > 150:
+                answer += "..."
+            lines.append(f"[{i}] {answer}")
+
+        return "\n".join(lines)
+
+    def _build_reduce_prompt(
+        self,
+        query: str,
+        answers_text: str,
+        num_answers: int
+    ) -> str:
+        """Build prompt for reduce phase - simplified for smaller LLMs."""
+
+        # Simpler, more direct prompt for Allam/smaller models
+        prompt = f"""اجمع هذه المعلومات للإجابة على السؤال.
+
+السؤال: {query}
+
+المعلومات:
+{answers_text}
+
+اكتب إجابة شاملة في 3-4 جمل تجمع أهم النقاط:
+"""
+        return prompt
+
+    def _clean_reduce_response(self, response: str) -> str:
+        """Clean and format the reduce phase response."""
+
+        if not response:
+            return ""
+
+        # Remove common artifacts
+        response = response.strip()
+
+        # Remove LLM hallucination patterns
+        hallucination_patterns = [
+            r'هل ترغب في.*$',             # "Would you like to..." (to end of text)
+            r'هل تريد.*$',                 # "Do you want..." (to end of text)
+            r'نعم،?\s*أرغب.*$',            # "Yes, I want..." (to end of text)
+            r'نعم،?\s*يمكن.*$',            # "Yes, can..." (to end of text)
+            r'الإجابة المُحسنة:.*$',       # "Improved answer:" (to end of text)
+            r'^التعليمات:.*$',
+            r'^الإجابة الشاملة:?\s*$',     # Empty header line
+        ]
+
+        for pattern in hallucination_patterns:
+            response = re.sub(pattern, '', response, flags=re.MULTILINE | re.UNICODE)
+
+        lines = response.split('\n')
+        clean_lines = []
+
+        for line in lines:
+            line = line.strip()
+            if not line:
+                continue
+
+            # Skip very short lines that are likely artifacts
+            if len(line) < 5:
+                continue
+
+            # Skip numbered list prefixes but keep content
+            line = re.sub(r'^\d+\.\s*', '', line)
+            line = re.sub(r'^-\s*', '', line)
+
+            if line:
+                clean_lines.append(line)
+
+        result = ' '.join(clean_lines)
+
+        # If result is too short, something went wrong
+        if len(result) < 20:
+            logger.warning(f"Reduce response too short ({len(result)} chars), raw: {response[:200]}")
+            return ""
+
+        return result
+
+    def _extract_themes(
+        self,
+        answer: str,
+        partial_answers: List[PartialAnswer]
+    ) -> List[str]:
+        """Extract themes from the answer and partial answers."""
+
+        themes = set()
+
+        # Theme keywords
+        theme_keywords = [
+            'التكنولوجيا', 'الذكاء الاصطناعي', 'التعليم', 'الصحة',
+            'الاقتصاد', 'الحكومة', 'الرقمي', 'التحول', 'الابتكار',
+            'الخدمات', 'البيانات', 'الأمن', 'التجارة', 'الطاقة',
+            'technology', 'digital', 'innovation', 'government',
+            'education', 'health', 'economy', 'security'
+        ]
+
+        # Search in answer
+        answer_lower = answer.lower()
+        for keyword in theme_keywords:
+            if keyword in answer_lower:
+                themes.add(keyword)
+
+        # Search in partial answers
+        for pa in partial_answers:
+            if pa.key_points:
+                for point in pa.key_points:
+                    for keyword in theme_keywords:
+                        if keyword in point.lower():
+                            themes.add(keyword)
+
+        return list(themes)[:5]
+
+    def _fallback_reduce(self, partial_answers: List[PartialAnswer]) -> str:
+        """Fallback reduce: structured concatenation of top answers."""
+
+        if not partial_answers:
+            return "لم يتم العثور على معلومات كافية للإجابة."
+
+        # Take top 3 answers with valid content
+        top_answers = [pa for pa in partial_answers[:4] if pa.answer and len(pa.answer) > 20]
+
+        if not top_answers:
+            return "لم يتم العثور على معلومات كافية للإجابة."
+
+        # Build structured response
+        parts = []
+        for pa in top_answers:
+            answer = pa.answer[:200].strip()
+            if answer:
+                parts.append(answer)
+
+        combined = " كما أن ".join(parts) if len(parts) > 1 else parts[0]
+
+        return combined[:600] if combined else "لم يتم العثور على معلومات كافية."
+
+    def search_multi_level(
+        self,
+        query: str,
+        levels: List[int] = [0, 1]
+    ) -> GlobalSearchResult:
+        """
+        Search across multiple community levels and combine results.
+
+        Args:
+            query: User query
+            levels: List of levels to search (e.g., [0, 1] for fine and coarse)
+
+        Returns:
+            Combined GlobalSearchResult
+        """
+        all_partial_answers = []
+        total_communities = 0
+        searched_communities = 0
+
+        for level in levels:
+            self.community_level = level
+            communities = self._get_communities_at_level(level)
+
+            if communities:
+                total_communities += len(communities)
+                communities = communities[:self.max_communities // len(levels)]
+                searched_communities += len(communities)
+
+                partial = self._map_phase(query, communities)
+                all_partial_answers.extend(partial)
+
+        if not all_partial_answers:
+            return GlobalSearchResult(
+                query=query,
+                answer="لم يتم العثور على معلومات ذات صلة.",
+                partial_answers=[],
+                communities_searched=searched_communities,
+                total_communities=total_communities,
+                search_level=-1  # Multiple levels
+            )
+
+        # Filter and reduce across all levels
+        relevant = self._filter_phase(all_partial_answers)
+        final_answer, themes, confidence = self._reduce_phase(query, relevant)
+
+        return GlobalSearchResult(
+            query=query,
+            answer=final_answer,
+            partial_answers=relevant,
+            communities_searched=searched_communities,
+            total_communities=total_communities,
+            search_level=-1,  # Indicates multi-level
+            confidence=confidence,
+            themes=themes
+        )
+
+    def __del__(self):
+        """Cleanup executor on deletion."""
+        if hasattr(self, '_executor'):
+            self._executor.shutdown(wait=False)
+
+
+# Singleton instance
+_global_search_engine: Optional[GlobalSearchEngine] = None
+
+
+def get_global_search_engine(
+    neo4j_client=None,
+    **kwargs
+) -> GlobalSearchEngine:
+    """Get or create global search engine singleton."""
+    global _global_search_engine
+
+    if _global_search_engine is None:
+        if neo4j_client is None:
+            # Try to get default client
+            try:
+                from ..graph_builder import Neo4jClient
+                neo4j_client = Neo4jClient()
+            except Exception as e:
+                logger.error(f"Could not initialize Neo4j client: {e}")
+                raise
+
+        _global_search_engine = GlobalSearchEngine(
+            neo4j_client=neo4j_client,
+            **kwargs
+        )
+
+    return _global_search_engine

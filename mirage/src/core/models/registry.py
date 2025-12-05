@@ -19,19 +19,9 @@ from dataclasses import dataclass, field, asdict
 from datetime import datetime
 from loguru import logger
 
-try:
-    from huggingface_hub import snapshot_download, hf_hub_download, HfApi
-    HF_AVAILABLE = True
-except ImportError:
-    HF_AVAILABLE = False
-    logger.warning("huggingface_hub not installed - model downloads will be limited")
-
-try:
-    import torch
-    TORCH_AVAILABLE = True
-except ImportError:
-    TORCH_AVAILABLE = False
-    logger.warning("torch not installed - GPU detection limited")
+# Required imports - no fallback (enforced in Docker)
+from huggingface_hub import snapshot_download, hf_hub_download, HfApi
+import torch
 
 
 @dataclass
@@ -105,9 +95,6 @@ class ModelRegistry:
 
     def _detect_device(self) -> str:
         """Detect best available device for inference"""
-        if not TORCH_AVAILABLE:
-            return "cpu"
-
         if torch.cuda.is_available():
             gpu_name = torch.cuda.get_device_name(0)
             gpu_memory = torch.cuda.get_device_properties(0).total_memory / (1024**3)
@@ -225,9 +212,6 @@ class ModelRegistry:
         Returns:
             Local path to downloaded model
         """
-        if not HF_AVAILABLE:
-            raise RuntimeError("huggingface_hub not installed. Install with: pip install huggingface-hub")
-
         if self.offline_mode:
             local_path = self._get_model_cache_path(model_id)
             if local_path.exists():

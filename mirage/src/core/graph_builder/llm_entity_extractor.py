@@ -11,27 +11,11 @@ import time
 from typing import List, Dict, Any, Optional, Tuple
 from loguru import logger
 
-try:
-    import redis
-    REDIS_AVAILABLE = True
-except ImportError:
-    REDIS_AVAILABLE = False
-    logger.warning("redis-py not available - chunk progress tracking disabled")
-
-try:
-    import litellm
-    from litellm import completion
-    LITELLM_AVAILABLE = True
-except ImportError:
-    LITELLM_AVAILABLE = False
-    logger.warning("LiteLLM not available")
-
-try:
-    import tiktoken
-    TIKTOKEN_AVAILABLE = True
-except ImportError:
-    TIKTOKEN_AVAILABLE = False
-    logger.warning("tiktoken not available, using rough estimation for token counting")
+# Required imports - no fallback (enforced in Docker)
+import redis
+import litellm
+from litellm import completion
+import tiktoken
 
 from ...config import settings
 from .entity_normalizer import EntityNormalizer
@@ -61,28 +45,16 @@ class LLMEntityExtractor:
         # Auto-detect available provider
         self._detect_provider()
 
-        # Initialize token counter
-        if TIKTOKEN_AVAILABLE:
-            try:
-                self.encoding = tiktoken.get_encoding("cl100k_base")
-            except Exception as e:
-                logger.warning(f"Failed to load tiktoken encoding: {e}")
+        # Initialize token counter (required)
+        self.encoding = tiktoken.get_encoding("cl100k_base")
 
-        # Initialize Redis for progress tracking
-        if REDIS_AVAILABLE:
-            try:
-                self.redis_client = redis.Redis.from_url(settings.redis_url, decode_responses=True)
-                self.redis_client.ping()
-                logger.debug("Redis client initialized for chunk progress tracking")
-            except Exception as e:
-                logger.warning(f"Failed to initialize Redis for progress tracking: {e}")
-                self.redis_client = None
+        # Initialize Redis for progress tracking (required)
+        self.redis_client = redis.Redis.from_url(settings.redis_url, decode_responses=True)
+        self.redis_client.ping()
+        logger.debug("Redis client initialized for chunk progress tracking")
 
     def _detect_provider(self) -> None:
         """Auto-detect which LLM provider to use based on available API keys"""
-        if not LITELLM_AVAILABLE:
-            logger.error("LiteLLM not installed. Install with: pip install litellm")
-            return
 
         # Check for TGI (local GPU) first - highest priority if enabled
         if settings.use_tgi and settings.tgi_endpoint:

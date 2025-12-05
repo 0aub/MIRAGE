@@ -10,45 +10,31 @@ import re
 from typing import List, Dict, Any, Optional
 from loguru import logger
 
-# Language detection
-try:
-    import spacy
-    SPACY_AVAILABLE = True
-except ImportError:
-    SPACY_AVAILABLE = False
-    logger.warning("spaCy not available")
-
-try:
-    from camel_tools.ner import NERecognizer
-    CAMEL_AVAILABLE = True
-except ImportError:
-    CAMEL_AVAILABLE = False
-    logger.warning("CAMeLTools not available")
-
-try:
-    from .llm_entity_extractor import LLMEntityExtractor
-    LLM_AVAILABLE = True
-except ImportError:
-    LLM_AVAILABLE = False
-    logger.warning("LLM entity extractor not available")
-
-try:
-    from .entity_resolver import EntityResolver
-    RESOLVER_AVAILABLE = True
-except ImportError:
-    RESOLVER_AVAILABLE = False
-    logger.warning("Entity resolver not available")
+# Required imports - no fallback (enforced in Docker)
+import spacy
+from camel_tools.ner import NERecognizer
+from .llm_entity_extractor import LLMEntityExtractor
+from .entity_resolver import EntityResolver
+from .ensemble_extractor import EnsembleEntityExtractor, get_ensemble_extractor
 
 
 class EntityExtractor:
     """Extract named entities from text in multiple languages"""
 
-    def __init__(self, use_llm: bool = True, resolve_duplicates: bool = True, similarity_threshold: float = 0.85, embedder=None):
+    def __init__(
+        self,
+        use_llm: bool = True,
+        use_ensemble: bool = True,
+        resolve_duplicates: bool = True,
+        similarity_threshold: float = 0.85,
+        embedder=None
+    ):
         """
         Initialize entity extractor
 
         Args:
             use_llm: If True, try to use LLM-based extraction first (recommended)
+            use_ensemble: If True, use ensemble extraction (CAMeL + patterns + LLM)
             resolve_duplicates: If True, resolve duplicate entities using embedding similarity
             similarity_threshold: Cosine similarity threshold for merging entities (0.85 recommended)
             embedder: Optional embedder for generating entity embeddings (for semantic relationships)
@@ -57,33 +43,34 @@ class EntityExtractor:
         self.camel_ner = None
         self.llm_extractor = None
         self.entity_resolver = None
+        self.ensemble_extractor = None
         self.embedder = embedder  # Store embedder for entity embedding generation
 
         # Initialize models lazily
         self._spacy_loaded = False
         self._camel_loaded = False
         self._llm_loaded = False
+        self._ensemble_loaded = False
 
-        # Try to initialize LLM extractor if requested
+        # Phase 2: Try ensemble extraction first (combines CAMeL + patterns + LLM)
+        self.use_ensemble = use_ensemble
+        if use_ensemble:
+            self.ensemble_extractor = get_ensemble_extractor()
+            self._ensemble_loaded = True
+            logger.info("Ensemble entity extractor initialized (CAMeL + patterns + LLM)")
+
+        # Initialize LLM extractor if requested and ensemble not loaded
         self.use_llm = use_llm
-        if use_llm and LLM_AVAILABLE:
-            try:
-                self.llm_extractor = LLMEntityExtractor()
-                self._llm_loaded = True
-                logger.info("LLM entity extractor initialized successfully")
-            except Exception as e:
-                logger.warning(f"Failed to initialize LLM extractor: {e}")
-                self._llm_loaded = False
+        if use_llm and not self._ensemble_loaded:
+            self.llm_extractor = LLMEntityExtractor()
+            self._llm_loaded = True
+            logger.info("LLM entity extractor initialized successfully")
 
-        # Initialize entity resolver for deduplication
+        # Initialize entity resolver for deduplication (required)
         self.resolve_duplicates = resolve_duplicates
-        if resolve_duplicates and RESOLVER_AVAILABLE:
-            try:
-                self.entity_resolver = EntityResolver(similarity_threshold=similarity_threshold)
-                logger.info(f"Entity resolver initialized (threshold: {similarity_threshold})")
-            except Exception as e:
-                logger.warning(f"Failed to initialize entity resolver: {e}")
-                self.entity_resolver = None
+        if resolve_duplicates:
+            self.entity_resolver = EntityResolver(similarity_threshold=similarity_threshold)
+            logger.info(f"Entity resolver initialized (threshold: {similarity_threshold})")
 
         # Entity type mapping
         self.entity_type_map = {
@@ -113,37 +100,27 @@ class EntityExtractor:
 
     def _load_spacy_model(self):
         """Load spaCy model for English"""
-        if not SPACY_AVAILABLE or self._spacy_loaded:
+        if self._spacy_loaded:
             return
 
         try:
-            # Try to load the model
-            try:
-                self.spacy_model = spacy.load("en_core_web_sm")
-                logger.info("Loaded spaCy model: en_core_web_sm")
-            except OSError:
-                # Model not installed, use blank model
-                logger.warning("spaCy model not found. Using blank model. Install with: python -m spacy download en_core_web_sm")
-                self.spacy_model = spacy.blank("en")
+            self.spacy_model = spacy.load("en_core_web_sm")
+            logger.info("Loaded spaCy model: en_core_web_sm")
+        except OSError:
+            # Model not installed, use blank model
+            logger.warning("spaCy model not found. Using blank model. Install with: python -m spacy download en_core_web_sm")
+            self.spacy_model = spacy.blank("en")
 
-            self._spacy_loaded = True
-
-        except Exception as e:
-            logger.error(f"Error loading spaCy model: {e}")
-            self.spacy_model = None
+        self._spacy_loaded = True
 
     def _load_camel_model(self):
         """Load CAMeLTools NER for Arabic"""
-        if not CAMEL_AVAILABLE or self._camel_loaded:
+        if self._camel_loaded:
             return
 
-        try:
-            self.camel_ner = NERecognizer.pretrained()
-            self._camel_loaded = True
-            logger.info("Loaded CAMeL NER model")
-        except Exception as e:
-            logger.error(f"Error loading CAMeL NER: {e}")
-            self.camel_ner = None
+        self.camel_ner = NERecognizer.pretrained()
+        self._camel_loaded = True
+        logger.info("Loaded CAMeL NER model")
 
     def detect_language(self, text: str) -> str:
         """
@@ -330,7 +307,7 @@ class EntityExtractor:
     ) -> Dict[str, Any]:
         """
         Extract entities from document chunks
-        REQUIRES LLM extraction - no fallback to ensure quality
+        Uses ensemble extraction (Phase 2) or LLM extraction as fallback
 
         Args:
             chunks: List of text chunks
@@ -339,14 +316,54 @@ class EntityExtractor:
 
         Returns:
             Dict with entities, relationships, and status information
-            Returns status='unavailable' if LLM is not ready instead of raising errors
+            Returns status='unavailable' if extraction is not ready
         """
-        # Check if LLM extraction is available
+        # Phase 2: Try ensemble extraction first (CAMeL + patterns + LLM)
+        if self._ensemble_loaded and self.ensemble_extractor:
+            logger.info("Using ensemble entity extraction (CAMeL + patterns + LLM)")
+            try:
+                result = self.ensemble_extractor.extract_from_chunks(chunks, language, document_id)
+
+                entities = result.get("entities", [])
+                relationships = result.get("relationships", [])
+
+                # Apply entity resolution if enabled
+                if self.resolve_duplicates and self.entity_resolver and entities:
+                    logger.info(f"Resolving {len(entities)} entities using embedding similarity")
+
+                    from ..embeddings import JinaEmbedder
+                    embedder = JinaEmbedder()
+
+                    entity_texts = [e.get("text", e.get("name", "")) for e in entities]
+                    embeddings = embedder.embed(entity_texts)
+
+                    entities_before = len(entities)
+                    entities = self.entity_resolver.resolve_entities(entities, embeddings)
+                    entities_after = len(entities)
+
+                    reduction_pct = (1 - entities_after / entities_before) * 100 if entities_before > 0 else 0
+                    logger.info(
+                        f"Entity resolution: {entities_before} → {entities_after} entities "
+                        f"({reduction_pct:.1f}% reduction)"
+                    )
+
+                return {
+                    "status": "success",
+                    "entities": entities,
+                    "relationships": relationships,
+                    "total_entities": len(entities),
+                    "extraction_method": "ensemble",
+                    "extraction_stats": result.get("extraction_stats", {})
+                }
+            except Exception as e:
+                logger.warning(f"Ensemble extraction failed, falling back to LLM: {e}")
+
+        # Fallback: Check if LLM extraction is available
         if not self._llm_loaded or not self.llm_extractor:
-            logger.warning("LLM extraction requested but not available - returning status info")
+            logger.warning("No extraction method available - returning status info")
             return {
                 "status": "unavailable",
-                "message": "LLM entity extraction is currently unavailable. The Llama 3.1 70B model may still be downloading. Please wait a few minutes and try again.",
+                "message": "Entity extraction is currently unavailable. Please ensure TGI is running or API keys are configured.",
                 "entities": [],
                 "relationships": [],
                 "total_entities": 0,

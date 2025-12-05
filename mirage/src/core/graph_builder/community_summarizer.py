@@ -14,6 +14,17 @@ from dataclasses import dataclass
 import logging
 import requests
 
+# Import centralized constants
+from core.config.constants import (
+    MAX_ENTITIES_IN_SUMMARY,
+    MAX_RELATIONSHIPS_IN_SUMMARY,
+    MAX_SUMMARY_TOKENS,
+    SUMMARIZATION_TEMPERATURE,
+    MAX_CONTEXT_TOKENS,
+    MAX_RESPONSE_TOKENS,
+    TGI_ENDPOINT_DEFAULT,
+)
+
 logger = logging.getLogger(__name__)
 
 
@@ -71,28 +82,29 @@ class CommunitySummarizer:
     def __init__(
         self,
         neo4j_client,
-        llm_endpoint: str = "http://tgi:8765",
-        max_tokens_per_summary: int = 500,
-        temperature: float = 0.3
+        llm_endpoint: str = None,
+        max_tokens_per_summary: int = None,
+        temperature: float = None
     ):
         """
         Initialize community summarizer.
 
         Args:
             neo4j_client: Neo4j client instance
-            llm_endpoint: TGI endpoint for Allam
-            max_tokens_per_summary: Maximum tokens to generate per summary
-            temperature: LLM temperature (0.3 = more deterministic)
+            llm_endpoint: TGI endpoint for Allam (default: from constants)
+            max_tokens_per_summary: Maximum tokens to generate per summary (default: from constants)
+            temperature: LLM temperature (default: from constants, 0.3 = more deterministic)
         """
         self.neo4j_client = neo4j_client
-        self.llm_endpoint = llm_endpoint
-        self.max_tokens_per_summary = max_tokens_per_summary
-        self.temperature = temperature
+        self.llm_endpoint = llm_endpoint or TGI_ENDPOINT_DEFAULT
+        self.max_tokens_per_summary = max_tokens_per_summary or MAX_SUMMARY_TOKENS
+        self.temperature = temperature if temperature is not None else SUMMARIZATION_TEMPERATURE
 
-        # Token limits for Allam (2K context)
-        self.max_input_tokens = 2048
-        self.reserved_response_tokens = 600  # Leave room for summary
-        self.max_context_tokens = self.max_input_tokens - self.reserved_response_tokens  # ~1450
+        # Token limits for Allam (2K context) - from centralized constants
+        self.max_context_tokens = MAX_CONTEXT_TOKENS
+        self.reserved_response_tokens = MAX_RESPONSE_TOKENS
+        self.max_entities = MAX_ENTITIES_IN_SUMMARY
+        self.max_relationships = MAX_RELATIONSHIPS_IN_SUMMARY
 
     def generate_all_summaries(
         self,
@@ -236,8 +248,8 @@ class CommunitySummarizer:
             logger.error(f"Failed to generate summary for {community_id}")
             return None
 
-        # Extract key entities
-        key_entities = context.get('key_entities', [])[:10]  # Top 10
+        # Extract key entities (use configured max)
+        key_entities = context.get('key_entities', [])[:self.max_entities]
 
         # Estimate token count (rough: 4 chars per token)
         token_count = len(summary_text) // 4
@@ -309,18 +321,17 @@ class CommunitySummarizer:
 
             # Limit to fit in context (Allam 2K tokens)
             # Estimate: ~100 tokens per entity, ~50 tokens per relationship
-            max_entities = 15  # ~1500 tokens
-            max_relationships = 10  # ~500 tokens
+            # Using centralized constants
 
-            if len(entities) > max_entities:
+            if len(entities) > self.max_entities:
                 logger.warning(
                     f"Community {community_id} has {len(entities)} entities, "
-                    f"limiting to {max_entities}"
+                    f"limiting to {self.max_entities}"
                 )
-                entities = entities[:max_entities]
+                entities = entities[:self.max_entities]
 
-            if len(relationships) > max_relationships:
-                relationships = relationships[:max_relationships]
+            if len(relationships) > self.max_relationships:
+                relationships = relationships[:self.max_relationships]
 
             return {
                 'community_id': community_id,
@@ -388,7 +399,7 @@ class CommunitySummarizer:
                 'community_id': community_id,
                 'entity_count': len(entities),
                 'child_summaries': child_summaries,
-                'key_entities': entities[:15]  # Top 15 entities
+                'key_entities': entities[:self.max_entities]
             }
 
         except Exception as e:
@@ -477,39 +488,43 @@ class CommunitySummarizer:
         entities = context.get('entities', [])
         relationships = context.get('relationships', [])
 
-        # Format entities
-        entity_lines = []
+        # Format entities - group by type for better context
+        entities_by_type = {}
         for e in entities:
-            entity_lines.append(f"- {e['name']} ({e['type']})")
+            etype = e.get('type', 'Unknown')
+            if etype not in entities_by_type:
+                entities_by_type[etype] = []
+            entities_by_type[etype].append(e['name'])
+
+        entity_lines = []
+        for etype, names in entities_by_type.items():
+            entity_lines.append(f"• {etype}: {', '.join(names)}")
 
         entities_text = "\n".join(entity_lines)
 
         # Format relationships
         rel_lines = []
         for r in relationships:
-            rel_lines.append(
-                f"- {r['source']} → {r['type']} → {r['target']}"
-            )
+            if r.get('source') and r.get('target'):
+                rel_lines.append(f"• {r['source']} ← {r['type']} → {r['target']}")
 
-        relationships_text = "\n".join(rel_lines) if rel_lines else "لا توجد علاقات واضحة"
+        relationships_text = "\n".join(rel_lines[:8]) if rel_lines else "(مترابطة ضمنياً)"
 
-        # Bilingual prompt (Arabic + English for better understanding)
-        prompt = f"""لخّص هذه المجموعة من الكيانات المترابطة.
+        # Direct task prompt - no meta-instructions
+        prompt = f"""أنت محلل بيانات. اكتب ملخصاً مباشراً لهذه المجموعة:
 
-الكيانات ({len(entities)}):
+الكيانات:
 {entities_text}
 
-العلاقات الرئيسية:
+العلاقات:
 {relationships_text}
 
-التعليمات:
-1. حدد الموضوع الرئيسي أو الموضوعات (2-3 موضوعات)
-2. اذكر الكيانات الأساسية
-3. اشرح العلاقات المهمة
-4. اكتب ملخص موجز (2-3 فقرات)
+اكتب فقرة واحدة (3-4 جمل) تصف:
+- ما هو الموضوع الرئيسي لهذه المجموعة؟
+- ما هي الكيانات الأهم ولماذا؟
+- كيف ترتبط هذه الكيانات ببعضها؟
 
-الملخص:
-"""
+ابدأ الملخص مباشرة (بدون مقدمات):"""
 
         return prompt
 
@@ -518,29 +533,28 @@ class CommunitySummarizer:
 
         child_summaries = context.get('child_summaries', [])
 
-        # Format child summaries
+        # Format child summaries - cleaner format
         summary_lines = []
         for i, summary in enumerate(child_summaries, 1):
-            # Truncate if too long
-            summary_preview = summary[:300] + "..." if len(summary) > 300 else summary
-            summary_lines.append(f"{i}. {summary_preview}")
+            # Truncate if too long and clean up
+            summary_clean = summary.strip()[:400]
+            if len(summary) > 400:
+                summary_clean += "..."
+            summary_lines.append(f"[{i}] {summary_clean}")
 
         summaries_text = "\n\n".join(summary_lines)
 
-        # Bilingual prompt
-        prompt = f"""لخّص هذه المجموعة من الملخصات المترابطة (المستوى {level}).
+        # Direct task prompt
+        prompt = f"""أنت محلل بيانات. اقرأ هذه الملخصات واكتب ملخصاً شاملاً يجمعها:
 
-الملخصات الفرعية ({len(child_summaries)}):
 {summaries_text}
 
-التعليمات:
-1. حدد الموضوعات الرئيسية المشتركة
-2. ادمج المعلومات من جميع الملخصات
-3. اكتب ملخص شامل (2-4 فقرات)
-4. ركّز على الأنماط والاتجاهات العامة
+اكتب فقرتين (4-6 جمل) تجمع المعلومات أعلاه:
+- ما الموضوع الرئيسي المشترك؟
+- ما الأنماط أو الاتجاهات البارزة؟
+- ما أهم النقاط التي يجب معرفتها؟
 
-الملخص الشامل:
-"""
+ابدأ الملخص مباشرة:"""
 
         return prompt
 
@@ -551,32 +565,72 @@ class CommunitySummarizer:
         Returns:
             (summary_text, themes)
         """
-        # For now, return the full response as summary
-        # Extract themes using simple heuristics
+        # Clean up the response - remove meta-content
+        summary = response.strip()
 
+        # Remove common meta-content patterns (LLM explaining what to do)
+        meta_patterns = [
+            "يجب أن",  # "should be"
+            "يجب ألا",  # "should not"
+            "لا يحتوي على",  # "does not contain"
+            "يركز على",  # "focuses on" (when giving instructions)
+            "يُستخدم ل",  # "is used for"
+            "الإجابة النهائية",  # "final answer"
+            "**الملخص:**",  # markdown headers
+            "###",  # markdown headers
+            "---",  # dividers
+        ]
+
+        # Split into lines and filter out meta-content lines
+        lines = summary.split('\n')
+        clean_lines = []
+        for line in lines:
+            line = line.strip()
+            if not line:
+                continue
+            # Skip lines that start with meta-patterns
+            is_meta = False
+            for pattern in meta_patterns:
+                if line.startswith(pattern) or line.startswith(f"- {pattern}"):
+                    is_meta = True
+                    break
+            if not is_meta and len(line) > 10:  # Skip very short lines
+                clean_lines.append(line)
+
+        summary = ' '.join(clean_lines)
+
+        # Remove bullet points at start
+        if summary.startswith('- '):
+            summary = summary[2:]
+        if summary.startswith('• '):
+            summary = summary[2:]
+
+        # Extract themes using simple heuristics
         themes = []
 
         # Look for common theme indicators in Arabic
         theme_keywords_ar = [
             'التكنولوجيا', 'الذكاء الاصطناعي', 'التعليم', 'الصحة',
             'الاقتصاد', 'السياسة', 'البيئة', 'الطاقة', 'النقل',
-            'الثقافة', 'العلوم', 'الأمن', 'التجارة'
+            'الثقافة', 'العلوم', 'الأمن', 'التجارة', 'الحكومة',
+            'الرقمي', 'التحول', 'الابتكار', 'الشراكة'
         ]
 
         # Look for common theme indicators in English
         theme_keywords_en = [
             'technology', 'ai', 'education', 'health', 'economy',
             'politics', 'environment', 'energy', 'transportation',
-            'culture', 'science', 'security', 'trade', 'business'
+            'culture', 'science', 'security', 'trade', 'business',
+            'government', 'digital', 'innovation', 'partnership'
         ]
 
-        response_lower = response.lower()
+        response_lower = summary.lower()
 
         for keyword in theme_keywords_ar + theme_keywords_en:
             if keyword in response_lower and keyword not in themes:
                 themes.append(keyword)
 
-        return response, themes[:5]  # Max 5 themes
+        return summary, themes[:5]  # Max 5 themes
 
     def store_summaries_in_neo4j(
         self,

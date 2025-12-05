@@ -1,6 +1,12 @@
 """
 Hybrid Search Module for GraphRAG
 
+DEPRECATED: This module is maintained for backward compatibility.
+For new code, use the unified RetrievalEngine which provides:
+- MIX mode for hybrid retrieval (global + local + semantic)
+- Better integration with validation and reranking
+- Consistent API across all search types
+
 Combines Global Search (community summaries) and Local Search (entity traversal)
 with intelligent routing to select the best search mode for each query.
 
@@ -16,11 +22,23 @@ Usage:
 """
 
 import re
+import warnings
 from typing import Optional, Tuple
 from dataclasses import dataclass
 import logging
 
+# Import centralized constants
+from core.config.constants import TGI_ENDPOINT_DEFAULT
+
 logger = logging.getLogger(__name__)
+
+# Emit deprecation warning on import
+warnings.warn(
+    "core.graph_builder.hybrid_search is deprecated. "
+    "Use core.retrieval.RetrievalEngine with MIX mode.",
+    DeprecationWarning,
+    stacklevel=2
+)
 
 
 @dataclass
@@ -133,7 +151,7 @@ class HybridSearchEngine:
         self,
         neo4j_client,
         graph_traversal,
-        llm_endpoint: str = "http://tgi:8765",
+        llm_endpoint: str = None,
         auto_route: bool = True
     ):
         """
@@ -142,12 +160,12 @@ class HybridSearchEngine:
         Args:
             neo4j_client: Neo4j client instance
             graph_traversal: GraphTraversal instance
-            llm_endpoint: TGI endpoint for Allam
+            llm_endpoint: TGI endpoint for Allam (default: from constants)
             auto_route: If True, automatically route queries
         """
         self.neo4j_client = neo4j_client
         self.graph_traversal = graph_traversal
-        self.llm_endpoint = llm_endpoint
+        self.llm_endpoint = llm_endpoint or TGI_ENDPOINT_DEFAULT
         self.auto_route = auto_route
 
         # Initialize sub-engines (lazy loading to avoid circular imports)

@@ -19,6 +19,10 @@ from .base_retriever import (
 from .query_router import QueryRouter, RoutingDecision, get_query_router
 from .fusion import ResultFusion, FusionConfig
 
+# Required imports - no fallback (enforced in Docker)
+from ..evaluation import get_metrics_tracker, MetricsTracker
+from ..graph_builder import EntityDisambiguator, get_entity_disambiguator
+
 
 @dataclass
 class RetrievalEngineConfig:
@@ -50,25 +54,30 @@ class RetrievalEngineConfig:
     fallback_on_error: bool = True
     fallback_mode: RetrievalMode = RetrievalMode.NAIVE
 
+    # Metrics tracking (Phase 3)
+    track_metrics: bool = True
+
 
 class RetrievalEngine:
     """
-    Unified retrieval engine supporting 7 modes.
+    Unified retrieval engine supporting 8 modes.
 
     Modes:
     1. NAIVE - Simple vector search
     2. LOCAL - Entity-focused retrieval
     3. GLOBAL - Relationship-focused retrieval
-    4. HYBRID - Combines local + global
-    5. MIX - All modes with RRF fusion
-    6. SEMANTIC - Deep semantic matching
-    7. BYPASS - No retrieval (returns empty)
+    4. GLOBAL_SEARCH - Map-reduce over community summaries (TRUE GraphRAG)
+    5. HYBRID - Combines local + global
+    6. MIX - All modes with RRF fusion
+    7. SEMANTIC - Deep semantic matching
+    8. BYPASS - No retrieval (returns empty)
 
     Features:
     - Automatic query routing
     - Multiple fusion strategies
     - Fallback on errors
     - Detailed retrieval explanations
+    - Global search for holistic queries (GraphRAG map-reduce)
     """
 
     def __init__(
@@ -101,43 +110,52 @@ class RetrievalEngine:
         # Retriever cache
         self._retrievers: Dict[RetrievalMode, BaseRetriever] = {}
 
+        # Metrics tracker (Phase 3) - required component
+        self._metrics_tracker = None
+        if self.config.track_metrics:
+            self._metrics_tracker = get_metrics_tracker()
+            logger.info("Metrics tracking enabled")
+
+        # Entity disambiguator (MIRAGE V4) - lazy initialized
+        self._entity_disambiguator = None
+
         logger.info(
             f"RetrievalEngine initialized: default_mode={self.config.default_mode.value}, "
-            f"auto_route={self.config.auto_route}"
+            f"auto_route={self.config.auto_route}, track_metrics={self._metrics_tracker is not None}"
         )
 
     @property
     def embedder(self):
         """Lazy load embedder"""
         if self._embedder is None:
-            try:
-                from ..models.embedding_manager import get_embedding_manager
-                self._embedder = get_embedding_manager()
-            except ImportError:
-                logger.warning("Could not load embedding manager")
+            from ..models.embedding_manager import get_embedding_manager
+            self._embedder = get_embedding_manager()
         return self._embedder
 
     @property
     def index_manager(self):
         """Lazy load index manager"""
         if self._index_manager is None:
-            try:
-                from ..indexing import get_index_manager
-                self._index_manager = get_index_manager()
-            except ImportError:
-                logger.warning("Could not load index manager")
+            from ..indexing import get_index_manager
+            self._index_manager = get_index_manager()
         return self._index_manager
 
     @property
     def graph_client(self):
         """Lazy load graph client"""
         if self._graph_client is None:
-            try:
-                from ..graph_builder import Neo4jClient
-                self._graph_client = Neo4jClient()
-            except ImportError:
-                logger.warning("Could not load graph client")
+            from ..graph_builder import Neo4jClient
+            self._graph_client = Neo4jClient()
         return self._graph_client
+
+    @property
+    def entity_disambiguator(self):
+        """Lazy load entity disambiguator (MIRAGE V4)"""
+        if self._entity_disambiguator is None:
+            if self.graph_client:
+                self._entity_disambiguator = get_entity_disambiguator(self.graph_client)
+                logger.info("Entity disambiguator initialized")
+        return self._entity_disambiguator
 
     def retrieve(
         self,
@@ -224,6 +242,8 @@ class RetrievalEngine:
             return self._local_retrieve(query, query_embedding, top_k, **kwargs)
         elif mode == RetrievalMode.GLOBAL:
             return self._global_retrieve(query, query_embedding, top_k, **kwargs)
+        elif mode == RetrievalMode.GLOBAL_SEARCH:
+            return self._global_search_retrieve(query, top_k, **kwargs)
         elif mode == RetrievalMode.HYBRID:
             return self._hybrid_retrieve(query, query_embedding, top_k, **kwargs)
         elif mode == RetrievalMode.SEMANTIC:
@@ -292,11 +312,12 @@ class RetrievalEngine:
         """
         Entity-focused retrieval: query → chunks → entities → enriched context
 
-        Improved L2 strategy:
+        MIRAGE V4 Enhanced L2 strategy:
         1. Get relevant chunks via vector search
         2. Extract entities from those chunks
-        3. Filter entities by type based on query patterns
-        4. Include entity names in retrieval metadata for better answers
+        3. Use entity disambiguation (cross-encoder) for better matching
+        4. Filter entities by type based on query patterns
+        5. Include entity names in retrieval metadata for better answers
         """
         if query_embedding is None or self.index_manager is None:
             return self._naive_retrieve(query, query_embedding, top_k, **kwargs)
@@ -310,6 +331,8 @@ class RetrievalEngine:
         # 3. Extract entities from retrieved chunks
         extracted_entities = []
         entity_chunks = []
+        disambiguated_entities = []  # MIRAGE V4: Track disambiguated entities
+
         if self.graph_client and naive_response.results:
             try:
                 # Get chunk IDs from naive results
@@ -338,24 +361,59 @@ class RetrievalEngine:
                                 "entity_type": entity.get("type", "")
                             })
 
-                # Also try direct term matching for backup
-                query_terms = [t for t in query.split() if len(t) > 2]
-                for term in query_terms[:3]:
-                    entities = self.graph_client.search_entities_by_name(term, limit=3)
-                    for entity in entities:
-                        if entity not in extracted_entities:
-                            extracted_entities.append(entity)
-                        chunks = self.graph_client.get_entity_chunks(
-                            entity.get("name", ""), limit=2
-                        )
-                        for chunk in chunks:
-                            entity_chunks.append({
-                                "chunk_id": chunk.get("chunk_id", ""),
-                                "document_id": chunk.get("document_id", ""),
-                                "text": chunk.get("text", ""),
-                                "entity": entity.get("name", ""),
-                                "entity_type": entity.get("type", "")
-                            })
+                # MIRAGE V4: Use entity disambiguator for semantic matching
+                if self.entity_disambiguator:
+                    query_terms = [t for t in query.split() if len(t) > 2]
+                    for term in query_terms[:5]:
+                        try:
+                            result = self.entity_disambiguator.disambiguate(
+                                query_entity=term,
+                                entity_type=entity_types[0] if entity_types else None,
+                                context=query
+                            )
+                            if result.matched_entity:
+                                disambiguated_entities.append({
+                                    "query_term": term,
+                                    "matched": result.matched_entity,
+                                    "score": result.similarity_score,
+                                    "match_type": result.match_type
+                                })
+                                # Get chunks for disambiguated entity
+                                chunks = self.graph_client.get_entity_chunks(
+                                    result.matched_entity, limit=3
+                                )
+                                for chunk in chunks:
+                                    # Higher score for semantically disambiguated matches
+                                    entity_chunks.append({
+                                        "chunk_id": chunk.get("chunk_id", ""),
+                                        "document_id": chunk.get("document_id", ""),
+                                        "text": chunk.get("text", ""),
+                                        "entity": result.matched_entity,
+                                        "entity_type": chunk.get("entity_type", ""),
+                                        "disambiguated": True,
+                                        "match_score": result.similarity_score
+                                    })
+                        except Exception as e:
+                            logger.debug(f"Disambiguation failed for term '{term}': {e}")
+                else:
+                    # Fallback: direct term matching
+                    query_terms = [t for t in query.split() if len(t) > 2]
+                    for term in query_terms[:3]:
+                        entities = self.graph_client.search_entities_by_name(term, limit=3)
+                        for entity in entities:
+                            if entity not in extracted_entities:
+                                extracted_entities.append(entity)
+                            chunks = self.graph_client.get_entity_chunks(
+                                entity.get("name", ""), limit=2
+                            )
+                            for chunk in chunks:
+                                entity_chunks.append({
+                                    "chunk_id": chunk.get("chunk_id", ""),
+                                    "document_id": chunk.get("document_id", ""),
+                                    "text": chunk.get("text", ""),
+                                    "entity": entity.get("name", ""),
+                                    "entity_type": entity.get("type", "")
+                                })
 
             except Exception as e:
                 logger.warning(f"Neo4j entity search failed: {e}")
@@ -364,15 +422,27 @@ class RetrievalEngine:
         results = []
         seen_chunks = set()
 
+        # Sort entity_chunks: disambiguated first (higher score), then by match_score
+        entity_chunks_sorted = sorted(
+            entity_chunks,
+            key=lambda x: (x.get("disambiguated", False), x.get("match_score", 0.5)),
+            reverse=True
+        )
+
         # First add entity-connected chunks
-        for ec in entity_chunks[:top_k // 2]:
+        for ec in entity_chunks_sorted[:top_k // 2]:
             if ec["chunk_id"] and ec["chunk_id"] not in seen_chunks:
                 seen_chunks.add(ec["chunk_id"])
+                # MIRAGE V4: Higher score for disambiguated matches
+                base_score = 0.90 if ec.get("disambiguated") else 0.85
+                match_score = ec.get("match_score", 0.5)
+                final_score = min(0.95, base_score * match_score + (0.1 if ec.get("disambiguated") else 0))
+
                 results.append(RetrievalResult(
                     chunk_id=ec["chunk_id"],
                     document_id=ec["document_id"],
                     text=ec["text"],
-                    score=0.85,  # High score for entity match
+                    score=final_score,
                     retrieval_mode="local",
                     via_entity=ec["entity"],
                     hop_distance=1
@@ -397,6 +467,9 @@ class RetrievalEngine:
                 "entities_found": len(extracted_entities),
                 "entity_names": entity_names[:20],  # Top 20 entity names
                 "entity_types_filtered": entity_types or [],
+                # MIRAGE V4: Include disambiguation results
+                "disambiguated_entities": disambiguated_entities[:10] if disambiguated_entities else [],
+                "disambiguation_enabled": self.entity_disambiguator is not None,
             }
         )
 
@@ -541,6 +614,125 @@ class RetrievalEngine:
             total_candidates=len(relationship_chunks) + len(naive_response.results),
             metadata={"relationships_found": len(relationship_chunks)}
         )
+
+    def _global_search_retrieve(
+        self,
+        query: str,
+        top_k: int,
+        **kwargs
+    ) -> RetrievalResponse:
+        """
+        TRUE GraphRAG Global Search: Map-reduce over community summaries.
+
+        This enables answering holistic queries like:
+        - "What are the main themes across all documents?"
+        - "Summarize the key topics in this knowledge base"
+        - "What patterns emerge from the data?"
+
+        Strategy:
+        1. MAP: Query each community summary in parallel
+        2. FILTER: Keep relevant partial answers
+        3. REDUCE: Synthesize coherent final answer
+        4. Get supporting chunks from relevant communities
+        """
+        try:
+            from .global_search import GlobalSearchEngine
+
+            # Initialize global search engine
+            global_engine = GlobalSearchEngine(
+                neo4j_client=self.graph_client,
+                llm_endpoint="http://tgi:80",
+                max_communities=kwargs.get('max_communities', 30),
+                min_relevance=kwargs.get('min_relevance', 0.3),
+                community_level=kwargs.get('community_level', 0)
+            )
+
+            # Execute global search
+            result = global_engine.search(query)
+
+            logger.info(
+                f"Global search: {result.communities_searched} communities queried, "
+                f"{len(result.partial_answers)} relevant answers"
+            )
+
+            # Get supporting chunks from relevant communities
+            supporting_chunks = []
+            if result.partial_answers and self.graph_client:
+                community_ids = [pa.community_id for pa in result.partial_answers[:5]]
+                supporting_chunks = self._get_chunks_from_communities(community_ids, top_k)
+
+            # Build results
+            results = [
+                RetrievalResult(
+                    chunk_id=chunk.get("chunk_id", ""),
+                    document_id=chunk.get("document_id", ""),
+                    text=chunk.get("text", ""),
+                    score=0.85,
+                    retrieval_mode="global_search",
+                    metadata={
+                        "community_id": chunk.get("community_id", ""),
+                        "from_global_search": True
+                    }
+                )
+                for chunk in supporting_chunks
+            ]
+
+            return RetrievalResponse(
+                results=results[:top_k],
+                query=query,
+                mode=RetrievalMode.GLOBAL_SEARCH,
+                total_candidates=result.communities_searched,
+                metadata={
+                    "global_answer": result.answer,
+                    "communities_searched": result.communities_searched,
+                    "total_communities": result.total_communities,
+                    "partial_answers_count": len(result.partial_answers),
+                    "themes": result.themes,
+                    "confidence": result.confidence,
+                    "is_global_search": True
+                }
+            )
+
+        except Exception as e:
+            logger.error(f"Global search failed: {e}")
+            # Fallback to relationship-based global retrieval
+            query_embedding = self.embedder.embed(query) if self.embedder else None
+            return self._global_retrieve(query, query_embedding, top_k, **kwargs)
+
+    def _get_chunks_from_communities(
+        self,
+        community_ids: List[str],
+        limit: int = 10
+    ) -> List[Dict]:
+        """Get representative chunks from specified communities."""
+        if not self.graph_client or not community_ids:
+            return []
+
+        try:
+            # Note: Relationship is (Chunk)-[:MENTIONS]->(Entity)
+            query = """
+            MATCH (c:Community)
+            WHERE c.id IN $community_ids
+            MATCH (e:Entity)-[:BELONGS_TO]->(c)
+            MATCH (chunk:Chunk)-[:MENTIONS]->(e)
+            RETURN DISTINCT
+                chunk.id as chunk_id,
+                chunk.text as text,
+                chunk.document_id as document_id,
+                c.id as community_id
+            LIMIT $limit
+            """
+
+            results = self.graph_client.execute_query(query, {
+                'community_ids': community_ids,
+                'limit': limit
+            })
+
+            return results
+
+        except Exception as e:
+            logger.warning(f"Error getting chunks from communities: {e}")
+            return []
 
     def _hybrid_retrieve(
         self,
@@ -702,6 +894,17 @@ class RetrievalEngine:
         fused.results = fused.results[:top_k]
 
         return fused
+
+    def get_metrics_stats(self) -> Dict[str, Any]:
+        """
+        Get aggregated metrics statistics.
+
+        Returns:
+            Dict with retrieval metrics (MRR, NDCG, MAP) and query count
+        """
+        if self._metrics_tracker:
+            return self._metrics_tracker.get_stats()
+        return {"tracking_enabled": False}
 
     def explain_retrieval(
         self,
