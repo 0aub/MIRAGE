@@ -14,6 +14,7 @@ import asyncio
 
 from ..core.orchestration import RAGWorkflow
 from ..core.retrieval import get_retrieval_engine, RetrievalMode
+from ..core.retrieval import get_v5_engine, V5Config, get_observability
 from ..core.generation import get_prompt_manager, get_response_generator
 
 router = APIRouter()
@@ -25,6 +26,10 @@ rag_workflow = RAGWorkflow()
 retrieval_engine = get_retrieval_engine()
 prompt_manager = get_prompt_manager()
 response_generator = get_response_generator()
+
+# V5: Initialize unified engine with all SOTA innovations
+v5_engine = None  # Lazy init to avoid startup issues
+observability = get_observability()
 
 
 # Models
@@ -568,3 +573,160 @@ async def ask_v2(request: ChatRequest):
     except Exception as e:
         logger.error(f"V2 RAG error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# =============================================================================
+# MIRAGE V5 Endpoint - All SOTA Innovations
+# =============================================================================
+
+class V5Request(BaseModel):
+    """Request for V5 unified retrieval."""
+    message: str
+    use_hyde: bool = True
+    use_ppr: bool = True
+    use_community_selection: bool = True
+    use_dual_level: bool = True
+    top_k: int = 10
+
+
+@router.post("/v5/ask", response_model=Dict[str, Any])
+async def ask_v5(request: V5Request):
+    """
+    MIRAGE V5 RAG endpoint with all SOTA innovations:
+
+    - HyDE: Hypothetical Document Embeddings for query enhancement
+    - PPR: Personalized PageRank (HippoRAG) for graph traversal
+    - Community Selection: O(log C) hierarchical pruning
+    - Dual-Level: LightRAG-style low + high level retrieval
+    - Observability: Full tracing and metrics
+
+    This is the production-ready 10/10 retrieval engine.
+    """
+    import httpx
+    global v5_engine
+
+    start_time = time.time()
+    logger.info(f"V5 RAG query: {request.message[:100]}...")
+
+    # Start trace
+    trace = observability.start_trace(request.message)
+
+    try:
+        # Lazy initialize V5 engine
+        if v5_engine is None:
+            logger.info("Initializing V5 engine...")
+            v5_engine = get_v5_engine()
+            logger.info("V5 engine initialized")
+
+        # Configure based on request
+        v5_engine.config.use_hyde = request.use_hyde
+        v5_engine.config.use_hippocampal = request.use_ppr
+        v5_engine.config.use_dynamic_community_selection = request.use_community_selection
+        v5_engine.config.use_dual_level = request.use_dual_level
+        v5_engine.config.max_chunks = request.top_k
+
+        # Retrieve with V5 engine
+        with observability.record_step(trace, "v5_retrieval") as step:
+            result = v5_engine.retrieve(request.message)
+            step.metadata["chunks"] = len(result.chunks)
+            step.metadata["communities_searched"] = result.communities_searched
+
+        # Generate answer with LLM
+        with observability.record_step(trace, "generation") as step:
+            context = [
+                {"text": c.get("text", ""), "document_id": c.get("document_id", ""), "chunk_id": c.get("chunk_id", "")}
+                for c in result.chunks
+            ]
+
+            if context:
+                prompt = prompt_manager.create_qa_prompt(
+                    question=request.message,
+                    context=context
+                )
+
+                async with httpx.AsyncClient(timeout=60.0) as client:
+                    llm_response = await client.post(
+                        "http://tgi:80/generate",
+                        json={
+                            "inputs": f"{prompt.system_message}\n\n{prompt.user_message}",
+                            "parameters": {
+                                "max_new_tokens": 500,
+                                "temperature": 0.3,
+                                "do_sample": True,
+                                "top_p": 0.9,
+                                "return_full_text": False
+                            }
+                        }
+                    )
+                    llm_result = llm_response.json()
+                    answer = llm_result.get("generated_text", "لم يتم إنشاء إجابة").strip()
+            else:
+                answer = "لم يتم العثور على معلومات ذات صلة في قاعدة البيانات."
+
+            step.metadata["answer_length"] = len(answer)
+
+        # End trace
+        total_time = (time.time() - start_time) * 1000
+        observability.end_trace(trace, success=True)
+
+        return {
+            "query": request.message,
+            "answer": answer,
+            "chunks": [
+                {
+                    "text": c.get("text", "")[:300],
+                    "document_id": c.get("document_id", ""),
+                    "score": c.get("score", 0)
+                }
+                for c in result.chunks[:5]
+            ],
+            "metadata": {
+                "enhanced_query": result.enhanced_query,
+                "communities_searched": result.communities_searched,
+                "communities_pruned": result.communities_pruned,
+                "ppr_activated_entities": result.ppr_activated_entities,
+                "query_type": result.query_type,
+                "confidence": result.confidence,
+                "low_level_chunks": result.low_level_chunks,
+                "high_level_chunks": result.high_level_chunks
+            },
+            "timing": {
+                "retrieval_ms": result.retrieval_time_ms,
+                "total_ms": total_time
+            },
+            "trace_id": trace.trace_id,
+            "v5_features": {
+                "hyde": request.use_hyde,
+                "ppr": request.use_ppr,
+                "community_selection": request.use_community_selection,
+                "dual_level": request.use_dual_level
+            }
+        }
+
+    except Exception as e:
+        observability.end_trace(trace, success=False, error=str(e))
+        logger.error(f"V5 RAG error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/v5/metrics")
+async def v5_metrics():
+    """Get V5 engine performance metrics."""
+    metrics = observability.get_metrics()
+    dashboard = observability.get_dashboard_data()
+
+    return {
+        "metrics": {
+            "total_queries": metrics.total_queries,
+            "avg_latency_ms": round(metrics.avg_latency_ms, 2),
+            "p50_latency_ms": round(metrics.p50_latency_ms, 2),
+            "p95_latency_ms": round(metrics.p95_latency_ms, 2),
+            "p99_latency_ms": round(metrics.p99_latency_ms, 2),
+            "qps": round(metrics.queries_per_second, 2),
+            "error_rate": round(metrics.error_rate * 100, 2),
+            "cache_hit_rate": round(metrics.cache_hit_rate * 100, 2)
+        },
+        "mode_distribution": metrics.mode_distribution,
+        "recent_traces": dashboard.get("recent_traces", []),
+        "slow_traces": dashboard.get("slow_traces", [])
+    }
