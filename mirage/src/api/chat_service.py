@@ -453,8 +453,10 @@ async def ask_v2(request: ChatRequest):
             return {
                 "query": request.message,
                 "answer": "لم يتم العثور على معلومات ذات صلة في قاعدة البيانات.",
+                "chunks": [],
                 "sources": [],
                 "retrieval_mode": response.mode.value if response.mode else "unknown",
+                "chunks_retrieved": 0,
                 "retrieval_time_ms": retrieval_time,
                 "generation_time_ms": 0,
                 "total_time_ms": (time.time() - start_time) * 1000
@@ -468,6 +470,16 @@ async def ask_v2(request: ChatRequest):
                 return {
                     "query": request.message,
                     "answer": global_answer,
+                    "chunks": [
+                        {
+                            "chunk_id": r.chunk_id,
+                            "document_id": r.document_id,
+                            "text": r.text,
+                            "score": r.score,
+                            "metadata": r.metadata if hasattr(r, 'metadata') else {}
+                        }
+                        for r in response.results[:10]
+                    ],
                     "sources": [
                         {
                             "document_id": r.document_id,
@@ -552,10 +564,23 @@ async def ask_v2(request: ChatRequest):
             for i, ctx in enumerate(context[:5])
         ]
 
+        # Build full chunks for transparency (full text, not truncated)
+        chunks = [
+            {
+                "chunk_id": r.chunk_id,
+                "document_id": r.document_id,
+                "text": r.text,
+                "score": r.score,
+                "metadata": r.metadata if hasattr(r, 'metadata') else {}
+            }
+            for r in response.results[:10]  # Top 10 chunks
+        ]
+
         result = {
             "query": request.message,
             "answer": answer,
-            "sources": sources,
+            "chunks": chunks,  # Full chunk data for debugging/transparency
+            "sources": sources,  # Truncated preview for display
             "retrieval_mode": response.mode.value if response.mode else "unknown",
             "chunks_retrieved": len(context),
             "retrieval_time_ms": round(retrieval_time, 1),
