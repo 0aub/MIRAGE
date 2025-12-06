@@ -7,8 +7,82 @@ from typing import List, Dict, Any, Optional, Type
 from dataclasses import dataclass, field
 from enum import Enum
 import time
+import re
 from loguru import logger
 import numpy as np
+
+
+def normalize_arabic(text: str) -> str:
+    """
+    Normalize Arabic text for consistent matching.
+
+    Handles common Arabic text variations:
+    - ة ↔ ه (ta marbuta / ha) - critical for entity names
+    - أ/إ/آ → ا (alef variants)
+    - ى → ي (alef maqsura / ya)
+    - Remove diacritics (tashkeel)
+
+    Args:
+        text: Arabic text to normalize
+
+    Returns:
+        Normalized text for matching
+    """
+    if not text:
+        return text
+
+    # Remove diacritics (tashkeel)
+    diacritics = re.compile(r'[\u064B-\u065F\u0670]')
+    text = diacritics.sub('', text)
+
+    # Normalize ta marbuta ة → ه (both directions for matching)
+    # We convert to ه as it's more common in informal Arabic text
+    text = text.replace('ة', 'ه')
+
+    # Normalize alef variants → ا
+    text = text.replace('أ', 'ا')
+    text = text.replace('إ', 'ا')
+    text = text.replace('آ', 'ا')
+
+    # Normalize alef maqsura → ي
+    text = text.replace('ى', 'ي')
+
+    return text
+
+
+def get_arabic_variants(text: str) -> List[str]:
+    """
+    Generate common Arabic text variants for a phrase.
+
+    Returns both the original and normalized forms,
+    plus common variants for better matching.
+
+    Args:
+        text: Original Arabic text
+
+    Returns:
+        List of text variants to search for
+    """
+    variants = [text]
+
+    # Add normalized form
+    normalized = normalize_arabic(text)
+    if normalized != text:
+        variants.append(normalized)
+
+    # If text has ه, also try ة (reverse normalization)
+    if 'ه' in text:
+        reverse = text.replace('ه', 'ة')
+        if reverse not in variants:
+            variants.append(reverse)
+
+    # If text has ة, also try ه
+    if 'ة' in text:
+        reverse = text.replace('ة', 'ه')
+        if reverse not in variants:
+            variants.append(reverse)
+
+    return list(set(variants))
 
 from .base_retriever import (
     BaseRetriever,
@@ -28,7 +102,7 @@ from ..graph_builder import EntityDisambiguator, get_entity_disambiguator
 class RetrievalEngineConfig:
     """Configuration for the retrieval engine"""
     # Default mode when no routing
-    default_mode: RetrievalMode = RetrievalMode.HYBRID
+    default_mode: RetrievalMode = RetrievalMode.LOCAL  # Phase 4: LOCAL is best performer (92.9%)
 
     # Top-k settings
     default_top_k: int = 10
@@ -325,6 +399,68 @@ class RetrievalEngine:
         # 1. First get naive results as base
         naive_response = self._naive_retrieve(query, query_embedding, top_k * 2, **kwargs)
 
+        # 1b. Keyword-based search fallback for Arabic entities
+        # Vector search may miss chunks due to embedding model limitations
+        # Use Arabic variants to handle ة↔ه normalization issues
+        entity_phrases = self._extract_arabic_entity_phrases(query)
+        keyword_chunks = []
+        if entity_phrases and self.index_manager:
+            try:
+                seen_chunks = set()
+                # Search for chunks containing key entity phrases directly
+                for phrase in entity_phrases[:5]:
+                    if len(phrase) >= 3:
+                        # Get Arabic variants for this phrase (handles ة↔ه, أ/إ/آ→ا)
+                        variants = get_arabic_variants(phrase)
+                        for variant in variants:
+                            keyword_results = self.index_manager.keyword_search(
+                                variant, limit=3
+                            )
+                            for kr in keyword_results:
+                                chunk_id = kr.get("chunk_id", kr.get("id", ""))
+                                if chunk_id and chunk_id not in seen_chunks:
+                                    seen_chunks.add(chunk_id)
+                                    keyword_chunks.append(RetrievalResult(
+                                        chunk_id=chunk_id,
+                                        document_id=kr.get("document_id", ""),
+                                        text=kr.get("text", ""),
+                                        score=0.90,  # High score for keyword match
+                                        retrieval_mode="keyword",
+                                        metadata={"keyword_match": phrase, "matched_variant": variant}
+                                    ))
+            except Exception as e:
+                logger.debug(f"Keyword search failed: {e}")
+
+        # Merge keyword results into naive results (boost or add)
+        result_map = {r.chunk_id: r for r in naive_response.results if r.chunk_id}
+        added_count = 0
+        boosted_count = 0
+
+        for kr in keyword_chunks:
+            if not kr.chunk_id:
+                continue
+
+            if kr.chunk_id in result_map:
+                # Chunk already exists - boost its score for keyword match
+                existing = result_map[kr.chunk_id]
+                old_score = existing.score
+                existing.score = max(existing.score, 0.92)  # Boost to high score
+                existing.metadata = existing.metadata or {}
+                existing.metadata["keyword_boost"] = True
+                existing.metadata["keyword_match"] = kr.metadata.get("keyword_match", "")
+                boosted_count += 1
+                logger.debug(f"Keyword boost: {kr.chunk_id} {old_score:.2f} → {existing.score:.2f}")
+            else:
+                # New chunk - add with high score
+                naive_response.results.insert(0, kr)
+                result_map[kr.chunk_id] = kr
+                added_count += 1
+
+        # Re-sort by score after boosting
+        if added_count > 0 or boosted_count > 0:
+            naive_response.results.sort(key=lambda x: x.score, reverse=True)
+            logger.debug(f"Keyword search: added={added_count}, boosted={boosted_count}")
+
         # 2. Detect entity types from query patterns
         entity_types = self._detect_entity_types(query)
 
@@ -362,9 +498,11 @@ class RetrievalEngine:
                             })
 
                 # MIRAGE V4: Use entity disambiguator for semantic matching
+                # Use Arabic entity phrase extraction for better compound entity matching
                 if self.entity_disambiguator:
-                    query_terms = [t for t in query.split() if len(t) > 2]
-                    for term in query_terms[:5]:
+                    query_terms = self._extract_arabic_entity_phrases(query)
+                    logger.debug(f"Arabic entity phrases extracted: {query_terms}")
+                    for term in query_terms[:8]:  # Check more phrases
                         try:
                             result = self.entity_disambiguator.disambiguate(
                                 query_entity=term,
@@ -396,9 +534,9 @@ class RetrievalEngine:
                         except Exception as e:
                             logger.debug(f"Disambiguation failed for term '{term}': {e}")
                 else:
-                    # Fallback: direct term matching
-                    query_terms = [t for t in query.split() if len(t) > 2]
-                    for term in query_terms[:3]:
+                    # Fallback: direct term matching with Arabic phrase extraction
+                    query_terms = self._extract_arabic_entity_phrases(query)
+                    for term in query_terms[:5]:
                         entities = self.graph_client.search_entities_by_name(term, limit=3)
                         for entity in entities:
                             if entity not in extracted_entities:
@@ -418,7 +556,26 @@ class RetrievalEngine:
             except Exception as e:
                 logger.warning(f"Neo4j entity search failed: {e}")
 
-        # 4. Combine with naive results, prioritizing entity-connected chunks
+        # 4. Text content fallback: Boost naive results containing entity phrases
+        # This handles cases where entities weren't extracted during ingestion
+        entity_phrases = self._extract_arabic_entity_phrases(query)
+        for r in naive_response.results:
+            text_lower = r.text.lower() if r.text else ""
+            for phrase in entity_phrases:
+                if phrase in r.text or phrase in text_lower:
+                    # Found entity phrase in chunk text - boost score
+                    entity_chunks.append({
+                        "chunk_id": r.chunk_id,
+                        "document_id": r.document_id,
+                        "text": r.text,
+                        "entity": phrase,
+                        "entity_type": "TextMatch",
+                        "text_match": True,
+                        "match_score": 0.85
+                    })
+                    break  # Only add once per chunk
+
+        # 5. Combine with naive results, prioritizing entity-connected chunks
         results = []
         seen_chunks = set()
 
@@ -518,6 +675,46 @@ class RetrievalEngine:
             return ["Organization", "Person"]
 
         return []  # No filter
+
+    def _extract_arabic_entity_phrases(self, query: str) -> List[str]:
+        """
+        Extract compound Arabic entity phrases from query.
+
+        Arabic entities often have prefixes like:
+        - شركة (company) + name → "شركة تيتو"
+        - هيئة (authority) + name → "هيئة الزكاة"
+        - وزارة (ministry) + name → "وزارة الصحة"
+        - جامعة (university) + name
+
+        Returns:
+            List of entity phrases to search for
+        """
+        import re
+
+        phrases = []
+        query_clean = query.replace("؟", " ").replace("،", " ").strip()
+
+        # Pattern 1: شركة/هيئة/وزارة + following word(s)
+        prefixes = ["شركة", "شركه", "هيئة", "هيئه", "وزارة", "وزاره", "جامعة", "جامعه", "مركز", "جائزة", "جائزه"]
+        for prefix in prefixes:
+            pattern = rf"{prefix}\s+([^\s]+(?:\s+[^\s]+)?)"
+            matches = re.findall(pattern, query_clean)
+            for match in matches:
+                full_phrase = f"{prefix} {match}".strip()
+                phrases.append(full_phrase)
+                # Also add just the name part
+                phrases.append(match.strip())
+
+        # Pattern 2: Words that look like proper nouns (no common words)
+        common_words = {"من", "هي", "هو", "ما", "هل", "في", "على", "إلى", "عن", "التي", "الذي", "هذا", "هذه", "تلك", "ذلك"}
+        words = query_clean.split()
+        for word in words:
+            if len(word) > 2 and word not in common_words:
+                # Check if it might be an entity name
+                if not word.startswith("ال") or len(word) > 4:  # Skip generic articles
+                    phrases.append(word)
+
+        return list(set(phrases))  # Deduplicate
 
     def _global_retrieve(
         self,

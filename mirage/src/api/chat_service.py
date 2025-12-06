@@ -46,9 +46,12 @@ class ChatRequest(BaseModel):
     use_graph: bool = True
     use_refrag: bool = True
     language: Optional[str] = None  # auto-detect if not provided
-    # V2: Retrieval mode selection
+    # Retrieval mode selection
     retrieval_mode: Optional[str] = None  # auto, naive, local, global, hybrid, mix, semantic
     top_k: Optional[int] = 10
+    # V5 features (optional enhancements)
+    use_hyde: bool = False  # HyDE query enhancement
+    enable_tracing: bool = False  # Observability tracing
 
 
 class ChatResponse(BaseModel):
@@ -451,33 +454,286 @@ def _clean_llm_response(answer: str) -> str:
     return answer
 
 
+def _is_no_info_response(answer: str) -> bool:
+    """
+    Detect if the LLM response indicates "no information found" or is too generic.
+    This triggers fallback to chunk summarization.
+
+    Phase 3: More nuanced detection - only flag if answer is PURELY negative,
+    not if it leads with negative but then provides useful content.
+    """
+    if not answer or len(answer) < 30:
+        return True
+
+    # Pure "no info" patterns - these indicate a complete failure to answer
+    pure_no_info_patterns = [
+        # Arabic patterns - these indicate complete failure
+        "لا أجد أي معلومات",
+        "لم أجد معلومات",
+        "لا توجد معلومات متاحة",
+        "لا تتوفر معلومات",
+        "لم يتم العثور على أي",
+        "لا يمكنني الإجابة",
+        "لا أستطيع الإجابة",
+        "لا يوجد في السياق المقدم",
+        # English patterns
+        "i cannot find any",
+        "no information available",
+        "unable to find any",
+        "cannot answer this",
+    ]
+
+    answer_lower = answer.lower()
+
+    # Check if answer is PURELY a "no info" statement (short + negative)
+    if len(answer.strip()) < 80:
+        if any(pattern in answer_lower for pattern in pure_no_info_patterns):
+            return True
+
+    # Phase 3: If answer is longer (>100 chars), it likely has useful content
+    # even if it starts with "لا يوجد ذكر مباشر" etc.
+    if len(answer.strip()) > 100:
+        return False
+
+    # Short answers (<50 chars) that aren't useful
+    if len(answer.strip()) < 50:
+        return True
+
+    # Detect if answer is just repeating the question
+    if answer.count("؟") > 1:
+        return True
+
+    return False
+
+
+def _extract_key_terms(question: str) -> list:
+    """
+    Extract key terms (entities/nouns) from Arabic/English question.
+    Used to create better fallback answers.
+    """
+    import re
+
+    # Remove question words and stopwords
+    arabic_stopwords = [
+        "ما", "من", "هل", "كيف", "لماذا", "أين", "متى", "هي", "هو", "هذا", "هذه",
+        "التي", "الذي", "في", "على", "إلى", "عن", "مع", "بين", "أو", "و", "ال",
+        "أن", "إن", "كان", "يكون", "له", "لها", "هم", "هن", "نحن", "أنت", "أنا"
+    ]
+
+    # Clean and tokenize
+    words = re.findall(r'[\u0600-\u06FF]+|[a-zA-Z]+', question)
+
+    # Filter out stopwords and short words
+    key_terms = []
+    for word in words:
+        # Skip short words and stopwords
+        if len(word) < 3:
+            continue
+        if word in arabic_stopwords:
+            continue
+        # Remove common Arabic prefixes (ال، ب، و، ف، ك، ل)
+        clean_word = word
+        if clean_word.startswith('ال'):
+            clean_word = clean_word[2:]
+        if clean_word.startswith(('ب', 'و', 'ف', 'ك', 'ل')) and len(clean_word) > 3:
+            clean_word = clean_word[1:]
+        if len(clean_word) >= 2:
+            key_terms.append(clean_word)
+
+    return key_terms
+
+
+def _normalize_arabic(text: str) -> str:
+    """Normalize Arabic text for matching."""
+    import re
+    if not text:
+        return ""
+    # Normalize ة to ه
+    text = text.replace('ة', 'ه')
+    # Normalize alef variants
+    text = re.sub(r'[أإآ]', 'ا', text)
+    return text
+
+
+def _create_fallback_answer(question: str, chunks: list) -> str:
+    """
+    Create a fallback answer by summarizing the top chunks.
+    Improved: Extracts key terms and finds relevant snippets.
+    Used when LLM fails to synthesize an answer.
+    """
+    if not chunks:
+        return "لم يتم العثور على معلومات ذات صلة."
+
+    # Extract key terms from question
+    key_terms = _extract_key_terms(question)
+    normalized_terms = [_normalize_arabic(t) for t in key_terms]
+
+    # Take top 3 chunks
+    top_chunks = chunks[:3]
+
+    # Find the most relevant snippet from each chunk
+    answer_parts = []
+
+    # Create context-aware intro if we found key terms
+    if key_terms:
+        main_entity = key_terms[0] if key_terms else ""
+        answer_parts.append(f"بخصوص {main_entity}، إليك المعلومات المتوفرة:")
+    else:
+        answer_parts.append("بناءً على المعلومات المتوفرة:")
+
+    for i, chunk in enumerate(top_chunks, 1):
+        text = chunk.get("text", "")
+        if not text:
+            continue
+
+        normalized_text = _normalize_arabic(text)
+
+        # Try to find a snippet containing a key term
+        best_snippet = None
+        best_score = 0
+
+        # Split into sentences (Arabic uses . and ،)
+        sentences = text.replace('،', '.').replace('؟', '.').split('.')
+
+        for sentence in sentences:
+            sentence = sentence.strip()
+            if len(sentence) < 20:
+                continue
+
+            norm_sentence = _normalize_arabic(sentence)
+            score = sum(1 for t in normalized_terms if t in norm_sentence)
+
+            if score > best_score:
+                best_score = score
+                best_snippet = sentence
+
+        # Use best snippet or first 200 chars
+        if best_snippet:
+            snippet = best_snippet[:250].strip()
+        else:
+            snippet = text[:200].strip()
+
+        # Clean up snippet ending
+        if len(snippet) > 200:
+            last_space = snippet.rfind(' ')
+            if last_space > 100:
+                snippet = snippet[:last_space]
+            snippet += "..."
+
+        answer_parts.append(f"\n• {snippet}")
+
+    return "".join(answer_parts)
+
+
+def _rerank_chunks_by_keywords(question: str, results: list, boost_factor: float = 0.3) -> list:
+    """
+    Re-rank retrieval results by boosting chunks that contain query keywords.
+    This helps when vector similarity misses exact keyword matches.
+
+    Args:
+        question: User's question
+        results: List of retrieval results (with .text and .score attributes)
+        boost_factor: Score boost per keyword match (0.0-1.0)
+
+    Returns:
+        Re-ranked results list
+    """
+    if not results:
+        return results
+
+    # Extract key terms from question
+    key_terms = _extract_key_terms(question)
+    if not key_terms:
+        return results
+
+    normalized_terms = [_normalize_arabic(t) for t in key_terms]
+
+    # Calculate keyword boost for each result
+    boosted_results = []
+    for r in results:
+        text = r.text if hasattr(r, 'text') else ""
+        normalized_text = _normalize_arabic(text)
+
+        # Count keyword matches
+        match_count = sum(1 for t in normalized_terms if t in normalized_text)
+
+        # Calculate boost (cap at 0.5 to avoid overwhelming vector score)
+        keyword_boost = min(match_count * boost_factor, 0.5)
+
+        # Create a tuple of (result, original_score, boosted_score)
+        original_score = r.score if hasattr(r, 'score') else 0.5
+        boosted_score = original_score + keyword_boost
+
+        boosted_results.append((r, boosted_score, match_count))
+
+    # Sort by boosted score (descending)
+    boosted_results.sort(key=lambda x: x[1], reverse=True)
+
+    # Log re-ranking if it changed order
+    if boosted_results:
+        reranked_count = sum(1 for i, (r, _, mc) in enumerate(boosted_results) if mc > 0)
+        if reranked_count > 0:
+            logger.debug(f"Re-ranked {reranked_count} chunks by keyword match ({key_terms[:3]})")
+
+    # Return re-ordered results
+    return [r for r, _, _ in boosted_results]
+
+
 @router.post("/ask", response_model=Dict[str, Any])
 async def ask_v2(request: ChatRequest):
     """
-    V2 RAG endpoint: Full pipeline with retrieval + LLM generation
+    Unified RAG endpoint: Full pipeline with retrieval + LLM generation
 
     Uses:
-    - V2 RetrievalEngine with automatic mode routing
-    - V2 PromptManager for context formatting
+    - RetrievalEngine with automatic mode routing
+    - PromptManager for context formatting
     - TGI (local LLM) for response generation
+
+    Optional V5 Features:
+    - use_hyde: HyDE query enhancement for better semantic matching
+    - enable_tracing: Full observability with trace IDs
 
     Returns complete response with sources and timing.
     """
     import httpx
 
     start_time = time.time()
-    logger.info(f"V2 RAG query: {request.message[:100]}...")
+    logger.info(f"RAG query: {request.message[:100]}... (hyde={request.use_hyde})")
+
+    # Start trace if enabled
+    trace = None
+    trace_id = None
+    if request.enable_tracing:
+        trace = observability.start_trace(request.message)
+        trace_id = trace.trace_id
 
     try:
         # 1. Parse retrieval mode
         mode = None
+        global_search_warning = None
         if request.retrieval_mode and request.retrieval_mode != "auto":
             try:
                 mode = RetrievalMode(request.retrieval_mode)
+                # WARN about global_search latency
+                if mode == RetrievalMode.GLOBAL_SEARCH:
+                    global_search_warning = "global_search mode is experimental and slow (~40s). Consider using 'local' or 'hybrid' for better latency."
+                    logger.warning(f"global_search requested - {global_search_warning}")
             except ValueError:
                 pass  # Use auto mode
 
-        # 2. Retrieve relevant chunks
+        # 2. Optional: HyDE query enhancement
+        enhanced_query = None
+        if request.use_hyde:
+            try:
+                from ..core.retrieval import get_hyde_enhancer
+                hyde = get_hyde_enhancer()
+                enhanced = hyde.enhance(request.message, mode="hypothetical")
+                enhanced_query = enhanced.hypothetical_answer
+                logger.info(f"HyDE enhanced query: {enhanced_query[:100]}...")
+            except Exception as e:
+                logger.warning(f"HyDE enhancement failed: {e}")
+
+        # 3. Retrieve relevant chunks
         retrieval_start = time.time()
         response = retrieval_engine.retrieve(
             query=request.message,
@@ -486,10 +742,14 @@ async def ask_v2(request: ChatRequest):
         )
         retrieval_time = (time.time() - retrieval_start) * 1000
 
-        # 3. Build context
+        # 3b. Re-rank results by keyword match (Phase 2.2)
+        # This boosts chunks containing exact query keywords
+        reranked_results = _rerank_chunks_by_keywords(request.message, response.results)
+
+        # 4. Build context from re-ranked results
         context = [
             {"text": r.text, "document_id": r.document_id, "chunk_id": r.chunk_id}
-            for r in response.results
+            for r in reranked_results
         ]
 
         if not context:
@@ -563,9 +823,12 @@ async def ask_v2(request: ChatRequest):
         )
 
         # 6. Call TGI for generation
+        # Phase 4: Improved timeout handling with separate connect/read timeouts
         generation_start = time.time()
         try:
-            async with httpx.AsyncClient(timeout=60.0) as client:
+            # Use proper timeout config: 10s connect, 90s read (LLM can be slow)
+            timeout_config = httpx.Timeout(timeout=90.0, connect=10.0)
+            async with httpx.AsyncClient(timeout=timeout_config) as client:
                 tgi_response = await client.post(
                     "http://tgi:80/generate",
                     json={
@@ -586,23 +849,36 @@ async def ask_v2(request: ChatRequest):
 
                 # Clean up LLM artifacts (citation markers, prompt echoes, etc.)
                 answer = _clean_llm_response(raw_answer)
+
+                # FALLBACK: If LLM returned "no info" despite having chunks, summarize chunks
+                if _is_no_info_response(answer) and context:
+                    logger.info(f"LLM returned no-info response, using chunk fallback. Original: {answer[:100]}")
+                    answer = _create_fallback_answer(request.message, context)
+
+        except httpx.TimeoutException as e:
+            logger.warning(f"TGI generation timeout after {time.time() - generation_start:.1f}s: {e}")
+            # For timeout, use chunk fallback with a timeout note
+            answer = _create_fallback_answer(request.message, context) if context else "انتهت مهلة معالجة الطلب. يرجى المحاولة مرة أخرى."
+
+        except httpx.ConnectError as e:
+            logger.error(f"TGI connection error: {e}")
+            answer = _create_fallback_answer(request.message, context) if context else "خطأ في الاتصال بخدمة المعالجة."
+
         except Exception as e:
             logger.error(f"TGI generation error: {e}")
             # Fallback to showing retrieved context
-            answer = f"خطأ في الإنشاء. السياق المسترد:\n\n"
-            for i, ctx in enumerate(context[:3]):
-                answer += f"[{i+1}] {ctx['text'][:300]}...\n\n"
+            answer = _create_fallback_answer(request.message, context) if context else "خطأ في معالجة الطلب."
 
         generation_time = (time.time() - generation_start) * 1000
         total_time = (time.time() - start_time) * 1000
 
-        # 6. Build sources
+        # 6. Build sources (from re-ranked results)
         sources = [
             {
                 "chunk_id": ctx["chunk_id"],
                 "document_id": ctx["document_id"],
                 "text_preview": ctx["text"][:200] + "..." if len(ctx["text"]) > 200 else ctx["text"],
-                "score": response.results[i].score if i < len(response.results) else 0
+                "score": reranked_results[i].score if i < len(reranked_results) else 0
             }
             for i, ctx in enumerate(context[:5])
         ]
@@ -616,7 +892,7 @@ async def ask_v2(request: ChatRequest):
                 "score": r.score,
                 "metadata": r.metadata if hasattr(r, 'metadata') else {}
             }
-            for r in response.results[:10]  # Top 10 chunks
+            for r in reranked_results[:10]  # Top 10 chunks (re-ranked)
         ]
 
         result = {
@@ -636,10 +912,25 @@ async def ask_v2(request: ChatRequest):
             result["entities_found"] = entity_names[:20]
             result["entity_count"] = len(entity_names)
 
+        # Add V5 features if used
+        if enhanced_query:
+            result["enhanced_query"] = enhanced_query
+        if trace_id:
+            result["trace_id"] = trace_id
+        if global_search_warning:
+            result["warning"] = global_search_warning
+
+        # End trace if enabled
+        if trace:
+            observability.end_trace(trace, success=True)
+
         return result
 
     except Exception as e:
-        logger.error(f"V2 RAG error: {e}")
+        # End trace on error
+        if trace:
+            observability.end_trace(trace, success=False, error=str(e))
+        logger.error(f"RAG error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -712,22 +1003,28 @@ async def ask_v5(request: V5Request):
                     context=context
                 )
 
-                async with httpx.AsyncClient(timeout=60.0) as client:
+                # Phase 4: Improved timeout handling
+                timeout_config = httpx.Timeout(timeout=90.0, connect=10.0)
+                async with httpx.AsyncClient(timeout=timeout_config) as client:
                     llm_response = await client.post(
                         "http://tgi:80/generate",
                         json={
                             "inputs": f"{prompt.system_message}\n\n{prompt.user_message}",
                             "parameters": {
-                                "max_new_tokens": 500,
+                                "max_new_tokens": 200,
                                 "temperature": 0.3,
                                 "do_sample": True,
                                 "top_p": 0.9,
-                                "return_full_text": False
+                                "repetition_penalty": 1.15,
+                                "return_full_text": False,
+                                "stop": ["\n\n\n", "Human:", "---", "Question:"]
                             }
                         }
                     )
                     llm_result = llm_response.json()
-                    answer = llm_result.get("generated_text", "لم يتم إنشاء إجابة").strip()
+                    raw_answer = llm_result.get("generated_text", "لم يتم إنشاء إجابة").strip()
+                    # Clean up LLM artifacts (same as V2)
+                    answer = _clean_llm_response(raw_answer)
             else:
                 answer = "لم يتم العثور على معلومات ذات صلة في قاعدة البيانات."
 
@@ -742,14 +1039,16 @@ async def ask_v5(request: V5Request):
             "answer": answer,
             "chunks": [
                 {
+                    "chunk_id": c.get("chunk_id", ""),
                     "text": c.get("text", "")[:300],
                     "document_id": c.get("document_id", ""),
-                    "score": c.get("score", 0)
+                    "score": c.get("fused_score", c.get("score", 0.5))
                 }
                 for c in result.chunks[:5]
             ],
             "metadata": {
                 "enhanced_query": result.enhanced_query,
+                "entities_found": result.entities_found,
                 "communities_searched": result.communities_searched,
                 "communities_pruned": result.communities_pruned,
                 "ppr_activated_entities": result.ppr_activated_entities,

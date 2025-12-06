@@ -180,29 +180,35 @@ Relationships:""",
             use_cot=False
         ))
 
-        # Answer generation
+        # Answer generation - V3 (Phase 3: Never lead with negatives)
         self._register_template(PromptTemplate(
             name="answer_generation_v1",
-            version="1.0",
+            version="3.0",
             type=PromptType.ANSWER_GENERATION,
-            description="Generate answer from retrieved context",
-            system_message="""You are a helpful assistant that answers questions based on provided context.
-Answer in the same language as the question. If the answer is not in the context, say so.
-Always cite your sources using [1], [2], etc.""",
-            template="""Answer the following question based on the provided context.
+            description="Generate answer from retrieved context - optimized for Arabic",
+            system_message="""أنت مساعد ذكي متخصص في الإجابة على الأسئلة باستخدام السياق المقدم.
+يجب أن تجيب دائماً باللغة العربية.
 
-Context:
+CRITICAL RULES:
+1. NEVER start your answer with negative phrases like "لا يوجد" or "لا أجد" or "لم أتمكن"
+2. ALWAYS start directly with the relevant information from the context
+3. Focus on what IS mentioned, not what isn't
+4. If the exact entity isn't mentioned, discuss related entities or topics from the context
+5. Keep your answer informative and focused on the context provided""",
+            template="""أجب على السؤال التالي. ابدأ مباشرة بالمعلومات المتوفرة.
+
+السياق:
 {context}
 
-Question: {question}
+السؤال: {question}
 
-Instructions:
-- Answer based only on the provided context
-- Use the same language as the question
-- Cite sources using [1], [2], etc.
-- If unsure, say "I cannot find this information in the provided context"
+تعليمات صارمة:
+- ابدأ إجابتك مباشرة بالمعلومات (لا تبدأ بـ "لا يوجد" أو "لم أجد")
+- إذا لم يُذكر الكيان المطلوب مباشرة، تحدث عن الكيانات المرتبطة
+- قدم المعلومات المتوفرة في السياق بشكل مختصر ومفيد
+- لا تتجاوز 3 جمل
 
-Answer:""",
+الإجابة:""",
             use_cot=False
         ))
 
