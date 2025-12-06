@@ -9,11 +9,43 @@ but also entities and relationships with their own embeddings, enabling:
 - Combined retrieval (hybrid/mix search)
 """
 
+import re
 import uuid
 from typing import List, Dict, Any, Optional, Tuple, Union
 from dataclasses import dataclass, field
 from datetime import datetime
 from loguru import logger
+
+
+def normalize_arabic_for_search(text: str) -> str:
+    """
+    Normalize Arabic text for consistent search matching.
+
+    Handles common Arabic text variations:
+    - ة ↔ ه (ta marbuta / ha) - critical for entity names
+    - أ/إ/آ → ا (alef variants)
+    - ى → ي (alef maqsura / ya)
+    - Remove diacritics (tashkeel)
+    """
+    if not text:
+        return text
+
+    # Remove diacritics (tashkeel)
+    diacritics = re.compile(r'[\u064B-\u065F\u0670]')
+    text = diacritics.sub('', text)
+
+    # Normalize ta marbuta ة → ه
+    text = text.replace('ة', 'ه')
+
+    # Normalize alef variants → ا
+    text = text.replace('أ', 'ا')
+    text = text.replace('إ', 'ا')
+    text = text.replace('آ', 'ا')
+
+    # Normalize alef maqsura → ي
+    text = text.replace('ى', 'ي')
+
+    return text
 
 try:
     from qdrant_client import QdrantClient
@@ -354,6 +386,74 @@ class IndexManager:
             )
             for r in results
         ]
+
+    def keyword_search(
+        self,
+        keyword: str,
+        limit: int = 5
+    ) -> List[Dict[str, Any]]:
+        """
+        Search chunks by keyword/phrase in text content.
+
+        This is a fallback for when vector search fails to find
+        semantically similar content (e.g., proper nouns, Arabic entities).
+
+        Uses Arabic normalization to handle ة↔ه and other variants.
+
+        Args:
+            keyword: Text phrase to search for
+            limit: Maximum results to return
+
+        Returns:
+            List of dicts with chunk_id, document_id, text
+        """
+        client = self._get_client()
+
+        # Normalize keyword for Arabic matching (handles ة↔ه, أ/إ/آ→ا)
+        keyword_normalized = normalize_arabic_for_search(keyword)
+
+        try:
+            # Scroll through all chunks and filter by keyword
+            # Note: For large collections, consider full-text search index
+            results = []
+            offset = None
+
+            while len(results) < limit:
+                scroll_result = client.scroll(
+                    collection_name=self.chunks_collection,
+                    limit=100,
+                    offset=offset,
+                    with_payload=True,
+                    with_vectors=False
+                )
+
+                points, next_offset = scroll_result
+
+                if not points:
+                    break
+
+                for point in points:
+                    text = point.payload.get("text", "")
+                    # Check both original and normalized text for matches
+                    text_normalized = normalize_arabic_for_search(text)
+                    if keyword in text or keyword_normalized in text_normalized:
+                        results.append({
+                            "chunk_id": point.payload.get("chunk_id", str(point.id)),
+                            "document_id": point.payload.get("document_id", ""),
+                            "text": text
+                        })
+                        if len(results) >= limit:
+                            break
+
+                offset = next_offset
+                if offset is None:
+                    break
+
+            return results
+
+        except Exception as e:
+            logger.warning(f"Keyword search error: {e}")
+            return []
 
     # =========================================================================
     # ENTITY OPERATIONS

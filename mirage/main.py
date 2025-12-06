@@ -11,6 +11,7 @@ import sys
 
 from src.config import settings
 from src.core.retrieval import preload_reranker
+from src.core.models.embedding_manager import get_embedding_manager
 from src.api import (
     document_service,
     chat_service,
@@ -180,6 +181,16 @@ async def startup_event():
     # await init_neo4j()
     # await init_qdrant()
     # await init_redis()
+
+    # Preload embedding model (eliminates 20s+ cold-start on first query)
+    try:
+        logger.info("Loading embedding model for vector search...")
+        embedder = get_embedding_manager()
+        # Trigger actual model load by making a test embedding
+        _ = embedder.embed("test")
+        logger.info("✅ Embedding model preloaded successfully")
+    except Exception as e:
+        logger.warning(f"⚠️ Embedding model preload error: {e}")
 
     # Preload cross-encoder model for semantic mode (eliminates 35s cold-start)
     try:

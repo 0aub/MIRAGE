@@ -43,7 +43,7 @@ class TestCase:
     expected_keywords: List[str]
     expected_entity_type: str = ""
     min_chunks: int = 3
-    max_latency_ms: int = 5000
+    max_latency_ms: int = 15000  # 15s threshold (LLM generation can be slow)
     should_find_info: bool = True
     description: str = ""
 

@@ -105,7 +105,7 @@ class CrossEncoderReranker:
         query: str,
         candidates: List[Dict[str, Any]],
         top_k: Optional[int] = None,
-        score_threshold: float = 0.0
+        score_threshold: float = -100.0  # Default very low to include all candidates
     ) -> List[RerankResult]:
         """
         Rerank candidate documents using cross-encoder.
@@ -114,7 +114,8 @@ class CrossEncoderReranker:
             query: Query string
             candidates: List of candidate dicts with 'text', 'chunk_id', 'document_id', 'score'
             top_k: Return only top-k results (None = return all)
-            score_threshold: Minimum rerank score to include
+            score_threshold: Minimum rerank score to include (default -100 to include all;
+                           cross-encoder scores can be negative for non-matching chunks)
 
         Returns:
             List of RerankResult sorted by rerank_score descending

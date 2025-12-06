@@ -390,16 +390,46 @@ class MIRAGEV5Engine:
         Multi-hop indicators:
         - Relationship questions ("how is X related to Y")
         - Chain questions ("what connects X to Y")
+        - Causal questions ("why", "what caused")
+        - Comparative questions ("how different", "compared to")
+        - Temporal chains ("before", "after", "then")
         - Indirect references
         """
         query_lower = query.lower()
 
         multi_hop_patterns = [
-            "العلاقة بين", "related to",
-            "يرتبط", "connection",
-            "من خلال", "through",
-            "عن طريق", "via",
-            "والـ", " and ",  # Compound queries
+            # Relationship patterns (Arabic)
+            "العلاقة بين", "ما علاقة", "علاقة", "يرتبط", "ترتبط",
+            "الصلة بين", "الرابط بين", "كيف ترتبط", "كيف يرتبط",
+
+            # Through/Via patterns (Arabic)
+            "من خلال", "عن طريق", "بواسطة", "عبر",
+
+            # Causal patterns (Arabic)
+            "لماذا", "ما سبب", "ما أسباب", "بسبب", "أدى إلى",
+            "نتيجة", "أثر", "تأثير", "ما تأثير",
+
+            # Comparative patterns (Arabic)
+            "الفرق بين", "ما الفرق", "كيف تختلف", "كيف يختلف",
+            "مقارنة", "بالمقارنة مع", "مقارنة بين",
+
+            # Temporal chains (Arabic)
+            "قبل", "بعد", "ثم", "ومن ثم", "بعد ذلك",
+
+            # Multi-entity connectors (Arabic)
+            "والـ", "و ال", " و ", "بين", "مع",
+
+            # Indirect references (Arabic)
+            "الذي", "التي", "اللذان", "اللتان", "الذين", "اللاتي",
+
+            # English patterns
+            "related to", "relationship between", "connection",
+            "through", "via", "by means of",
+            "why", "what caused", "because", "led to", "resulted in",
+            "difference between", "compared to", "how different",
+            "before", "after", "then", "subsequently",
+            " and ", "between", "with",
+            "which", "that",
         ]
 
         return any(p in query_lower for p in multi_hop_patterns)

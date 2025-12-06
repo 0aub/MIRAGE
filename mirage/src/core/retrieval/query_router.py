@@ -253,8 +253,20 @@ class QueryRouter:
 
         # Check for multi-hop indicators (even in short queries)
         multi_hop_patterns = [
+            # Relationship patterns
+            r"العلاقة بين|ما علاقة|الصلة بين|كيف ترتبط|كيف يرتبط",
+            # Causal patterns
+            r"لماذا|ما سبب|ما أسباب|أدى إلى|ما تأثير",
             r"وما النتائج|وما الأثر",    # And what results/impact
             r"ساهم.*وما|ساهمت.*وما",     # Contributed and what
+            # Comparative patterns
+            r"الفرق بين|ما الفرق|كيف تختلف|كيف يختلف|مقارنة بين",
+            # Multi-entity connectors
+            r" و .*و | بين ",
+            # English patterns
+            r"related to|relationship between|connection between",
+            r"why|what caused|led to|resulted in",
+            r"difference between|compared to|how different",
             r"and what|and how",
         ]
         is_multi_hop = any(re.search(p, query, re.IGNORECASE | re.UNICODE) for p in multi_hop_patterns)

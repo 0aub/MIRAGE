@@ -218,6 +218,13 @@ class CommunityDetector:
         all_communities = []
         current_graph = graph.copy()
 
+        # Track mapping from super-node IDs to original entities
+        # At level 0, nodes are entity names; at level 1+, nodes are community IDs
+        node_to_entities: Dict[str, List[str]] = {}
+        # Initialize: each entity maps to itself
+        for node in graph.nodes():
+            node_to_entities[str(node)] = [str(node)]
+
         for level in range(levels):
             logger.info(f"Detecting communities at level {level}...")
 
@@ -230,30 +237,42 @@ class CommunityDetector:
                 random_state=42
             )
 
-            # Group entities by community
+            # Group nodes by community
             communities_dict = defaultdict(list)
-            for entity, comm_id in partition.items():
-                communities_dict[comm_id].append(entity)
+            for node, comm_id in partition.items():
+                communities_dict[comm_id].append(str(node))
 
             # Filter out small communities
             communities_dict = {
-                comm_id: entities
-                for comm_id, entities in communities_dict.items()
-                if len(entities) >= min_size or level == 0  # Keep all at level 0
+                comm_id: nodes
+                for comm_id, nodes in communities_dict.items()
+                if len(nodes) >= min_size or level == 0  # Keep all at level 0
             }
 
-            # Create Community objects
+            # Create Community objects with ORIGINAL entities (not super-node IDs)
             level_communities = []
-            for comm_id, entities in communities_dict.items():
+            new_node_to_entities: Dict[str, List[str]] = {}
+
+            for comm_id, nodes in communities_dict.items():
+                # Collect original entities from all nodes in this community
+                original_entities = []
+                for node in nodes:
+                    original_entities.extend(node_to_entities.get(str(node), [str(node)]))
+                original_entities = list(set(original_entities))  # Remove duplicates
+
                 community = Community(
                     id=f"L{level}_C{comm_id}",
                     level=level,
-                    entities=entities,
-                    size=len(entities)
+                    entities=original_entities,
+                    size=len(original_entities)
                 )
                 level_communities.append(community)
 
+                # Update mapping for next level
+                new_node_to_entities[str(comm_id)] = original_entities
+
             all_communities.extend(level_communities)
+            node_to_entities = new_node_to_entities
 
             logger.info(f"Level {level}: Detected {len(level_communities)} communities")
 
@@ -402,7 +421,7 @@ class CommunityDetector:
             'parent_of_rels': 0
         }
 
-        # Create community nodes
+        # Pass 1: Create all community nodes and BELONGS_TO relationships
         for community in result.communities:
             self._create_community_node(community)
             stats['communities_created'] += 1
@@ -412,7 +431,8 @@ class CommunityDetector:
                 self._create_belongs_to_relationship(entity_name, community)
                 stats['belongs_to_rels'] += 1
 
-            # Create PARENT_OF relationships
+        # Pass 2: Create PARENT_OF relationships (after all nodes exist)
+        for community in result.communities:
             if community.parent_community:
                 self._create_parent_relationship(community)
                 stats['parent_of_rels'] += 1
