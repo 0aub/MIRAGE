@@ -46,20 +46,20 @@ services:
     volumes:
       - tgi_data:/data
     environment:
-      # Model selection - Qwen3-4B-Instruct-2507 (128K context, excellent Arabic support, ~7GB VRAM)
-      # Other options: ALLaM-7B (512 token limit), Qwen2.5-7B (multilingual), Phi-3-mini-128k (8GB VRAM)
-      MODEL_ID: Qwen/Qwen3-4B-Instruct-2507
-      # Performance settings optimized for 128K context window
+      # Model selection for multi-model benchmark
+      # Options: Qwen/Qwen2.5-7B-Instruct, Qwen/Qwen3-4B, humain-ai/ALLaM-7B-Instruct-preview
+      MODEL_ID: humain-ai/ALLaM-7B-Instruct-preview
+      # Performance settings optimized for 7B model
       NUM_SHARD: 1
-      MAX_INPUT_LENGTH: 8192
-      MAX_TOTAL_TOKENS: 16384
-      MAX_BATCH_PREFILL_TOKENS: 8192
+      MAX_INPUT_LENGTH: 4096
+      MAX_TOTAL_TOKENS: 8192
+      MAX_BATCH_PREFILL_TOKENS: 4096
       # PyTorch memory optimization to reduce fragmentation
       PYTORCH_CUDA_ALLOC_CONF: expandable_segments:True
       # Disable hf_transfer - use standard download for reliability
       HF_HUB_ENABLE_HF_TRANSFER: 0
-      # Optional: Hugging Face token for gated models
-      # HUGGING_FACE_HUB_TOKEN: ${HUGGING_FACE_TOKEN}
+      # HuggingFace token for gated models (ALLaM, Jais)
+      HUGGING_FACE_HUB_TOKEN: ${HUGGING_FACE_TOKEN}
     deploy:
       resources:
         reservations:

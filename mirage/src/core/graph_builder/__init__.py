@@ -9,7 +9,7 @@ Handles:
 - Neo4j graph storage
 - Dynamic schema evolution
 
-GraphRAG Components (COMPLETE - Phases 1-5):
+GraphRAG Components (COMPLETE - Phases 1-6):
 - Entity normalization (prevent duplicates)
 - Entity disambiguation (link query entities to graph)
 - Multi-hop graph traversal
@@ -19,6 +19,7 @@ GraphRAG Components (COMPLETE - Phases 1-5):
 - Global search (map-reduce over summaries)
 - Local search (entity-centric traversal)
 - Hybrid search (global + local + routing)
+- Claim extraction (subject-predicate-object facts with evidence)
 """
 
 from .entity_extractor import EntityExtractor
@@ -82,6 +83,13 @@ from .coreference_resolver import (
     get_coreference_resolver,
 )
 
+# GraphRAG Phase 5: Claim Extraction
+from .claim_extractor import (
+    ClaimExtractor,
+    Claim,
+    store_claims_neo4j,
+)
+
 __all__ = [
     # Original components
     "EntityExtractor",
@@ -141,4 +149,8 @@ __all__ = [
     "CoreferenceResolver",
     "ResolvedEntity",
     "get_coreference_resolver",
+    # GraphRAG Phase 5: Claim Extraction
+    "ClaimExtractor",
+    "Claim",
+    "store_claims_neo4j",
 ]

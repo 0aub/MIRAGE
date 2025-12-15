@@ -1,0 +1,101 @@
+{
+  "name": "SDAIA Data Governance Policies",
+  "description": "Saudi Data & AI Authority official policy documents for data governance",
+  "created_at": "2025-12-15",
+  "documents": [
+    {
+      "id": "master_policies_en",
+      "title": "National Data Management Office - Master Policies (English)",
+      "url": "https://sdaia.gov.sa/ndmo/Files/PoliciesEn.pdf",
+      "language": "en",
+      "type": "pdf",
+      "topics": ["data governance", "data management", "data sharing", "open data"],
+      "priority": 1
+    },
+    {
+      "id": "master_policies_ar",
+      "title": "مكتب إدارة البيانات الوطنية - السياسات الرئيسية (عربي)",
+      "url": "https://sdaia.gov.sa/ndmo/Files/Policiesar.pdf",
+      "language": "ar",
+      "type": "pdf",
+      "topics": ["حوكمة البيانات", "إدارة البيانات", "مشاركة البيانات", "البيانات المفتوحة"],
+      "priority": 1
+    },
+    {
+      "id": "open_data_policy_ar",
+      "title": "سياسة البيانات المفتوحة",
+      "url": "https://sdaia.gov.sa/ar/SDAIA/about/Files/RegulationsAndPolicies07.pdf",
+      "language": "ar",
+      "type": "pdf",
+      "topics": ["open data", "البيانات المفتوحة"],
+      "notes": "Also included in Master Policy section 5",
+      "priority": 2
+    },
+    {
+      "id": "freedom_of_info_en",
+      "title": "Freedom of Information Policy (English)",
+      "url": "https://sdaia.gov.sa/en/SDAIA/about/Documents/FreedomOfInformationPolicy.pdf",
+      "language": "en",
+      "type": "pdf",
+      "topics": ["freedom of information", "transparency", "data access"],
+      "priority": 2
+    },
+    {
+      "id": "freedom_of_info_ar",
+      "title": "سياسة حرية المعلومات",
+      "url": "https://sdaia.gov.sa/en/SDAIA/about/Files/RegulationsAndPolicies06.pdf",
+      "language": "ar",
+      "type": "pdf",
+      "topics": ["حرية المعلومات", "الشفافية"],
+      "priority": 2
+    },
+    {
+      "id": "data_sharing_policy_en",
+      "title": "Data Sharing Policy (English)",
+      "url": "https://dgp.sdaia.gov.sa/wps/wcm/connect/b5d1907f-1b54-469d-8609-204ede2fa928/Data+Sharing+Policy.pdf",
+      "language": "en",
+      "type": "pdf",
+      "topics": ["data sharing", "inter-agency cooperation"],
+      "notes": "Arabic version included in Master Policy section 4",
+      "priority": 2
+    }
+  ],
+  "expected_test_queries": [
+    {
+      "id": "q1",
+      "query": "What is the data classification framework in Saudi Arabia?",
+      "difficulty": "easy",
+      "expected_topics": ["data classification", "sensitivity levels"]
+    },
+    {
+      "id": "q2",
+      "query": "ما هي سياسة مشاركة البيانات؟",
+      "difficulty": "easy",
+      "expected_topics": ["data sharing", "مشاركة البيانات"]
+    },
+    {
+      "id": "q3",
+      "query": "What are the requirements for open data publishing?",
+      "difficulty": "medium",
+      "expected_topics": ["open data", "publishing requirements"]
+    },
+    {
+      "id": "q4",
+      "query": "ما هي حقوق الوصول إلى المعلومات الحكومية؟",
+      "difficulty": "medium",
+      "expected_topics": ["freedom of information", "access rights"]
+    },
+    {
+      "id": "q5",
+      "query": "What is the relationship between SDAIA and government data governance?",
+      "difficulty": "hard",
+      "expected_topics": ["SDAIA role", "governance framework", "national strategy"]
+    },
+    {
+      "id": "q6",
+      "query": "ما هي أهم المبادئ التي تحكم إدارة البيانات الوطنية؟",
+      "difficulty": "hard",
+      "expected_topics": ["principles", "national data management"]
+    }
+  ]
+}

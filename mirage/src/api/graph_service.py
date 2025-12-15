@@ -255,7 +255,7 @@ async def visualize_document_graph(document_id: str):
 
 
 @router.get("/visualize/full")
-async def visualize_full_graph(limit: int = Query(500, ge=10, le=2000)):
+async def visualize_full_graph(limit: int = Query(1000, ge=10, le=5000)):
     """
     Get full graph data for visualization
     Returns up to 'limit' most connected nodes and their relationships
@@ -292,12 +292,13 @@ async def visualize_full_graph(limit: int = Query(500, ge=10, le=2000)):
                     "degree": record["degree"],
                 })
 
-        # Get relationships between these nodes
-        rel_query = """
+        # Get relationships between these nodes (scale with node limit)
+        edge_limit = min(limit * 3, 10000)  # ~3 edges per node on average
+        rel_query = f"""
         MATCH (source:Entity)-[r]->(target:Entity)
         WHERE source.name IN $node_names AND target.name IN $node_names
         RETURN source.name as source, target.name as target, type(r) as relationship, r
-        LIMIT 200
+        LIMIT {edge_limit}
         """
 
         edges = []

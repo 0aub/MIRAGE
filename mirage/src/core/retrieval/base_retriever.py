@@ -20,6 +20,7 @@ class RetrievalMode(Enum):
     HYBRID = "hybrid"        # Combines local + global
     MIX = "mix"             # All modes combined with RRF
     SEMANTIC = "semantic"    # Deep semantic matching
+    DRIFT = "drift"          # GraphRAG drift search (dynamic global→local)
     BYPASS = "bypass"        # No retrieval (for testing generation)
 
 

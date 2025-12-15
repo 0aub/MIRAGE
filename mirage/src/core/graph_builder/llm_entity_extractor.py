@@ -262,107 +262,38 @@ class LLMEntityExtractor:
         """Extract entities and relationships from a single chunk"""
 
         # Create language-specific prompt
+        # SIMPLIFIED prompt for reliable JSON output from smaller LLMs (Qwen, ALLaM)
         if language == "ar":
-            system_prompt = """أنت مستخرج معلومات متخصص في بناء الرسوم البيانية المعرفية الشاملة والغنية بالمعلومات.
+            system_prompt = """أنت مستخرج كيانات. استخرج الكيانات والعلاقات من النص بتنسيق JSON فقط.
 
-**تعليمات استخراج الكيانات:**
-- **مهم جداً**: استخرج **جميع** الكيانات المحددة والملموسة من النص، وليس فقط الكيانات الرئيسية أو المهمة
-- **لا تتجاهل أي كيان محدد** حتى لو ذُكر مرة واحدة فقط
-- الكيانات المطلوبة: أسماء أشخاص، منظمات، أماكن، برامج، مشاريع، منتجات، فعاليات، جوائز، سياسات، تقنيات، مقاييس، إلخ
-- **تجنب تماماً** الكيانات العامة مثل: "فرصة"، "قطاع"، "مجال"، "جانب"، "نقطة"، "شيء"، "موضوع"، "تحدي"، "أمر"، "حالة"
-- لكل كيان، حدد: الاسم، النوع، درجة الأهمية، وصف مختصر (جملة واحدة)، والسمات الرئيسية
-- السمات يمكن أن تشمل: التواريخ، الأرقام، المناصب، الأدوار، الإنجازات، المواقع، إلخ
+الكيانات: text (الاسم), type (النوع: Person/Organization/Location/Event/Program/Policy), importance (high/medium/low)
+العلاقات: source, target, type (نوع العلاقة), weight (0.0-1.0)
 
-**تعليمات استخراج العلاقات:**
-- استخرج **جميع** العلاقات الواضحة بين الكيانات
-- استخدم أنواع علاقات محددة ووصفية (مثل: يرأس، يدير، شارك_في، أطلق، حصل_على، أسس، يتعاون_مع، يقع_في، عمل_في، فاز_بـ، نظم، استضاف، طور، صمم، تحدث_عن، أعلن_عن)
-- **ممنوع منعاً باتاً** استخدام العلاقات العامة مثل: "مرتبط_بـ"، "له_علاقة_مع"، "متصل_بـ"، "يتعلق_بـ"
-- تأكد أن العلاقة منطقية وواضحة بين الكيانين
-- أضف وصف للعلاقة إذا كان هناك سياق مهم (اختياري)
-- أضف السمات الزمنية أو الكمية إذا توفرت
+مثال:
+{"entities": [{"text": "هيئة الحكومة الرقمية", "type": "Organization", "importance": "high"}], "relationships": [{"source": "هيئة الحكومة الرقمية", "target": "رؤية 2030", "type": "تدعم", "weight": 0.9}]}
 
-**أمثلة:**
-1. {"entities": [{"text": "وزارة التعليم", "type": "Organization", "importance": "high", "description": "الجهة الحكومية المسؤولة عن التعليم", "attributes": {"sector": "government", "domain": "education"}}, {"text": "الرياض", "type": "Location", "importance": "medium", "description": "عاصمة المملكة", "attributes": {"type": "capital"}}], "relationships": [{"source": "وزارة التعليم", "target": "الرياض", "type": "يقع_في", "description": "المقر الرئيسي"}]}
+أجب بـ JSON فقط، بدون نص إضافي."""
 
-2. {"entities": [{"text": "محمد بن سلمان", "type": "Person", "importance": "high", "description": "ولي العهد رئيس مجلس الوزراء", "attributes": {"role": "Crown Prince"}}, {"text": "رؤية 2030", "type": "Program", "importance": "high", "description": "خطة استراتيجية لتنويع الاقتصاد", "attributes": {"year": "2030"}}], "relationships": [{"source": "محمد بن سلمان", "target": "رؤية 2030", "type": "أطلق", "attributes": {"year": "2016"}}]}
+            user_prompt = f"""استخرج الكيانات والعلاقات من النص التالي:
 
-3. {"entities": [{"text": "جائزة التحول الرقمي", "type": "Award", "importance": "high", "description": "جائزة سنوية للابتكار الرقمي", "attributes": {"frequency": "annual"}}, {"text": "وزارة الاتصالات", "type": "Organization", "importance": "high", "description": "وزارة الاتصالات وتقنية المعلومات", "attributes": {"sector": "government"}}], "relationships": [{"source": "وزارة الاتصالات", "target": "جائزة التحول الرقمي", "type": "نظم"}]}
-
-4. {"entities": [{"text": "منصة إحسان", "type": "Product", "importance": "high", "description": "منصة وطنية للتبرعات الخيرية", "attributes": {"type": "digital_platform"}}, {"text": "المركز الوطني للتنمية", "type": "Organization", "importance": "medium", "description": "مركز حكومي للتنمية"}], "relationships": [{"source": "المركز الوطني للتنمية", "target": "منصة إحسان", "type": "طور"}]}
-
-5. {"entities": [{"text": "د. أحمد العيسى", "type": "Person", "importance": "high", "description": "وزير التعليم السابق", "attributes": {"position": "former_minister"}}, {"text": "برنامج نافس", "type": "Program", "importance": "medium", "description": "برنامج لدعم القطاع غير الربحي", "attributes": {"sector": "nonprofit"}}], "relationships": [{"source": "د. أحمد العيسى", "target": "برنامج نافس", "type": "أطلق"}]}
-
-6. {"entities": [{"text": "قمة المعرفة 2024", "type": "Event", "importance": "high", "description": "مؤتمر سنوي للمعرفة والابتكار", "attributes": {"year": "2024"}}, {"text": "دبي", "type": "Location", "importance": "medium", "description": "إمارة دبي", "attributes": {"country": "UAE"}}], "relationships": [{"source": "قمة المعرفة 2024", "target": "دبي", "type": "عُقد_في"}]}
-
-7. {"entities": [{"text": "مؤسسة مسك الخيرية", "type": "Organization", "importance": "high", "description": "مؤسسة خيرية غير ربحية", "attributes": {"type": "nonprofit"}}, {"text": "مبادرة مسك", "type": "Program", "importance": "medium", "description": "مبادرة لتمكين الشباب"}], "relationships": [{"source": "مؤسسة مسك الخيرية", "target": "مبادرة مسك", "type": "أطلق"}]}
-
-8. {"entities": [{"text": "الهيئة السعودية للبيانات", "type": "Organization", "importance": "high", "description": "هيئة حكومية لإدارة البيانات", "attributes": {"sector": "government"}}, {"text": "استراتيجية البيانات الوطنية", "type": "Policy", "importance": "high", "description": "استراتيجية وطنية للبيانات"}], "relationships": [{"source": "الهيئة السعودية للبيانات", "target": "استراتيجية البيانات الوطنية", "type": "أعلن_عن"}]}
-
-9. {"entities": [{"text": "نيوم", "type": "Project", "importance": "high", "description": "مشروع مدينة مستقبلية", "attributes": {"location": "تبوك", "size": "26500_km2"}}, {"text": "تبوك", "type": "Location", "importance": "medium", "description": "منطقة في شمال غرب السعودية"}], "relationships": [{"source": "نيوم", "target": "تبوك", "type": "يقع_في"}]}
-
-10. {"entities": [{"text": "برنامج سكني", "type": "Program", "importance": "high", "description": "برنامج إسكان حكومي", "attributes": {"sector": "housing"}}, {"text": "وزارة الإسكان", "type": "Organization", "importance": "high", "description": "وزارة الإسكان السعودية", "attributes": {"sector": "government"}}], "relationships": [{"source": "وزارة الإسكان", "target": "برنامج سكني", "type": "يدير"}]}
-
-11. {"entities": [{"text": "الذكاء الاصطناعي", "type": "Technology", "importance": "high", "description": "تقنية الذكاء الاصطناعي"}, {"text": "الهيئة السعودية للبيانات", "type": "Organization", "importance": "high", "description": "هيئة حكومية"}], "relationships": [{"source": "الهيئة السعودية للبيانات", "target": "الذكاء الاصطناعي", "type": "تستخدم"}]}
-
-12. {"entities": [{"text": "منتدى الاستثمار", "type": "Event", "importance": "high", "description": "منتدى سنوي للاستثمار", "attributes": {"frequency": "annual"}}, {"text": "هيئة الاستثمار", "type": "Organization", "importance": "high", "description": "هيئة حكومية للاستثمار"}], "relationships": [{"source": "هيئة الاستثمار", "target": "منتدى الاستثمار", "type": "نظم"}]}"""
-
-            user_prompt = f"""استخرج **جميع** الكيانات والعلاقات المحددة من النص التالي. لا تتخطى أي كيان محدد حتى لو ذُكر مرة واحدة.
-
-**مهم جداً**: هذا النص جزء من محادثة أو نص أطول وقد يحتوي على جمل غير مكتملة أو متقطعة - هذا طبيعي تماماً! استخرج الكيانات والعلاقات الموجودة حتى لو كان النص غير مكتمل. لا تعتذر أو ترفض الاستخراج - فقط استخرج ما تجده.
-
-النص: {chunk}
+{chunk}
 
 JSON:"""
 
         else:  # English
-            system_prompt = """You are an expert information extractor specialized in building comprehensive and information-rich knowledge graphs.
+            system_prompt = """You are an entity extractor. Extract entities and relationships from text in JSON format only.
 
-**Entity Extraction Instructions:**
-- **VERY IMPORTANT**: Extract **ALL** specific, concrete entities from the text, not just the main or important ones
-- **Do not skip any specific entity** even if mentioned only once
-- Required entities: person names, organizations, places, programs, projects, products, events, awards, policies, technologies, metrics, etc.
-- **Completely avoid** generic entities like: "opportunity", "sector", "field", "aspect", "point", "thing", "topic", "challenge", "area", "way", "issue", "matter"
-- For each entity, specify: name, type, importance level, brief description (one sentence), and key attributes
-- Attributes can include: dates, numbers, positions, roles, achievements, locations, etc.
+Entities: text (name), type (Person/Organization/Location/Event/Program/Policy/Technology), importance (high/medium/low)
+Relationships: source, target, type (relationship type), weight (0.0-1.0)
 
-**Relationship Extraction Instructions:**
-- Extract **ALL** clear relationships between entities
-- Use specific, descriptive relationship types (e.g., "leads", "manages", "participates_in", "launched", "won", "founded", "collaborates_with", "located_in", "works_for", "organized", "hosted", "developed", "designed", "spoke_about", "announced")
-- **Strictly forbidden** to use generic relationships like: "related_to", "has_relationship_with", "connected_to", "associated_with", "linked_to"
-- Ensure the relationship is logical and clear between the two entities
-- Add relationship description if there's important context (optional)
-- Add temporal or quantitative attributes when available
+Example:
+{"entities": [{"text": "Digital Government Authority", "type": "Organization", "importance": "high"}], "relationships": [{"source": "Digital Government Authority", "target": "Vision 2030", "type": "supports", "weight": 0.9}]}
 
-**Examples:**
-1. {"entities": [{"text": "Ministry of Education", "type": "Organization", "importance": "high", "description": "Government body responsible for education", "attributes": {"sector": "government"}}, {"text": "Riyadh", "type": "Location", "importance": "medium", "description": "Capital city", "attributes": {"type": "capital"}}], "relationships": [{"source": "Ministry of Education", "target": "Riyadh", "type": "located_in"}]}
+Respond with JSON only, no additional text."""
 
-2. {"entities": [{"text": "Bill Gates", "type": "Person", "importance": "high", "description": "Co-founder of Microsoft", "attributes": {"role": "co-founder"}}, {"text": "Microsoft", "type": "Organization", "importance": "high", "description": "Technology company", "attributes": {"founded": "1975"}}], "relationships": [{"source": "Bill Gates", "target": "Microsoft", "type": "founded", "attributes": {"year": "1975"}}]}
+            user_prompt = f"""Extract entities and relationships from this text:
 
-3. {"entities": [{"text": "Digital Transformation Award", "type": "Award", "importance": "high", "description": "Annual award for innovation", "attributes": {"frequency": "annual"}}, {"text": "Ministry of Communications", "type": "Organization", "importance": "high", "description": "Government ministry", "attributes": {"sector": "government"}}], "relationships": [{"source": "Ministry of Communications", "target": "Digital Transformation Award", "type": "organized"}]}
-
-4. {"entities": [{"text": "Ihsan Platform", "type": "Product", "importance": "high", "description": "National charity platform", "attributes": {"type": "digital"}}, {"text": "National Development Center", "type": "Organization", "importance": "medium", "description": "Government development center"}], "relationships": [{"source": "National Development Center", "target": "Ihsan Platform", "type": "developed"}]}
-
-5. {"entities": [{"text": "Dr. Ahmed", "type": "Person", "importance": "high", "description": "Former minister", "attributes": {"position": "minister"}}, {"text": "Nafis Program", "type": "Program", "importance": "medium", "description": "Nonprofit support program"}], "relationships": [{"source": "Dr. Ahmed", "target": "Nafis Program", "type": "launched"}]}
-
-6. {"entities": [{"text": "Knowledge Summit 2024", "type": "Event", "importance": "high", "description": "Annual knowledge conference", "attributes": {"year": "2024"}}, {"text": "Dubai", "type": "Location", "importance": "medium", "description": "UAE emirate"}], "relationships": [{"source": "Knowledge Summit 2024", "target": "Dubai", "type": "held_in"}]}
-
-7. {"entities": [{"text": "Misk Foundation", "type": "Organization", "importance": "high", "description": "Charitable nonprofit", "attributes": {"type": "nonprofit"}}, {"text": "Misk Initiative", "type": "Program", "importance": "medium", "description": "Youth empowerment program"}], "relationships": [{"source": "Misk Foundation", "target": "Misk Initiative", "type": "launched"}]}
-
-8. {"entities": [{"text": "Data Authority", "type": "Organization", "importance": "high", "description": "Government data agency", "attributes": {"sector": "government"}}, {"text": "National Data Strategy", "type": "Policy", "importance": "high", "description": "National data strategy"}], "relationships": [{"source": "Data Authority", "target": "National Data Strategy", "type": "announced"}]}
-
-9. {"entities": [{"text": "NEOM", "type": "Project", "importance": "high", "description": "Future city project", "attributes": {"size": "26500_km2"}}, {"text": "Tabuk", "type": "Location", "importance": "medium", "description": "Northwestern region"}], "relationships": [{"source": "NEOM", "target": "Tabuk", "type": "located_in"}]}
-
-10. {"entities": [{"text": "Sakani Program", "type": "Program", "importance": "high", "description": "Housing program", "attributes": {"sector": "housing"}}, {"text": "Ministry of Housing", "type": "Organization", "importance": "high", "description": "Government ministry", "attributes": {"sector": "government"}}], "relationships": [{"source": "Ministry of Housing", "target": "Sakani Program", "type": "manages"}]}
-
-11. {"entities": [{"text": "Artificial Intelligence", "type": "Technology", "importance": "high", "description": "AI technology"}, {"text": "Data Authority", "type": "Organization", "importance": "high", "description": "Government agency"}], "relationships": [{"source": "Data Authority", "target": "Artificial Intelligence", "type": "uses"}]}
-
-12. {"entities": [{"text": "Investment Forum", "type": "Event", "importance": "high", "description": "Annual investment conference", "attributes": {"frequency": "annual"}}, {"text": "Investment Authority", "type": "Organization", "importance": "high", "description": "Government investment agency"}], "relationships": [{"source": "Investment Authority", "target": "Investment Forum", "type": "organized"}]}"""
-
-            user_prompt = f"""Extract **ALL** specific entities and relationships from the following text. Do not skip any specific entity even if mentioned only once.
-
-**VERY IMPORTANT**: This text is part of a conversation or longer document and may contain incomplete or fragmented sentences - this is completely normal! Extract whatever entities and relationships ARE present, even if the text seems incomplete. Do not apologize or refuse to extract - just extract what you find.
-
-Text: {chunk}
+{chunk}
 
 JSON:"""
 
@@ -565,6 +496,8 @@ JSON:"""
 
         Prevents duplicates like "Dr. Ahmed Hassan" and "Ahmed Hassan, PhD"
         by normalizing entity names before deduplication.
+
+        GraphRAG Enhancement: Merges descriptions from duplicates to create richer entity profiles.
         """
         seen = {}
         original_count = len(entities)
@@ -579,18 +512,47 @@ JSON:"""
             # Use normalized name for deduplication key
             key = (normalized_name.lower().strip(), entity_type)
 
-            # Keep entity with highest confidence or update text to normalized form
-            if key not in seen or entity.get("confidence", 0) > seen[key].get("confidence", 0):
-                # Update entity text to normalized form
+            if key not in seen:
+                # First occurrence - store it
                 entity["text"] = normalized_name
                 entity["original_text"] = entity_text  # Keep original for reference
                 seen[key] = entity
+            else:
+                # Duplicate found - merge information
+                existing = seen[key]
+
+                # Keep higher confidence
+                if entity.get("confidence", 0) > existing.get("confidence", 0):
+                    existing["confidence"] = entity.get("confidence", 0)
+
+                # Merge descriptions (GraphRAG: combine descriptions for richer context)
+                new_desc = entity.get("description", "")
+                existing_desc = existing.get("description", "")
+                if new_desc and new_desc not in existing_desc:
+                    if existing_desc:
+                        # Append new description if it adds information
+                        if len(existing_desc) < 500:  # Avoid overly long descriptions
+                            existing["description"] = f"{existing_desc} {new_desc}"
+                    else:
+                        existing["description"] = new_desc
+
+                # Merge attributes
+                new_attrs = entity.get("attributes", {})
+                existing_attrs = existing.get("attributes", {})
+                existing["attributes"] = {**new_attrs, **existing_attrs}
+
+                # Update importance if higher
+                importance_order = {"high": 3, "medium": 2, "low": 1}
+                new_importance = importance_order.get(entity.get("importance", "low"), 1)
+                existing_importance = importance_order.get(existing.get("importance", "low"), 1)
+                if new_importance > existing_importance:
+                    existing["importance"] = entity.get("importance")
 
         deduplicated = list(seen.values())
         removed_count = original_count - len(deduplicated)
 
         if removed_count > 0:
-            logger.info(f"Entity normalizer removed {removed_count} duplicate entities")
+            logger.info(f"Entity normalizer removed {removed_count} duplicate entities (merged descriptions)")
 
         return deduplicated
 
@@ -598,9 +560,9 @@ JSON:"""
         """
         Remove duplicate relationships and normalize entity names.
 
-        Also normalizes source/target entity names to match normalized entity names.
+        GraphRAG Enhancement: Merges descriptions and weights from duplicate relationships.
         """
-        seen = set()
+        seen = {}
         unique = []
 
         for rel in relationships:
@@ -610,7 +572,6 @@ JSON:"""
                 continue
 
             # Normalize source and target names (assume Person type for safety)
-            # The exact type doesn't matter much for relationship normalization
             source_normalized = self.normalizer.normalize_entity_name(rel["source"], "Person")
             target_normalized = self.normalizer.normalize_entity_name(rel["target"], "Person")
 
@@ -619,10 +580,36 @@ JSON:"""
             rel["target"] = target_normalized
 
             # Deduplicate using normalized names
-            key = (source_normalized.lower().strip(), target_normalized.lower().strip(), rel["type"])
+            key = (source_normalized.lower().strip(), target_normalized.lower().strip(), rel["type"].lower())
+
             if key not in seen:
-                seen.add(key)
+                # First occurrence
+                seen[key] = rel
                 unique.append(rel)
+            else:
+                # Duplicate found - merge information
+                existing = seen[key]
+
+                # Merge descriptions
+                new_desc = rel.get("description", "")
+                existing_desc = existing.get("description", "")
+                if new_desc and new_desc not in existing_desc:
+                    if existing_desc:
+                        if len(existing_desc) < 300:
+                            existing["description"] = f"{existing_desc} {new_desc}"
+                    else:
+                        existing["description"] = new_desc
+
+                # Keep higher weight
+                new_weight = rel.get("weight", 0.5)
+                existing_weight = existing.get("weight", 0.5)
+                if new_weight > existing_weight:
+                    existing["weight"] = new_weight
+
+                # Merge attributes
+                new_attrs = rel.get("attributes", {})
+                existing_attrs = existing.get("attributes", {})
+                existing["attributes"] = {**new_attrs, **existing_attrs}
 
         return unique
 

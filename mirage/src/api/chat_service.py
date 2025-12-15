@@ -15,9 +15,15 @@ import asyncio
 from ..core.orchestration import RAGWorkflow
 from ..core.retrieval import get_retrieval_engine, RetrievalMode
 from ..core.retrieval import get_v5_engine, V5Config, get_observability
+from ..core.retrieval import get_drift_search_engine, DriftConfig
+from ..core.retrieval import get_query_decomposer, DecomposeAndRetrieve
 from ..core.generation import get_prompt_manager, get_response_generator
+from ..core.refrag.compressor import REFRAGCompressor
 
 router = APIRouter()
+
+# Initialize RefRAG compressor
+refrag_compressor = REFRAGCompressor(strategy="hybrid")
 
 # Initialize RAG workflow (for backward compatibility)
 rag_workflow = RAGWorkflow()
@@ -30,6 +36,12 @@ response_generator = get_response_generator()
 # V5: Initialize unified engine with all SOTA innovations
 v5_engine = None  # Lazy init to avoid startup issues
 observability = get_observability()
+
+# GraphRAG: Drift search engine (lazy init)
+drift_engine = None
+
+# GraphRAG Phase 7: Query decomposer (lazy init)
+query_decomposer = None
 
 
 # Models
@@ -52,6 +64,8 @@ class ChatRequest(BaseModel):
     # V5 features (optional enhancements)
     use_hyde: bool = False  # HyDE query enhancement
     enable_tracing: bool = False  # Observability tracing
+    # GraphRAG Phase 7: Query decomposition for complex queries
+    use_decomposition: bool = False  # Decompose multi-hop queries into sub-queries
 
 
 class ChatResponse(BaseModel):
@@ -402,9 +416,11 @@ async def list_retrieval_modes():
             {"name": "naive", "description": "Simple vector similarity search"},
             {"name": "local", "description": "Entity-focused: query → entities → chunks"},
             {"name": "global", "description": "Relationship-focused: query → relationships → entities → chunks"},
+            {"name": "global_search", "description": "GraphRAG map-reduce over community summaries"},
             {"name": "hybrid", "description": "Combines local + global with RRF fusion"},
             {"name": "mix", "description": "All modes combined with weighted RRF"},
             {"name": "semantic", "description": "Deep semantic matching with re-ranking"},
+            {"name": "drift", "description": "GraphRAG drift search: dynamic global→local with claims"},
         ],
         "default": retrieval_engine.config.default_mode.value,
         "auto_route": retrieval_engine.config.auto_route
@@ -721,6 +737,87 @@ async def ask_v2(request: ChatRequest):
             except ValueError:
                 pass  # Use auto mode
 
+        # 1b. Handle DRIFT mode specially (GraphRAG drift search)
+        if mode == RetrievalMode.DRIFT:
+            global drift_engine
+            if drift_engine is None:
+                logger.info("Initializing Drift Search Engine...")
+                drift_engine = get_drift_search_engine()
+
+            drift_start = time.time()
+            drift_result = drift_engine.search(request.message)
+            drift_time = (time.time() - drift_start) * 1000
+            total_time = (time.time() - start_time) * 1000
+
+            return {
+                "query": request.message,
+                "answer": drift_result.answer,
+                "chunks": [
+                    {
+                        "chunk_id": c.get("chunk_id", f"drift_{i}"),
+                        "document_id": c.get("document_id", "unknown"),
+                        "text": c.get("text", "")[:500],
+                        "score": 0.8,
+                        "source_type": "drift_local",
+                        "via_entity": c.get("entity_name")
+                    }
+                    for i, c in enumerate(drift_result.local_context[:10])
+                ],
+                "sources": [
+                    {"text": s[:300], "type": "community_summary"}
+                    for s in drift_result.global_context[:5]
+                ],
+                "retrieval_mode": "drift",
+                "retrieval_time_ms": round(drift_time, 1),
+                "generation_time_ms": 0,  # Included in drift search
+                "total_time_ms": round(total_time, 1),
+                "metadata": {
+                    "drift_phases": [p.value for p in drift_result.phases_executed],
+                    "drift_path": drift_result.drift_path,
+                    "communities_visited": len(drift_result.communities_visited),
+                    "entities_traversed": drift_result.entities_traversed[:10],
+                    "claims_used": len(drift_result.claims_used),
+                    "confidence": drift_result.confidence
+                }
+            }
+
+        # 1c. Handle query decomposition for complex queries (GraphRAG Phase 7)
+        decomposition_info = None
+        if request.use_decomposition:
+            global query_decomposer
+            if query_decomposer is None:
+                logger.info("Initializing Query Decomposer...")
+                query_decomposer = get_query_decomposer()
+
+            decomposition_start = time.time()
+            decomposition_result = query_decomposer.decompose(request.message)
+            decomposition_time = (time.time() - decomposition_start) * 1000
+
+            if decomposition_result.needs_decomposition:
+                logger.info(f"Query decomposed into {len(decomposition_result.sub_queries)} sub-queries")
+                decomposition_info = {
+                    "decomposed": True,
+                    "query_type": decomposition_result.query_type.value,
+                    "sub_queries": [
+                        {
+                            "query": sq.query,
+                            "type": sq.query_type,
+                            "target_entities": sq.target_entities,
+                            "reasoning": sq.reasoning
+                        }
+                        for sq in decomposition_result.sub_queries
+                    ],
+                    "combination_strategy": decomposition_result.combination_strategy,
+                    "reasoning": decomposition_result.reasoning,
+                    "decomposition_time_ms": round(decomposition_time, 1)
+                }
+            else:
+                decomposition_info = {
+                    "decomposed": False,
+                    "query_type": "simple",
+                    "reasoning": "Query is simple enough to answer directly"
+                }
+
         # 2. Optional: HyDE query enhancement
         enhanced_query = None
         if request.use_hyde:
@@ -884,30 +981,111 @@ async def ask_v2(request: ChatRequest):
         ]
 
         # Build full chunks for transparency (full text, not truncated)
-        chunks = [
-            {
+        # Include source type (graph vs vector) based on hop_distance
+        chunks = []
+        vector_count = 0
+        graph_1hop_count = 0
+        graph_2hop_count = 0
+
+        for r in reranked_results[:10]:  # Top 10 chunks (re-ranked)
+            hop = r.hop_distance if hasattr(r, 'hop_distance') else 0
+            via = r.via_entity if hasattr(r, 'via_entity') else None
+
+            # Determine source type
+            if hop == 0:
+                source_type = "vector"
+                vector_count += 1
+            elif hop == 1:
+                source_type = "graph_1hop"
+                graph_1hop_count += 1
+            else:
+                source_type = "graph_2hop"
+                graph_2hop_count += 1
+
+            chunks.append({
                 "chunk_id": r.chunk_id,
                 "document_id": r.document_id,
                 "text": r.text,
                 "score": r.score,
+                "source_type": source_type,
+                "hop_distance": hop,
+                "via_entity": via,
                 "metadata": r.metadata if hasattr(r, 'metadata') else {}
+            })
+
+        # Calculate retrieval stats
+        retrieval_stats = {
+            "total_chunks": len(chunks),
+            "vector_chunks": vector_count,
+            "graph_1hop_chunks": graph_1hop_count,
+            "graph_2hop_chunks": graph_2hop_count,
+            "graph_total": graph_1hop_count + graph_2hop_count,
+            "entities_used": list(set(c["via_entity"] for c in chunks if c["via_entity"]))
+        }
+
+        # Apply RefRAG compression if enabled
+        compression_stats = None
+        if request.use_refrag and chunks:
+            compression_start = time.time()
+            compression_input = [{"text": c["text"], "chunk_id": c["chunk_id"]} for c in chunks]
+            compression_result = refrag_compressor.compress(compression_input, query_context=request.message)
+            compression_time = (time.time() - compression_start) * 1000
+
+            compression_stats = {
+                "enabled": True,
+                "original_length": compression_result["original_length"],
+                "compressed_length": compression_result["compressed_length"],
+                "compression_ratio": round(compression_result["compression_ratio"], 3),
+                "chunks_compressed": compression_result["chunks_compressed"],
+                "compression_time_ms": round(compression_time, 1),
+                "strategy": compression_result.get("strategy", "hybrid")
             }
-            for r in reranked_results[:10]  # Top 10 chunks (re-ranked)
-        ]
+        else:
+            compression_stats = {
+                "enabled": False,
+                "original_length": sum(len(c["text"]) for c in chunks),
+                "compressed_length": sum(len(c["text"]) for c in chunks),
+                "compression_ratio": 1.0
+            }
+
+        # Build metadata from retrieval response
+        # Convert any numpy types to Python types for JSON serialization
+        disambiguated = []
+        if response.metadata and response.metadata.get("disambiguated_entities"):
+            for ent in response.metadata.get("disambiguated_entities", []):
+                clean_ent = {}
+                for k, v in ent.items():
+                    if hasattr(v, 'item'):  # numpy types have .item()
+                        clean_ent[k] = v.item()
+                    else:
+                        clean_ent[k] = v
+                disambiguated.append(clean_ent)
+
+        metadata = {
+            "entities_found": entity_names[:20] if entity_names else [],
+            "entity_count": len(entity_names) if entity_names else 0,
+            "graph_chunks_count": graph_1hop_count + graph_2hop_count,
+            "vector_chunks_count": vector_count,
+            "disambiguated_entities": disambiguated,
+        }
 
         result = {
             "query": request.message,
             "answer": answer,
-            "chunks": chunks,  # Full chunk data for debugging/transparency
+            "chunks": chunks,  # Full chunk data with source metadata
             "sources": sources,  # Truncated preview for display
             "retrieval_mode": response.mode.value if response.mode else "unknown",
             "chunks_retrieved": len(context),
             "retrieval_time_ms": round(retrieval_time, 1),
             "generation_time_ms": round(generation_time, 1),
-            "total_time_ms": round(total_time, 1)
+            "total_time_ms": round(total_time, 1),
+            # New detailed metadata
+            "retrieval_stats": retrieval_stats,
+            "compression_stats": compression_stats,
+            "metadata": metadata
         }
 
-        # Add entity names for LOCAL mode
+        # Also add entity names at top level for backwards compatibility
         if entity_names:
             result["entities_found"] = entity_names[:20]
             result["entity_count"] = len(entity_names)
@@ -919,6 +1097,8 @@ async def ask_v2(request: ChatRequest):
             result["trace_id"] = trace_id
         if global_search_warning:
             result["warning"] = global_search_warning
+        if decomposition_info:
+            result["decomposition"] = decomposition_info
 
         # End trace if enabled
         if trace:

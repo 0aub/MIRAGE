@@ -5,9 +5,18 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Send, Bot, User, ChevronDown, Loader2, Network as NetworkIcon, GitBranch, Layers, FileText, Info } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible";
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+import {
+  Send, Bot, User, ChevronDown, Loader2, Network as NetworkIcon, GitBranch,
+  Layers, Info, Settings2, Clock, Database, Minimize2,
+  ArrowRight, Target, PanelRightClose, PanelRight,
+  Activity, HelpCircle
+} from "lucide-react";
 import { Network } from "vis-network";
-import { chatApi } from "@/lib/api";
+import { chatApi, RetrievalMode, ChunkInfo, CompressionStats } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 
 interface Message {
@@ -18,7 +27,52 @@ interface Message {
   timestamp: Date;
   retrievedNodes?: number;
   responseTime?: number;
+  retrievalMode?: string;
+  retrievalTimeMs?: number;
+  generationTimeMs?: number;
+  entitiesFound?: string[];
+  compressionStats?: {
+    compression_ratio: number;
+    speedup_factor: number;
+    chunks_compressed: number;
+    original_tokens?: number;
+    compressed_tokens?: number;
+  };
+  modelUsed?: string;
+  chunks?: ChunkInfo[];
 }
+
+// Mode descriptions
+const MODE_INFO: Record<RetrievalMode, { label: string; description: string; color: string }> = {
+  naive: { label: "Naive", description: "Vector similarity search with keyword fallback", color: "bg-blue-500" },
+  local: { label: "Local", description: "Entity-focused graph traversal (1-2 hops)", color: "bg-green-500" },
+  global: { label: "Global", description: "Relationship-focused graph traversal", color: "bg-purple-500" },
+  hybrid: { label: "Hybrid", description: "Fusion of naive + local + global modes", color: "bg-orange-500" },
+  semantic: { label: "Semantic", description: "Cross-encoder re-ranking for precision", color: "bg-pink-500" },
+  mix: { label: "Mix", description: "All modes combined with RRF fusion", color: "bg-red-500" },
+  global_search: { label: "Global Search", description: "Map-reduce over community summaries", color: "bg-teal-500" },
+  drift: { label: "Drift", description: "Dynamic global-to-local with claims", color: "bg-cyan-500" },
+};
+
+// Config option explanations
+const CONFIG_EXPLANATIONS = {
+  hyde: {
+    title: "HyDE (Hypothetical Document Embeddings)",
+    description: "Generates a hypothetical answer to your query, then searches using that answer's embedding. Improves retrieval for complex questions by creating a 'bridge' between query and document space."
+  },
+  ppr: {
+    title: "PPR (Personalized PageRank)",
+    description: "Uses graph algorithms to find important nodes connected to query entities. Ranks chunks by their 'importance' in the knowledge graph relative to the query context."
+  },
+  community: {
+    title: "Community Selection",
+    description: "First identifies relevant community clusters in the graph, then retrieves chunks from those communities. Useful for focused retrieval when you know which topic areas are relevant."
+  },
+  refrag: {
+    title: "RefRAG (Context Compression)",
+    description: "Compresses the retrieved context before sending to the LLM. Reduces tokens and speeds up generation while preserving key information. Shows compression ratio when enabled."
+  }
+};
 
 export default function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([
@@ -37,9 +91,43 @@ export default function ChatPage() {
     nodes: [],
     edges: [],
   });
-  const [retrievedNodesCount, setRetrievedNodesCount] = useState(0);
   const [retrievalMetadata, setRetrievalMetadata] = useState<any>(null);
-  const [retrievedContext, setRetrievedContext] = useState<string>("");
+  const [retrievedChunks, setRetrievedChunks] = useState<ChunkInfo[]>([]);
+
+  // Mode and options state
+  const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>("local");
+  const [topK, setTopK] = useState<number>(5);
+  const [showAdvanced, setShowAdvanced] = useState(false);
+
+  // V5 Advanced options
+  const [useHyde, setUseHyde] = useState(false);
+  const [usePpr, setUsePpr] = useState(false);
+  const [useCommunitySelection, setUseCommunitySelection] = useState(false);
+  const [useRefrag, setUseRefrag] = useState(false);
+
+  // UI State
+  const [showPanel, setShowPanel] = useState(true);
+  const [showMetrics, setShowMetrics] = useState(false);
+
+  // Last response metadata
+  const [lastResponseMeta, setLastResponseMeta] = useState<{
+    retrievalMode: string;
+    retrievalTimeMs: number;
+    generationTimeMs: number;
+    totalTimeMs: number;
+    chunksCount: number;
+    entitiesFound?: string[];
+    compressionStats?: CompressionStats;
+    retrievalStats?: {
+      total_chunks: number;
+      vector_chunks: number;
+      graph_1hop_chunks: number;
+      graph_2hop_chunks: number;
+      entities_used?: string[];
+    };
+    modelUsed?: string;
+  } | null>(null);
+
   const networkRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
@@ -67,34 +155,24 @@ export default function ChatPage() {
       edges: {
         width: 1,
         smooth: true,
+        arrows: { to: { enabled: true, scaleFactor: 0.5 } },
       },
       groups: {
-        document: {
-          color: {
-            background: "hsl(210, 100%, 55%)",
-            border: "hsl(210, 100%, 40%)",
-          },
+        chunk: {
+          color: { background: "hsl(210, 100%, 55%)", border: "hsl(210, 100%, 40%)" },
         },
         entity: {
-          color: {
-            background: "hsl(140, 65%, 45%)",
-            border: "hsl(140, 65%, 35%)",
-          },
+          color: { background: "hsl(140, 65%, 45%)", border: "hsl(140, 65%, 35%)" },
         },
-        concept: {
-          color: {
-            background: "hsl(25, 95%, 55%)",
-            border: "hsl(25, 95%, 40%)",
-          },
+        relationship: {
+          color: { background: "hsl(25, 95%, 55%)", border: "hsl(25, 95%, 40%)" },
         },
       },
-      physics: {
-        enabled: false,
-      },
+      physics: { enabled: true, stabilization: { iterations: 50 } },
       interaction: {
-        dragNodes: false,
-        dragView: false,
-        zoomView: false,
+        dragNodes: true,
+        dragView: true,
+        zoomView: true,
       },
     };
 
@@ -121,63 +199,127 @@ export default function ChatPage() {
     setIsLoading(true);
 
     try {
-      // Call backend API for detailed query response
-      const response = await chatApi.queryDetailed(input, conversationId);
+      const response = await chatApi.ask({
+        message: input,
+        retrieval_mode: retrievalMode,
+        top_k: topK,
+        conversation_id: conversationId,
+        use_hyde: useHyde,
+        use_ppr: usePpr,
+        use_community_selection: useCommunitySelection,
+        use_refrag: useRefrag,
+      });
 
-      // Update conversation ID if provided
-      if (!conversationId && response.workflow_metadata?.conversation_id) {
-        setConversationId(response.workflow_metadata.conversation_id);
-      }
+      // Store chunks for detailed view
+      setRetrievedChunks(response.chunks || []);
 
-      // Extract sources from citations
-      const sources = response.citations?.map(
-        (citation: any) => citation.source || citation.document_id || "Unknown"
-      ) || [];
+      // Build graph from chunks - extract entities from chunk data
+      const nodes: any[] = [];
+      const edges: any[] = [];
+      const seenNodes = new Set<string>();
+      const entityNodes = new Map<string, number>();
 
-      // Create assistant message
+      // Extract entities from chunks (via_entity field)
+      const chunkEntities = new Set<string>();
+      response.chunks?.forEach((chunk) => {
+        if (chunk.via_entity) {
+          chunkEntities.add(chunk.via_entity);
+        }
+      });
+
+      // Add entity nodes from chunks
+      chunkEntities.forEach((entity) => {
+        if (!seenNodes.has(`entity_${entity}`)) {
+          const entityId = nodes.length + 1;
+          nodes.push({
+            id: entityId,
+            label: entity,
+            group: "entity",
+            title: `Entity: ${entity}`,
+          });
+          seenNodes.add(`entity_${entity}`);
+          entityNodes.set(entity, entityId);
+        }
+      });
+
+      // Add chunk nodes and connect to entities
+      response.chunks?.forEach((chunk, idx) => {
+        const chunkId = nodes.length + 1;
+        const sourceType = chunk.source_type || (chunk.via_entity ? 'graph' : 'vector');
+        nodes.push({
+          id: chunkId,
+          label: `Chunk ${idx + 1}`,
+          group: "chunk",
+          title: `[${sourceType}] ${chunk.text.substring(0, 200)}...`,
+          raw: chunk,
+        });
+
+        // Connect chunk to entity if available
+        if (chunk.via_entity && entityNodes.has(chunk.via_entity)) {
+          const entityId = entityNodes.get(chunk.via_entity)!;
+          edges.push({
+            from: entityId,
+            to: chunkId,
+            label: chunk.hop_distance ? `${chunk.hop_distance}-hop` : "linked",
+            raw: { relationship: chunk.via_relationship || "contains", hop: chunk.hop_distance },
+          });
+        }
+      });
+
+      setContextGraph({ nodes, edges });
+
+      // Set metadata with full details
+      setRetrievalMetadata({
+        search_mode: response.retrieval_mode,
+        query_entities: response.metadata?.query_entities,
+        modes_used: response.metadata?.modes_used,
+        fusion_method: response.metadata?.fusion_method,
+        hyde_used: response.metadata?.hyde_used,
+        ppr_used: response.metadata?.ppr_used,
+        community_selection_used: response.metadata?.community_selection_used,
+        compression_stats: response.metadata?.compression_stats,
+        model_used: response.metadata?.model_used,
+        entities_found: response.entities_found,
+        entity_count: response.entity_count,
+        enhanced_query: response.enhanced_query,
+      });
+
+      // Set last response metadata for performance display
+      setLastResponseMeta({
+        retrievalMode: response.retrieval_mode,
+        retrievalTimeMs: response.retrieval_time_ms,
+        generationTimeMs: response.generation_time_ms,
+        totalTimeMs: response.total_time_ms,
+        chunksCount: response.chunks?.length || 0,
+        entitiesFound: response.entities_found || response.retrieval_stats?.entities_used,
+        retrievalStats: response.retrieval_stats,
+        compressionStats: response.compression_stats,
+        modelUsed: response.metadata?.model_used,
+      });
+
+      // Create assistant message with full metadata
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: response.response || "No response received",
-        sources: sources.length > 0 ? sources : undefined,
+        content: response.answer || "No response received",
+        sources: response.chunks?.map((c) => c.document_id) || [],
         timestamp: new Date(),
-        retrievedNodes: response.workflow_metadata?.retrieved_nodes_count || 0,
-        responseTime: response.workflow_metadata?.response_time_ms,
+        retrievedNodes: response.chunks?.length || 0,
+        responseTime: response.total_time_ms,
+        retrievalMode: response.retrieval_mode,
+        retrievalTimeMs: response.retrieval_time_ms,
+        generationTimeMs: response.generation_time_ms,
+        entitiesFound: response.entities_found,
+        compressionStats: response.metadata?.compression_stats,
+        modelUsed: response.metadata?.model_used,
+        chunks: response.chunks,
       };
 
       setMessages((prev) => [...prev, aiMessage]);
 
-      // Update context graph if available
-      if (response.graph_visualization?.nodes && response.graph_visualization.nodes.length > 0) {
-        const nodes = response.graph_visualization.nodes.map((node: any, idx: number) => ({
-          id: idx + 1,
-          label: node.label || node.id,
-          group: node.type?.toLowerCase() || "entity",
-          raw: node, // Keep raw data for details view
-        }));
-
-        const nodeIdMap = new Map(response.graph_visualization.nodes.map((node: any, idx: number) => [node.id, idx + 1]));
-
-        const edges = response.graph_visualization.edges?.map((edge: any) => ({
-          from: nodeIdMap.get(edge.source) || 1,
-          to: nodeIdMap.get(edge.target) || 1,
-          raw: edge, // Keep raw data for details view
-        })) || [];
-
-        setContextGraph({ nodes, edges });
-        setRetrievedNodesCount(nodes.length);
-      }
-
-      // Store GraphRAG metadata for explainability
-      setRetrievalMetadata(response.workflow_metadata?.graphrag_metadata || null);
-
-      // Store context for display
-      setRetrievedContext(response.workflow_metadata?.context || "");
-
     } catch (error: any) {
       console.error('Error sending message:', error);
 
-      // Show error message in chat
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
@@ -203,263 +345,486 @@ export default function ChatPage() {
     }
   };
 
+  // Format time nicely
+  const formatTime = (ms: number) => {
+    if (ms >= 1000) {
+      return `${(ms / 1000).toFixed(2)}s`;
+    }
+    return `${Math.round(ms)}ms`;
+  };
+
+  // Get entities from chunks (actual entities used in retrieval)
+  const getChunkEntities = () => {
+    const entities = new Set<string>();
+    retrievedChunks.forEach(chunk => {
+      if (chunk.via_entity) entities.add(chunk.via_entity);
+    });
+    return Array.from(entities);
+  };
+
+  // Calculate timing percentages for visual bar
+  const getTimingPercentages = () => {
+    if (!lastResponseMeta) return { retrieval: 50, generation: 50 };
+    const total = lastResponseMeta.retrievalTimeMs + lastResponseMeta.generationTimeMs;
+    if (total === 0) return { retrieval: 50, generation: 50 };
+    return {
+      retrieval: (lastResponseMeta.retrievalTimeMs / total) * 100,
+      generation: (lastResponseMeta.generationTimeMs / total) * 100,
+    };
+  };
+
+  const timingPcts = getTimingPercentages();
+  const chunkEntities = getChunkEntities();
+
   return (
-    <div className="h-[calc(100vh-12rem)] flex flex-col lg:flex-row gap-6 animate-fade-in pb-20 md:pb-0">
-      {/* Chat Section */}
-      <Card className="flex-1 flex flex-col p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h1 className="text-2xl font-bold">Chat</h1>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setIsRTL(!isRTL)}
-          >
-            {isRTL ? "EN" : "AR"}
-          </Button>
-        </div>
-
-        <ScrollArea className="flex-1 pr-4" ref={scrollRef}>
-          <div className="space-y-4">
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex gap-3 ${message.role === "user" ? "justify-end" : "justify-start"}`}
-                dir={isRTL ? "rtl" : "ltr"}
+    <TooltipProvider>
+      <div className="h-[calc(100vh-8rem)] flex gap-4 animate-fade-in">
+        {/* Main Chat Area */}
+        <Card className={`flex-1 flex flex-col p-4 ${showPanel ? '' : 'max-w-4xl mx-auto'}`}>
+          {/* Compact Header */}
+          <div className="flex items-center justify-between mb-3 pb-3 border-b">
+            <div className="flex items-center gap-3">
+              <h1 className="text-xl font-bold">Chat</h1>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsRTL(!isRTL)}
+                className="h-7 px-2 text-xs"
               >
-                {message.role === "assistant" && (
-                  <div className="w-8 h-8 rounded-full gradient-primary flex items-center justify-center flex-shrink-0">
-                    <Bot className="w-5 h-5 text-white" />
-                  </div>
+                {isRTL ? "EN" : "AR"}
+              </Button>
+            </div>
+
+            {/* Quick Stats Badge - Click to expand */}
+            {lastResponseMeta && (
+              <button
+                onClick={() => setShowMetrics(!showMetrics)}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary/50 hover:bg-secondary transition-colors text-xs"
+              >
+                <Clock className="w-3 h-3" />
+                <span>{formatTime(lastResponseMeta.totalTimeMs)}</span>
+                <span className="text-muted-foreground">|</span>
+                <Layers className="w-3 h-3" />
+                <span>{lastResponseMeta.chunksCount}</span>
+                {lastResponseMeta.compressionStats?.enabled && (
+                  <>
+                    <span className="text-muted-foreground">|</span>
+                    <Minimize2 className="w-3 h-3 text-green-500" />
+                    <span className="text-green-600">{Math.round((1 - lastResponseMeta.compressionStats.compression_ratio) * 100)}%</span>
+                  </>
                 )}
-
-                <div className={`flex flex-col gap-2 max-w-[80%]`}>
-                  <Card
-                    className={`p-4 ${
-                      message.role === "user"
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-card"
-                    }`}
-                  >
-                    <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                  </Card>
-
-                  {message.sources && (
-                    <details className="text-xs">
-                      <summary className="cursor-pointer text-muted-foreground hover:text-foreground flex items-center gap-1">
-                        <ChevronDown className="w-3 h-3" />
-                        Show Sources ({message.sources.length})
-                      </summary>
-                      <div className="mt-2 space-y-1 pl-4">
-                        {message.sources.map((source, idx) => (
-                          <div
-                            key={idx}
-                            className="text-muted-foreground hover:text-foreground"
-                          >
-                            • {source}
-                          </div>
-                        ))}
-                      </div>
-                    </details>
-                  )}
-                </div>
-
-                {message.role === "user" && (
-                  <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center flex-shrink-0">
-                    <User className="w-5 h-5" />
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </ScrollArea>
-
-        <div className="mt-4 flex gap-2" dir={isRTL ? "rtl" : "ltr"}>
-          <Input
-            placeholder={isRTL ? "اكتب رسالتك هنا..." : "Type your message..."}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyPress={handleKeyPress}
-            className="flex-1"
-            disabled={isLoading}
-          />
-          <Button onClick={handleSend} size="icon" disabled={isLoading}>
-            {isLoading ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <Send className="w-4 h-4" />
+                <ChevronDown className={`w-3 h-3 transition-transform ${showMetrics ? 'rotate-180' : ''}`} />
+              </button>
             )}
-          </Button>
-        </div>
-      </Card>
 
-      {/* Explainability Panel */}
-      <Card className="lg:w-[500px] p-6">
-        <h2 className="text-lg font-semibold mb-4">Explainability & Context</h2>
-        {contextGraph.nodes.length > 0 || retrievalMetadata || retrievedContext ? (
-          <Tabs defaultValue="graph" className="w-full">
-            <TabsList className="grid w-full grid-cols-5 h-auto">
-              <TabsTrigger value="graph" className="text-xs py-2">
-                <NetworkIcon className="w-3 h-3 mr-1" />
-                Graph
-              </TabsTrigger>
-              <TabsTrigger value="nodes" className="text-xs py-2">
-                <GitBranch className="w-3 h-3 mr-1" />
-                Nodes
-              </TabsTrigger>
-              <TabsTrigger value="edges" className="text-xs py-2">
-                <GitBranch className="w-3 h-3 mr-1 rotate-90" />
-                Edges
-              </TabsTrigger>
-              <TabsTrigger value="context" className="text-xs py-2">
-                <FileText className="w-3 h-3 mr-1" />
-                Context
-              </TabsTrigger>
-              <TabsTrigger value="metadata" className="text-xs py-2">
-                <Info className="w-3 h-3 mr-1" />
-                Meta
-              </TabsTrigger>
-            </TabsList>
+            {/* Panel Toggle */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowPanel(!showPanel)}
+              className="h-8"
+            >
+              {showPanel ? <PanelRightClose className="w-4 h-4" /> : <PanelRight className="w-4 h-4" />}
+            </Button>
+          </div>
 
-            {/* Graph Visualization */}
-            <TabsContent value="graph" className="mt-4">
-              <div
-                ref={networkRef}
-                className="w-full h-80 rounded-lg bg-secondary/20"
-                style={{ border: "1px solid hsl(var(--border))" }}
-              />
-              <div className="mt-3 space-y-1">
-                <p className="text-sm font-medium">Retrieved: {retrievedNodesCount} nodes, {contextGraph.edges.length} edges</p>
-                <p className="text-xs text-muted-foreground">
-                  Visual representation of retrieved subgraph
-                </p>
-              </div>
-            </TabsContent>
-
-            {/* Nodes List */}
-            <TabsContent value="nodes" className="mt-4">
-              <ScrollArea className="h-80">
-                <div className="space-y-2 pr-4">
-                  {contextGraph.nodes.length === 0 ? (
-                    <p className="text-sm text-muted-foreground text-center py-8">No nodes retrieved</p>
-                  ) : (
-                    contextGraph.nodes.map((node) => (
-                      <Card key={node.id} className="p-3">
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
-                              <Badge variant="outline" className="text-xs">
-                                {node.group}
-                              </Badge>
-                              <span className="text-sm font-medium truncate">
-                                {node.label}
-                              </span>
-                            </div>
-                            {node.raw?.confidence && (
-                              <div className="text-xs text-muted-foreground">
-                                Confidence: {(node.raw.confidence * 100).toFixed(0)}%
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </Card>
-                    ))
-                  )}
-                </div>
-              </ScrollArea>
-            </TabsContent>
-
-            {/* Edges List */}
-            <TabsContent value="edges" className="mt-4">
-              <ScrollArea className="h-80">
-                <div className="space-y-2 pr-4">
-                  {contextGraph.edges.length === 0 ? (
-                    <p className="text-sm text-muted-foreground text-center py-8">No edges retrieved</p>
-                  ) : (
-                    contextGraph.edges.map((edge, idx) => {
-                      const sourceNode = contextGraph.nodes.find(n => n.id === edge.from);
-                      const targetNode = contextGraph.nodes.find(n => n.id === edge.to);
-                      return (
-                        <Card key={idx} className="p-3">
-                          <div className="text-xs space-y-1">
-                            <div className="flex items-center gap-2">
-                              <span className="font-medium truncate">{sourceNode?.label || `Node ${edge.from}`}</span>
-                              <span className="text-muted-foreground">→</span>
-                              <span className="font-medium truncate">{targetNode?.label || `Node ${edge.to}`}</span>
-                            </div>
-                            {edge.raw?.relationship && (
-                              <div className="text-muted-foreground">
-                                Type: {edge.raw.relationship}
-                              </div>
-                            )}
-                            {edge.raw?.confidence && (
-                              <div className="text-muted-foreground">
-                                Confidence: {(edge.raw.confidence * 100).toFixed(0)}%
-                              </div>
-                            )}
-                          </div>
-                        </Card>
-                      );
-                    })
-                  )}
-                </div>
-              </ScrollArea>
-            </TabsContent>
-
-            {/* Context Text */}
-            <TabsContent value="context" className="mt-4">
-              <ScrollArea className="h-80">
-                {retrievedContext ? (
-                  <div className="bg-secondary/30 rounded-lg p-4 pr-6">
-                    <p className="text-xs leading-relaxed whitespace-pre-wrap">
-                      {retrievedContext}
-                    </p>
+          {/* Expandable Metrics Panel */}
+          <Collapsible open={showMetrics} onOpenChange={setShowMetrics}>
+            <CollapsibleContent>
+              {lastResponseMeta && (
+                <div className="mb-3 p-3 bg-secondary/20 rounded-lg space-y-2">
+                  {/* Timing Bar */}
+                  <div className="flex items-center gap-2 text-xs">
+                    <div className="flex-1 flex h-2 rounded-full overflow-hidden">
+                      <div className="bg-blue-500" style={{ width: `${timingPcts.retrieval}%` }} />
+                      <div className="bg-purple-500" style={{ width: `${timingPcts.generation}%` }} />
+                    </div>
+                    <span className="text-muted-foreground w-36 text-right">
+                      R: {formatTime(lastResponseMeta.retrievalTimeMs)} / G: {formatTime(lastResponseMeta.generationTimeMs)}
+                    </span>
                   </div>
+
+                  {/* Stats Row */}
+                  <div className="flex flex-wrap items-center gap-2 text-xs">
+                    <Badge variant="secondary" className={`${MODE_INFO[lastResponseMeta.retrievalMode as RetrievalMode]?.color || 'bg-gray-500'} text-white`}>
+                      {lastResponseMeta.retrievalMode}
+                    </Badge>
+                    {chunkEntities.length > 0 && (
+                      <span className="flex items-center gap-1">
+                        <Target className="w-3 h-3 text-green-500" />
+                        {chunkEntities.slice(0, 3).join(", ")}
+                        {chunkEntities.length > 3 && ` +${chunkEntities.length - 3}`}
+                      </span>
+                    )}
+                    {lastResponseMeta.retrievalStats && (
+                      <span className="flex items-center gap-1 text-muted-foreground">
+                        <Database className="w-3 h-3" />
+                        Vec:{lastResponseMeta.retrievalStats.vector_chunks} 1-hop:{lastResponseMeta.retrievalStats.graph_1hop_chunks} 2-hop:{lastResponseMeta.retrievalStats.graph_2hop_chunks}
+                      </span>
+                    )}
+                    {lastResponseMeta.compressionStats?.enabled && (
+                      <span className="flex items-center gap-1 text-green-600">
+                        <Minimize2 className="w-3 h-3" />
+                        {lastResponseMeta.compressionStats.original_length.toLocaleString()} → {lastResponseMeta.compressionStats.compressed_length.toLocaleString()}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
+            </CollapsibleContent>
+          </Collapsible>
+
+          {/* Messages Area - Takes all available space */}
+          <ScrollArea className="flex-1 pr-4 mb-3" ref={scrollRef}>
+            <div className="space-y-4">
+              {messages.map((message) => (
+                <div
+                  key={message.id}
+                  className={`flex gap-3 ${message.role === "user" ? "justify-end" : "justify-start"}`}
+                  dir={isRTL ? "rtl" : "ltr"}
+                >
+                  {message.role === "assistant" && (
+                    <div className="w-8 h-8 rounded-full gradient-primary flex items-center justify-center flex-shrink-0">
+                      <Bot className="w-5 h-5 text-white" />
+                    </div>
+                  )}
+
+                  <div className="flex flex-col gap-1.5 max-w-[80%]">
+                    <Card
+                      className={`p-4 ${
+                        message.role === "user"
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-card"
+                      }`}
+                    >
+                      <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                    </Card>
+
+                    {/* Compact message metadata */}
+                    {message.role === "assistant" && message.responseTime && (
+                      <div className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
+                        <Badge variant="outline" className="h-5 text-xs py-0">
+                          {message.retrievalMode}
+                        </Badge>
+                        <span>{formatTime(message.responseTime)}</span>
+                        {message.compressionStats && (
+                          <span className="text-green-600">{message.compressionStats.compression_ratio.toFixed(1)}x</span>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Collapsible sources */}
+                    {message.sources && message.sources.length > 0 && (
+                      <details className="text-xs">
+                        <summary className="cursor-pointer text-muted-foreground hover:text-foreground">
+                          Sources ({[...new Set(message.sources)].length})
+                        </summary>
+                        <div className="mt-1 space-y-0.5 pl-2 text-muted-foreground">
+                          {[...new Set(message.sources)].slice(0, 5).map((source, idx) => (
+                            <div key={idx}>• {source}</div>
+                          ))}
+                        </div>
+                      </details>
+                    )}
+                  </div>
+
+                  {message.role === "user" && (
+                    <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center flex-shrink-0">
+                      <User className="w-5 h-5" />
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </ScrollArea>
+
+          {/* Input Area - Fixed at bottom */}
+          <div className="space-y-2 pt-3 border-t">
+            {/* Config Display - More readable */}
+            <div className="flex flex-wrap items-center gap-2">
+              <Select value={retrievalMode} onValueChange={(v) => setRetrievalMode(v as RetrievalMode)}>
+                <SelectTrigger className="w-36 h-8 text-xs">
+                  <div className="flex items-center gap-1.5">
+                    <div className={`w-2 h-2 rounded-full ${MODE_INFO[retrievalMode].color}`} />
+                    <SelectValue />
+                  </div>
+                </SelectTrigger>
+                <SelectContent>
+                  {(Object.keys(MODE_INFO) as RetrievalMode[]).map((mode) => (
+                    <SelectItem key={mode} value={mode}>
+                      <div className="flex items-center gap-2">
+                        <div className={`w-2 h-2 rounded-full ${MODE_INFO[mode].color}`} />
+                        {MODE_INFO[mode].label}
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Select value={topK.toString()} onValueChange={(v) => setTopK(parseInt(v))}>
+                <SelectTrigger className="w-20 h-8 text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {[3, 5, 10, 15, 20].map((k) => (
+                    <SelectItem key={k} value={k.toString()}>K = {k}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              {/* RefRAG toggle with tooltip */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <label className="flex items-center gap-1.5 cursor-pointer px-2 py-1 rounded hover:bg-secondary/50">
+                    <Switch checked={useRefrag} onCheckedChange={setUseRefrag} className="scale-75" />
+                    <span className="text-xs">RefRAG</span>
+                    <HelpCircle className="w-3 h-3 text-muted-foreground" />
+                  </label>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-xs">
+                  <p className="font-semibold">{CONFIG_EXPLANATIONS.refrag.title}</p>
+                  <p className="text-xs mt-1">{CONFIG_EXPLANATIONS.refrag.description}</p>
+                </TooltipContent>
+              </Tooltip>
+
+              {/* Advanced toggle */}
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-7 text-xs ml-auto"
+                onClick={() => setShowAdvanced(!showAdvanced)}
+              >
+                <Settings2 className="w-3 h-3 mr-1" />
+                Options
+                <ChevronDown className={`w-3 h-3 ml-1 transition-transform ${showAdvanced ? 'rotate-180' : ''}`} />
+              </Button>
+            </div>
+
+            {/* Advanced Options - Collapsible with tooltips */}
+            <Collapsible open={showAdvanced} onOpenChange={setShowAdvanced}>
+              <CollapsibleContent>
+                <div className="flex flex-wrap items-center gap-4 p-2 bg-secondary/30 rounded-lg text-xs">
+                  {/* HyDE */}
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <label className="flex items-center gap-1.5 cursor-pointer">
+                        <Switch checked={useHyde} onCheckedChange={setUseHyde} className="scale-75" />
+                        <span>HyDE</span>
+                        <HelpCircle className="w-3 h-3 text-muted-foreground" />
+                      </label>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="max-w-xs">
+                      <p className="font-semibold">{CONFIG_EXPLANATIONS.hyde.title}</p>
+                      <p className="text-xs mt-1">{CONFIG_EXPLANATIONS.hyde.description}</p>
+                    </TooltipContent>
+                  </Tooltip>
+
+                  {/* PPR */}
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <label className="flex items-center gap-1.5 cursor-pointer">
+                        <Switch checked={usePpr} onCheckedChange={setUsePpr} className="scale-75" />
+                        <span>PPR</span>
+                        <HelpCircle className="w-3 h-3 text-muted-foreground" />
+                      </label>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="max-w-xs">
+                      <p className="font-semibold">{CONFIG_EXPLANATIONS.ppr.title}</p>
+                      <p className="text-xs mt-1">{CONFIG_EXPLANATIONS.ppr.description}</p>
+                    </TooltipContent>
+                  </Tooltip>
+
+                  {/* Community */}
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <label className="flex items-center gap-1.5 cursor-pointer">
+                        <Switch checked={useCommunitySelection} onCheckedChange={setUseCommunitySelection} className="scale-75" />
+                        <span>Community</span>
+                        <HelpCircle className="w-3 h-3 text-muted-foreground" />
+                      </label>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="max-w-xs">
+                      <p className="font-semibold">{CONFIG_EXPLANATIONS.community.title}</p>
+                      <p className="text-xs mt-1">{CONFIG_EXPLANATIONS.community.description}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+
+            {/* Input Row */}
+            <div className="flex gap-2" dir={isRTL ? "rtl" : "ltr"}>
+              <Input
+                placeholder={isRTL ? "اكتب رسالتك هنا..." : "Type your message..."}
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyPress={handleKeyPress}
+                className="flex-1 h-11"
+                disabled={isLoading}
+              />
+              <Button onClick={handleSend} size="icon" className="h-11 w-11" disabled={isLoading}>
+                {isLoading ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
                 ) : (
-                  <p className="text-sm text-muted-foreground text-center py-8">
-                    No context available
-                  </p>
+                  <Send className="w-5 h-5" />
                 )}
-              </ScrollArea>
-            </TabsContent>
+              </Button>
+            </div>
+          </div>
+        </Card>
 
-            {/* Metadata */}
-            <TabsContent value="metadata" className="mt-4">
-              <ScrollArea className="h-80">
-                <div className="space-y-3 pr-4">
-                  {retrievalMetadata ? (
+        {/* Explainability Side Panel - Collapsible */}
+        {showPanel && (
+          <Card className="w-[420px] flex-shrink-0 p-4 flex flex-col">
+            <h2 className="text-lg font-semibold mb-3">Explainability</h2>
+
+            {contextGraph.nodes.length > 0 || retrievalMetadata || retrievedChunks.length > 0 ? (
+              <Tabs defaultValue="chunks" className="flex-1 flex flex-col">
+                <TabsList className="grid w-full grid-cols-4 h-8">
+                  <TabsTrigger value="chunks" className="text-xs py-1">
+                    <Layers className="w-3 h-3 mr-1" />
+                    Chunks
+                  </TabsTrigger>
+                  <TabsTrigger value="graph" className="text-xs py-1">
+                    <NetworkIcon className="w-3 h-3 mr-1" />
+                    Graph
+                  </TabsTrigger>
+                  <TabsTrigger value="entities" className="text-xs py-1">
+                    <Target className="w-3 h-3 mr-1" />
+                    Entities
+                  </TabsTrigger>
+                  <TabsTrigger value="meta" className="text-xs py-1">
+                    <Info className="w-3 h-3 mr-1" />
+                    Meta
+                  </TabsTrigger>
+                </TabsList>
+
+                {/* Chunks Tab */}
+                <TabsContent value="chunks" className="flex-1 mt-3">
+                  <ScrollArea className="h-[calc(100vh-20rem)]">
+                    <div className="space-y-2 pr-2">
+                      {retrievedChunks.length === 0 ? (
+                        <p className="text-sm text-muted-foreground text-center py-8">No chunks retrieved</p>
+                      ) : (
+                        retrievedChunks.map((chunk, idx) => {
+                          const sourceType = chunk.source_type || (chunk.via_entity ? 'graph' : 'vector');
+                          const isGraph = sourceType.includes('graph') || chunk.via_entity;
+
+                          return (
+                            <Card key={idx} className="p-2.5">
+                              <div className="space-y-1.5">
+                                {/* Header */}
+                                <div className="flex items-center justify-between">
+                                  <div className="flex items-center gap-1.5">
+                                    <span className="text-xs font-bold">#{idx + 1}</span>
+                                    <Badge className={`text-xs h-5 ${
+                                      sourceType === 'vector' ? 'bg-blue-500' :
+                                      sourceType === 'graph_1hop' || chunk.hop_distance === 1 ? 'bg-green-500' :
+                                      sourceType === 'graph_2hop' || chunk.hop_distance === 2 ? 'bg-purple-500' :
+                                      isGraph ? 'bg-green-500' : 'bg-blue-500'
+                                    }`}>
+                                      {sourceType === 'graph_1hop' || chunk.hop_distance === 1 ? '1-hop' :
+                                       sourceType === 'graph_2hop' || chunk.hop_distance === 2 ? '2-hop' :
+                                       sourceType}
+                                    </Badge>
+                                  </div>
+                                  <span className="text-xs text-muted-foreground">
+                                    {chunk.score.toFixed(3)}
+                                  </span>
+                                </div>
+
+                                {/* Entity info - CLEAR display */}
+                                {chunk.via_entity && (
+                                  <div className="flex items-center gap-1.5 text-xs bg-green-500/10 px-2 py-1 rounded">
+                                    <Target className="w-3 h-3 text-green-600" />
+                                    <span className="font-medium text-green-700 dark:text-green-400">
+                                      {chunk.via_entity}
+                                    </span>
+                                    {chunk.via_relationship && (
+                                      <>
+                                        <ArrowRight className="w-3 h-3 text-muted-foreground" />
+                                        <span className="text-muted-foreground">{chunk.via_relationship}</span>
+                                      </>
+                                    )}
+                                  </div>
+                                )}
+
+                                {/* Text */}
+                                <p className="text-xs text-muted-foreground line-clamp-4">
+                                  {chunk.text}
+                                </p>
+                              </div>
+                            </Card>
+                          );
+                        })
+                      )}
+                    </div>
+                  </ScrollArea>
+                </TabsContent>
+
+                {/* Graph Tab */}
+                <TabsContent value="graph" className="flex-1 mt-3">
+                  {contextGraph.nodes.length > 0 ? (
                     <>
-                      {retrievalMetadata.search_mode && (
-                        <div>
-                          <div className="text-xs font-medium mb-1">Search Mode</div>
-                          <Badge variant="default">{retrievalMetadata.search_mode}</Badge>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            {retrievalMetadata.search_mode === "global" && "Community-based search (holistic)"}
-                            {retrievalMetadata.search_mode === "local" && "Entity-based search (specific)"}
-                            {retrievalMetadata.search_mode === "hybrid" && "Combined approach"}
-                          </p>
-                        </div>
-                      )}
+                      <div
+                        ref={networkRef}
+                        className="w-full h-[calc(100vh-24rem)] rounded-lg bg-secondary/20"
+                        style={{ border: "1px solid hsl(var(--border))" }}
+                      />
+                      <div className="mt-2 flex items-center gap-4 text-xs text-muted-foreground">
+                        <span className="flex items-center gap-1">
+                          <div className="w-3 h-3 rounded-full bg-green-500" />
+                          Entities ({contextGraph.nodes.filter(n => n.group === 'entity').length})
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <div className="w-3 h-3 rounded-full bg-blue-500" />
+                          Chunks ({contextGraph.nodes.filter(n => n.group === 'chunk').length})
+                        </span>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flex-1 flex items-center justify-center h-[calc(100vh-24rem)]">
+                      <div className="text-center text-muted-foreground">
+                        <NetworkIcon className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                        <p className="text-sm">No graph data</p>
+                        <p className="text-xs">Use LOCAL or GRAPH modes to see entity connections</p>
+                      </div>
+                    </div>
+                  )}
+                </TabsContent>
 
-                      {retrievalMetadata.confidence !== undefined && (
-                        <div>
-                          <div className="text-xs font-medium mb-1">Confidence</div>
-                          <div className="flex items-center gap-2">
-                            <div className="flex-1 bg-secondary rounded-full h-2">
-                              <div
-                                className="bg-primary rounded-full h-2"
-                                style={{ width: `${retrievalMetadata.confidence * 100}%` }}
-                              />
-                            </div>
-                            <span className="text-xs">{(retrievalMetadata.confidence * 100).toFixed(0)}%</span>
+                {/* Entities Tab - Shows CHUNK entities */}
+                <TabsContent value="entities" className="flex-1 mt-3">
+                  <ScrollArea className="h-[calc(100vh-20rem)]">
+                    <div className="space-y-3 pr-2">
+                      {/* Chunk entities - the actual entities used */}
+                      <div>
+                        <div className="text-xs font-medium mb-2 flex items-center gap-2">
+                          <Target className="w-3 h-3" />
+                          Entities from Retrieved Chunks
+                        </div>
+                        {chunkEntities.length > 0 ? (
+                          <div className="flex flex-wrap gap-1.5">
+                            {chunkEntities.map((entity, idx) => (
+                              <Badge key={idx} variant="secondary" className="text-xs bg-green-500/10">
+                                {entity}
+                              </Badge>
+                            ))}
                           </div>
-                        </div>
-                      )}
+                        ) : (
+                          <p className="text-xs text-muted-foreground">No entities in retrieved chunks (try LOCAL or GRAPH mode)</p>
+                        )}
+                      </div>
 
-                      {retrievalMetadata.seed_entities && (
-                        <div>
-                          <div className="text-xs font-medium mb-1">Seed Entities</div>
-                          <div className="flex flex-wrap gap-1">
-                            {retrievalMetadata.seed_entities.map((entity: string, idx: number) => (
+                      {/* Query entities - what was detected in query */}
+                      {retrievalMetadata?.entities_found && retrievalMetadata.entities_found.length > 0 && (
+                        <div className="mt-4 pt-4 border-t">
+                          <div className="text-xs font-medium mb-2 flex items-center gap-2">
+                            <Info className="w-3 h-3" />
+                            Entities Detected in Query
+                          </div>
+                          <div className="flex flex-wrap gap-1.5">
+                            {retrievalMetadata.entities_found.map((entity: string, idx: number) => (
                               <Badge key={idx} variant="outline" className="text-xs">
                                 {entity}
                               </Badge>
@@ -468,62 +833,186 @@ export default function ChatPage() {
                         </div>
                       )}
 
-                      {retrievalMetadata.themes && (
-                        <div>
-                          <div className="text-xs font-medium mb-1">Themes</div>
-                          <div className="flex flex-wrap gap-1">
-                            {retrievalMetadata.themes.map((theme: string, idx: number) => (
-                              <Badge key={idx} variant="secondary" className="text-xs">
-                                {theme}
-                              </Badge>
-                            ))}
+                      {/* Relationships */}
+                      {contextGraph.edges.filter(e => e.label !== 'contains' && e.label !== 'linked').length > 0 && (
+                        <div className="mt-4 pt-4 border-t">
+                          <div className="text-xs font-medium mb-2">Relationships</div>
+                          <div className="space-y-1">
+                            {contextGraph.edges
+                              .filter(e => e.label !== 'contains' && e.label !== 'linked')
+                              .slice(0, 8)
+                              .map((edge, idx) => {
+                                const from = contextGraph.nodes.find(n => n.id === edge.from);
+                                const to = contextGraph.nodes.find(n => n.id === edge.to);
+                                if (!from || !to) return null;
+                                return (
+                                  <div key={idx} className="flex items-center gap-1.5 text-xs bg-secondary/30 rounded p-1.5">
+                                    <span>{from.label}</span>
+                                    <ArrowRight className="w-3 h-3" />
+                                    <Badge variant="outline" className="text-xs h-4 px-1">{edge.label}</Badge>
+                                    <ArrowRight className="w-3 h-3" />
+                                    <span>{to.label}</span>
+                                  </div>
+                                );
+                              })}
                           </div>
                         </div>
                       )}
+                    </div>
+                  </ScrollArea>
+                </TabsContent>
 
-                      {retrievalMetadata.communities_searched && (
-                        <div>
-                          <div className="text-xs font-medium mb-1">Communities Searched</div>
-                          <Badge variant="outline">{retrievalMetadata.communities_searched}</Badge>
-                        </div>
-                      )}
+                {/* Meta Tab */}
+                <TabsContent value="meta" className="flex-1 mt-3">
+                  <ScrollArea className="h-[calc(100vh-20rem)]">
+                    <div className="space-y-3 pr-2">
+                      {retrievalMetadata || lastResponseMeta ? (
+                        <>
+                          {/* Summary */}
+                          <div className="grid grid-cols-3 gap-2 text-xs">
+                            <div className="bg-secondary/30 rounded p-2 text-center">
+                              <div className="text-lg font-bold text-blue-500">{lastResponseMeta?.chunksCount || 0}</div>
+                              <div className="text-muted-foreground">Chunks</div>
+                            </div>
+                            <div className="bg-secondary/30 rounded p-2 text-center">
+                              <div className="text-lg font-bold text-green-500">{chunkEntities.length}</div>
+                              <div className="text-muted-foreground">Entities</div>
+                            </div>
+                            <div className="bg-secondary/30 rounded p-2 text-center">
+                              <div className="text-lg font-bold text-purple-500">{formatTime(lastResponseMeta?.totalTimeMs || 0)}</div>
+                              <div className="text-muted-foreground">Time</div>
+                            </div>
+                          </div>
 
-                      {retrievalMetadata.discovered_entities !== undefined && (
-                        <div>
-                          <div className="text-xs font-medium mb-1">Discovered Entities</div>
-                          <Badge variant="outline">{retrievalMetadata.discovered_entities}</Badge>
-                        </div>
-                      )}
+                          {/* Source breakdown - CLEAR labels */}
+                          {lastResponseMeta?.retrievalStats && (
+                            <div className="bg-secondary/30 rounded-lg p-2.5">
+                              <div className="text-xs font-medium mb-2">Source Breakdown</div>
+                              <div className="flex h-2 rounded-full overflow-hidden mb-2">
+                                {lastResponseMeta.retrievalStats.vector_chunks > 0 && (
+                                  <div
+                                    className="bg-blue-500"
+                                    style={{ width: `${(lastResponseMeta.retrievalStats.vector_chunks / lastResponseMeta.retrievalStats.total_chunks) * 100}%` }}
+                                  />
+                                )}
+                                {lastResponseMeta.retrievalStats.graph_1hop_chunks > 0 && (
+                                  <div
+                                    className="bg-green-500"
+                                    style={{ width: `${(lastResponseMeta.retrievalStats.graph_1hop_chunks / lastResponseMeta.retrievalStats.total_chunks) * 100}%` }}
+                                  />
+                                )}
+                                {lastResponseMeta.retrievalStats.graph_2hop_chunks > 0 && (
+                                  <div
+                                    className="bg-purple-500"
+                                    style={{ width: `${(lastResponseMeta.retrievalStats.graph_2hop_chunks / lastResponseMeta.retrievalStats.total_chunks) * 100}%` }}
+                                  />
+                                )}
+                              </div>
+                              <div className="grid grid-cols-3 gap-1 text-xs">
+                                <div className="flex items-center gap-1">
+                                  <div className="w-2 h-2 rounded-full bg-blue-500" />
+                                  <span>Vector: {lastResponseMeta.retrievalStats.vector_chunks}</span>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <div className="w-2 h-2 rounded-full bg-green-500" />
+                                  <span>1-hop: {lastResponseMeta.retrievalStats.graph_1hop_chunks}</span>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <div className="w-2 h-2 rounded-full bg-purple-500" />
+                                  <span>2-hop: {lastResponseMeta.retrievalStats.graph_2hop_chunks}</span>
+                                </div>
+                              </div>
+                            </div>
+                          )}
 
-                      {retrievalMetadata.relationships !== undefined && (
-                        <div>
-                          <div className="text-xs font-medium mb-1">Relationships</div>
-                          <Badge variant="outline">{retrievalMetadata.relationships}</Badge>
-                        </div>
+                          {/* Compression stats */}
+                          {lastResponseMeta?.compressionStats?.enabled && (
+                            <div className="bg-green-500/10 rounded-lg p-2.5">
+                              <div className="text-xs font-medium mb-2 text-green-700 dark:text-green-400">
+                                RefRAG Compression
+                              </div>
+                              <div className="text-xs space-y-1">
+                                <div className="flex justify-between">
+                                  <span>Strategy:</span>
+                                  <Badge variant="outline" className="text-xs h-5">{lastResponseMeta.compressionStats.strategy}</Badge>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span>Ratio:</span>
+                                  <span className="text-green-600 font-bold">
+                                    {(lastResponseMeta.compressionStats.compression_ratio * 100).toFixed(0)}%
+                                  </span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span>Original:</span>
+                                  <span>{lastResponseMeta.compressionStats.original_length.toLocaleString()} chars</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span>Compressed:</span>
+                                  <span className="text-green-600">{lastResponseMeta.compressionStats.compressed_length.toLocaleString()} chars</span>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Config */}
+                          <div className="bg-secondary/30 rounded-lg p-2.5">
+                            <div className="text-xs font-medium mb-2">Configuration Used</div>
+                            <div className="flex flex-wrap gap-1">
+                              <Badge variant={retrievalMetadata?.hyde_used ? "default" : "outline"} className="text-xs h-5">
+                                HyDE {retrievalMetadata?.hyde_used ? "ON" : "off"}
+                              </Badge>
+                              <Badge variant={retrievalMetadata?.ppr_used ? "default" : "outline"} className="text-xs h-5">
+                                PPR {retrievalMetadata?.ppr_used ? "ON" : "off"}
+                              </Badge>
+                              <Badge variant={retrievalMetadata?.community_selection_used ? "default" : "outline"} className="text-xs h-5">
+                                Community {retrievalMetadata?.community_selection_used ? "ON" : "off"}
+                              </Badge>
+                            </div>
+                          </div>
+
+                          {/* Fusion pipeline */}
+                          {retrievalMetadata?.modes_used && retrievalMetadata.modes_used.length > 0 && (
+                            <div className="bg-secondary/30 rounded-lg p-2.5">
+                              <div className="text-xs font-medium mb-2">Fusion Pipeline</div>
+                              <div className="flex flex-wrap items-center gap-1 text-xs">
+                                {retrievalMetadata.modes_used.map((mode: string, idx: number) => (
+                                  <span key={idx} className="flex items-center">
+                                    <Badge variant="outline" className="text-xs h-5">{mode}</Badge>
+                                    {idx < retrievalMetadata.modes_used.length - 1 && (
+                                      <ArrowRight className="w-3 h-3 mx-0.5 text-muted-foreground" />
+                                    )}
+                                  </span>
+                                ))}
+                                {retrievalMetadata.fusion_method && (
+                                  <>
+                                    <ArrowRight className="w-3 h-3 mx-0.5 text-muted-foreground" />
+                                    <Badge className="bg-orange-500 text-xs h-5">{retrievalMetadata.fusion_method}</Badge>
+                                  </>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        <p className="text-sm text-muted-foreground text-center py-8">No metadata available</p>
                       )}
-                    </>
-                  ) : (
-                    <p className="text-sm text-muted-foreground text-center py-8">
-                      No GraphRAG metadata available
-                    </p>
-                  )}
+                    </div>
+                  </ScrollArea>
+                </TabsContent>
+              </Tabs>
+            ) : (
+              <div className="flex-1 flex items-center justify-center">
+                <div className="text-center p-4">
+                  <Activity className="w-12 h-12 mx-auto text-muted-foreground mb-3" />
+                  <p className="text-sm text-muted-foreground">
+                    {isLoading ? "Retrieving..." : "Send a message to see details"}
+                  </p>
                 </div>
-              </ScrollArea>
-            </TabsContent>
-          </Tabs>
-        ) : (
-          <div className="w-full h-96 rounded-lg bg-secondary/20 flex items-center justify-center" style={{ border: "1px solid hsl(var(--border))" }}>
-            <div className="text-center p-4">
-              <Info className="w-12 h-12 mx-auto text-muted-foreground mb-3" />
-              <p className="text-sm text-muted-foreground">
-                {isLoading
-                  ? "Retrieving context and metadata..."
-                  : "Send a message to see explainability details"}
-              </p>
-            </div>
-          </div>
+              </div>
+            )}
+          </Card>
         )}
-      </Card>
-    </div>
+      </div>
+    </TooltipProvider>
   );
 }

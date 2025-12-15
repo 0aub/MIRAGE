@@ -1,0 +1,463 @@
+{
+  "version": "1.0",
+  "description": "MIRAGE GraphRAG Benchmark Questions - 5 question types, 10 questions each",
+  "question_types": {
+    "factual": "Direct fact retrieval - answers found in single chunk",
+    "analytical": "Requires reasoning across multiple chunks",
+    "comparative": "Compare/contrast multiple entities",
+    "global": "Broad themes, summaries, overviews",
+    "relationship": "Entity connections and graph traversal"
+  },
+  "questions": [
+    {
+      "id": "F1",
+      "type": "factual",
+      "question_ar": "ما هي جائزة الحكومة الرقمية؟",
+      "question_en": "What is the Digital Government Award?",
+      "expected_mode": "local",
+      "difficulty": "easy",
+      "expected_entities": ["جائزة الحكومة الرقمية", "Digital Government Award"]
+    },
+    {
+      "id": "F2",
+      "type": "factual",
+      "question_ar": "متى تم إطلاق رؤية 2030؟",
+      "question_en": "When was Vision 2030 launched?",
+      "expected_mode": "local",
+      "difficulty": "easy",
+      "expected_entities": ["رؤية 2030", "Vision 2030"]
+    },
+    {
+      "id": "F3",
+      "type": "factual",
+      "question_ar": "ما هي هيئة الحكومة الرقمية؟",
+      "question_en": "What is the Digital Government Authority?",
+      "expected_mode": "local",
+      "difficulty": "easy",
+      "expected_entities": ["هيئة الحكومة الرقمية", "DGA"]
+    },
+    {
+      "id": "F4",
+      "type": "factual",
+      "question_ar": "ما هو منتدى الحكومة الرقمية 2025؟",
+      "question_en": "What is the Digital Government Forum 2025?",
+      "expected_mode": "local",
+      "difficulty": "easy",
+      "expected_entities": ["منتدى الحكومة الرقمية", "Digital Government Forum"]
+    },
+    {
+      "id": "F5",
+      "type": "factual",
+      "question_ar": "ما هو مؤشر نضج الحكومة الرقمية؟",
+      "question_en": "What is the Digital Government Maturity Index?",
+      "expected_mode": "local",
+      "difficulty": "easy",
+      "expected_entities": ["مؤشر النضج", "Maturity Index"]
+    },
+    {
+      "id": "F6",
+      "type": "factual",
+      "question_ar": "كم عدد معايير النضج الرقمي؟",
+      "question_en": "How many digital maturity standards are there?",
+      "expected_mode": "local",
+      "difficulty": "medium",
+      "expected_entities": ["معايير النضج"]
+    },
+    {
+      "id": "F7",
+      "type": "factual",
+      "question_ar": "ما هي أهداف التحول الرقمي الحكومي؟",
+      "question_en": "What are the goals of government digital transformation?",
+      "expected_mode": "local",
+      "difficulty": "medium",
+      "expected_entities": ["التحول الرقمي"]
+    },
+    {
+      "id": "F8",
+      "type": "factual",
+      "question_ar": "ما هي منصة اعتماد؟",
+      "question_en": "What is the Etimad platform?",
+      "expected_mode": "local",
+      "difficulty": "easy",
+      "expected_entities": ["اعتماد", "Etimad"]
+    },
+    {
+      "id": "F9",
+      "type": "factual",
+      "question_ar": "ما هي خدمات النفاذ الوطني الموحد؟",
+      "question_en": "What are the National Single Sign-On services?",
+      "expected_mode": "local",
+      "difficulty": "medium",
+      "expected_entities": ["النفاذ الوطني"]
+    },
+    {
+      "id": "F10",
+      "type": "factual",
+      "question_ar": "ما هي الجهات الحكومية المشاركة في التحول الرقمي؟",
+      "question_en": "Which government agencies participate in digital transformation?",
+      "expected_mode": "local",
+      "difficulty": "medium",
+      "expected_entities": ["الجهات الحكومية"]
+    },
+    {
+      "id": "A1",
+      "type": "analytical",
+      "question_ar": "كيف يؤثر التحول الرقمي على جودة الخدمات الحكومية؟",
+      "question_en": "How does digital transformation impact government service quality?",
+      "expected_mode": "hybrid",
+      "difficulty": "medium",
+      "expected_entities": ["التحول الرقمي", "الخدمات الحكومية"]
+    },
+    {
+      "id": "A2",
+      "type": "analytical",
+      "question_ar": "ما العلاقة بين مؤشر النضج ورضا المستفيدين؟",
+      "question_en": "What is the relationship between maturity index and beneficiary satisfaction?",
+      "expected_mode": "hybrid",
+      "difficulty": "hard",
+      "expected_entities": ["مؤشر النضج", "رضا المستفيدين"]
+    },
+    {
+      "id": "A3",
+      "type": "analytical",
+      "question_ar": "ما هي التحديات التي تواجه التحول الرقمي الحكومي؟",
+      "question_en": "What challenges face government digital transformation?",
+      "expected_mode": "global",
+      "difficulty": "medium",
+      "expected_entities": ["التحديات", "التحول الرقمي"]
+    },
+    {
+      "id": "A4",
+      "type": "analytical",
+      "question_ar": "كيف تساهم البيانات المفتوحة في الشفافية الحكومية؟",
+      "question_en": "How do open data contribute to government transparency?",
+      "expected_mode": "hybrid",
+      "difficulty": "hard",
+      "expected_entities": ["البيانات المفتوحة", "الشفافية"]
+    },
+    {
+      "id": "A5",
+      "type": "analytical",
+      "question_ar": "ما أثر الذكاء الاصطناعي على الخدمات الحكومية؟",
+      "question_en": "What is the impact of AI on government services?",
+      "expected_mode": "hybrid",
+      "difficulty": "hard",
+      "expected_entities": ["الذكاء الاصطناعي", "الخدمات الحكومية"]
+    },
+    {
+      "id": "A6",
+      "type": "analytical",
+      "question_ar": "كيف يتم قياس نجاح التحول الرقمي؟",
+      "question_en": "How is digital transformation success measured?",
+      "expected_mode": "hybrid",
+      "difficulty": "medium",
+      "expected_entities": ["قياس", "التحول الرقمي"]
+    },
+    {
+      "id": "A7",
+      "type": "analytical",
+      "question_ar": "ما دور القيادة في نجاح التحول الرقمي؟",
+      "question_en": "What role does leadership play in digital transformation success?",
+      "expected_mode": "hybrid",
+      "difficulty": "hard",
+      "expected_entities": ["القيادة", "التحول الرقمي"]
+    },
+    {
+      "id": "A8",
+      "type": "analytical",
+      "question_ar": "كيف تؤثر البنية التحتية الرقمية على جودة الخدمات؟",
+      "question_en": "How does digital infrastructure affect service quality?",
+      "expected_mode": "hybrid",
+      "difficulty": "medium",
+      "expected_entities": ["البنية التحتية", "الخدمات"]
+    },
+    {
+      "id": "A9",
+      "type": "analytical",
+      "question_ar": "ما العوامل المؤثرة في تبني الخدمات الرقمية؟",
+      "question_en": "What factors influence adoption of digital services?",
+      "expected_mode": "global",
+      "difficulty": "hard",
+      "expected_entities": ["العوامل", "الخدمات الرقمية"]
+    },
+    {
+      "id": "A10",
+      "type": "analytical",
+      "question_ar": "كيف يتم ضمان أمن المعلومات في التحول الرقمي؟",
+      "question_en": "How is information security ensured in digital transformation?",
+      "expected_mode": "hybrid",
+      "difficulty": "hard",
+      "expected_entities": ["أمن المعلومات", "التحول الرقمي"]
+    },
+    {
+      "id": "C1",
+      "type": "comparative",
+      "question_ar": "ما الفرق بين الخدمات الرقمية والخدمات التقليدية؟",
+      "question_en": "What is the difference between digital and traditional services?",
+      "expected_mode": "hybrid",
+      "difficulty": "medium",
+      "expected_entities": ["الخدمات الرقمية", "الخدمات التقليدية"]
+    },
+    {
+      "id": "C2",
+      "type": "comparative",
+      "question_ar": "قارن بين مستويات النضج الرقمي المختلفة",
+      "question_en": "Compare different digital maturity levels",
+      "expected_mode": "global",
+      "difficulty": "hard",
+      "expected_entities": ["مستويات النضج"]
+    },
+    {
+      "id": "C3",
+      "type": "comparative",
+      "question_ar": "ما الفرق بين الحكومة الإلكترونية والحكومة الرقمية؟",
+      "question_en": "What is the difference between e-government and digital government?",
+      "expected_mode": "hybrid",
+      "difficulty": "medium",
+      "expected_entities": ["الحكومة الإلكترونية", "الحكومة الرقمية"]
+    },
+    {
+      "id": "C4",
+      "type": "comparative",
+      "question_ar": "قارن بين معايير التقييم المختلفة",
+      "question_en": "Compare different evaluation criteria",
+      "expected_mode": "global",
+      "difficulty": "hard",
+      "expected_entities": ["معايير التقييم"]
+    },
+    {
+      "id": "C5",
+      "type": "comparative",
+      "question_ar": "ما الفرق بين البوابات الحكومية والتطبيقات الذكية؟",
+      "question_en": "What is the difference between government portals and smart apps?",
+      "expected_mode": "hybrid",
+      "difficulty": "medium",
+      "expected_entities": ["البوابات الحكومية", "التطبيقات الذكية"]
+    },
+    {
+      "id": "C6",
+      "type": "comparative",
+      "question_ar": "قارن بين استراتيجيات التحول الرقمي",
+      "question_en": "Compare digital transformation strategies",
+      "expected_mode": "global",
+      "difficulty": "hard",
+      "expected_entities": ["استراتيجيات التحول"]
+    },
+    {
+      "id": "C7",
+      "type": "comparative",
+      "question_ar": "ما الفرق بين خدمات G2C وG2B وG2G؟",
+      "question_en": "What is the difference between G2C, G2B, and G2G services?",
+      "expected_mode": "local",
+      "difficulty": "medium",
+      "expected_entities": ["G2C", "G2B", "G2G"]
+    },
+    {
+      "id": "C8",
+      "type": "comparative",
+      "question_ar": "قارن بين الجوائز والتكريمات الرقمية",
+      "question_en": "Compare digital awards and recognitions",
+      "expected_mode": "global",
+      "difficulty": "medium",
+      "expected_entities": ["الجوائز", "التكريمات"]
+    },
+    {
+      "id": "C9",
+      "type": "comparative",
+      "question_ar": "ما الفرق بين المنصات الحكومية المختلفة؟",
+      "question_en": "What is the difference between various government platforms?",
+      "expected_mode": "global",
+      "difficulty": "hard",
+      "expected_entities": ["المنصات الحكومية"]
+    },
+    {
+      "id": "C10",
+      "type": "comparative",
+      "question_ar": "قارن بين متطلبات النضج الرقمي للجهات المختلفة",
+      "question_en": "Compare digital maturity requirements for different agencies",
+      "expected_mode": "global",
+      "difficulty": "hard",
+      "expected_entities": ["متطلبات النضج"]
+    },
+    {
+      "id": "G1",
+      "type": "global",
+      "question_ar": "ما هي الموضوعات الرئيسية في التحول الرقمي الحكومي؟",
+      "question_en": "What are the main themes in government digital transformation?",
+      "expected_mode": "global",
+      "difficulty": "medium",
+      "expected_entities": []
+    },
+    {
+      "id": "G2",
+      "type": "global",
+      "question_ar": "لخص أهم إنجازات الحكومة الرقمية",
+      "question_en": "Summarize the main achievements of digital government",
+      "expected_mode": "global",
+      "difficulty": "medium",
+      "expected_entities": []
+    },
+    {
+      "id": "G3",
+      "type": "global",
+      "question_ar": "ما هي التوجهات المستقبلية للتحول الرقمي؟",
+      "question_en": "What are the future trends for digital transformation?",
+      "expected_mode": "global",
+      "difficulty": "hard",
+      "expected_entities": []
+    },
+    {
+      "id": "G4",
+      "type": "global",
+      "question_ar": "ما هي أبرز التحديات والحلول في الحكومة الرقمية؟",
+      "question_en": "What are the main challenges and solutions in digital government?",
+      "expected_mode": "global",
+      "difficulty": "hard",
+      "expected_entities": []
+    },
+    {
+      "id": "G5",
+      "type": "global",
+      "question_ar": "كيف تتكامل الجهود الحكومية في التحول الرقمي؟",
+      "question_en": "How do government efforts integrate in digital transformation?",
+      "expected_mode": "global",
+      "difficulty": "hard",
+      "expected_entities": []
+    },
+    {
+      "id": "G6",
+      "type": "global",
+      "question_ar": "ما هي المحاور الاستراتيجية للتحول الرقمي؟",
+      "question_en": "What are the strategic axes of digital transformation?",
+      "expected_mode": "global",
+      "difficulty": "medium",
+      "expected_entities": []
+    },
+    {
+      "id": "G7",
+      "type": "global",
+      "question_ar": "لخص رحلة التحول الرقمي الحكومي",
+      "question_en": "Summarize the government digital transformation journey",
+      "expected_mode": "global",
+      "difficulty": "hard",
+      "expected_entities": []
+    },
+    {
+      "id": "G8",
+      "type": "global",
+      "question_ar": "ما هي أفضل الممارسات في الحكومة الرقمية؟",
+      "question_en": "What are the best practices in digital government?",
+      "expected_mode": "global",
+      "difficulty": "medium",
+      "expected_entities": []
+    },
+    {
+      "id": "G9",
+      "type": "global",
+      "question_ar": "ما هي مؤشرات الأداء الرئيسية للتحول الرقمي؟",
+      "question_en": "What are the key performance indicators for digital transformation?",
+      "expected_mode": "global",
+      "difficulty": "medium",
+      "expected_entities": []
+    },
+    {
+      "id": "G10",
+      "type": "global",
+      "question_ar": "كيف تدعم الحكومة الرقمية تحقيق رؤية 2030؟",
+      "question_en": "How does digital government support achieving Vision 2030?",
+      "expected_mode": "global",
+      "difficulty": "hard",
+      "expected_entities": ["رؤية 2030"]
+    },
+    {
+      "id": "R1",
+      "type": "relationship",
+      "question_ar": "ما الجهات المرتبطة بهيئة الحكومة الرقمية؟",
+      "question_en": "What entities are connected to the Digital Government Authority?",
+      "expected_mode": "local",
+      "difficulty": "medium",
+      "expected_entities": ["هيئة الحكومة الرقمية"]
+    },
+    {
+      "id": "R2",
+      "type": "relationship",
+      "question_ar": "من هم الشركاء في منتدى الحكومة الرقمية؟",
+      "question_en": "Who are the partners in the Digital Government Forum?",
+      "expected_mode": "local",
+      "difficulty": "medium",
+      "expected_entities": ["منتدى الحكومة الرقمية"]
+    },
+    {
+      "id": "R3",
+      "type": "relationship",
+      "question_ar": "ما العلاقة بين الجهات الحكومية المختلفة في التحول الرقمي؟",
+      "question_en": "What is the relationship between different government entities in digital transformation?",
+      "expected_mode": "hybrid",
+      "difficulty": "hard",
+      "expected_entities": ["الجهات الحكومية"]
+    },
+    {
+      "id": "R4",
+      "type": "relationship",
+      "question_ar": "ما المبادرات التي أطلقتها هيئة الحكومة الرقمية؟",
+      "question_en": "What initiatives did the Digital Government Authority launch?",
+      "expected_mode": "local",
+      "difficulty": "medium",
+      "expected_entities": ["هيئة الحكومة الرقمية", "مبادرات"]
+    },
+    {
+      "id": "R5",
+      "type": "relationship",
+      "question_ar": "من الفائزون بجوائز الحكومة الرقمية؟",
+      "question_en": "Who are the winners of digital government awards?",
+      "expected_mode": "local",
+      "difficulty": "medium",
+      "expected_entities": ["جوائز الحكومة الرقمية", "الفائزون"]
+    },
+    {
+      "id": "R6",
+      "type": "relationship",
+      "question_ar": "ما البرامج المرتبطة برؤية 2030؟",
+      "question_en": "What programs are connected to Vision 2030?",
+      "expected_mode": "local",
+      "difficulty": "medium",
+      "expected_entities": ["رؤية 2030", "برامج"]
+    },
+    {
+      "id": "R7",
+      "type": "relationship",
+      "question_ar": "ما الخدمات التي تقدمها المنصات الحكومية؟",
+      "question_en": "What services do government platforms provide?",
+      "expected_mode": "local",
+      "difficulty": "medium",
+      "expected_entities": ["المنصات الحكومية", "خدمات"]
+    },
+    {
+      "id": "R8",
+      "type": "relationship",
+      "question_ar": "ما الجهات المسؤولة عن قياس النضج الرقمي؟",
+      "question_en": "What entities are responsible for measuring digital maturity?",
+      "expected_mode": "local",
+      "difficulty": "medium",
+      "expected_entities": ["النضج الرقمي"]
+    },
+    {
+      "id": "R9",
+      "type": "relationship",
+      "question_ar": "ما التقنيات المستخدمة في الخدمات الحكومية الرقمية؟",
+      "question_en": "What technologies are used in digital government services?",
+      "expected_mode": "hybrid",
+      "difficulty": "hard",
+      "expected_entities": ["تقنيات", "الخدمات الحكومية"]
+    },
+    {
+      "id": "R10",
+      "type": "relationship",
+      "question_ar": "ما المشاريع المشتركة بين الجهات الحكومية؟",
+      "question_en": "What are the joint projects between government entities?",
+      "expected_mode": "hybrid",
+      "difficulty": "hard",
+      "expected_entities": ["مشاريع مشتركة", "الجهات الحكومية"]
+    }
+  ]
+}

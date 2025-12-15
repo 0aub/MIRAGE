@@ -8,6 +8,7 @@ MIRAGE V5 Features:
     - HyDE Query Enhancement: Hypothetical document embeddings
     - Personalized PageRank: HippoRAG-style associative retrieval
     - Production Observability: Full tracing and metrics
+    - Claim-based Retrieval: GraphRAG factual claim search (Phase 5)
 
 Usage:
     # V5 Unified Engine (recommended)
@@ -186,6 +187,34 @@ from .v5_engine import (
     get_v5_engine,
 )
 
+# GraphRAG Phase 5: Claim-based Retrieval
+from .claim_retriever import (
+    ClaimRetriever,
+    ClaimMatch,
+    ClaimRetrievalResult,
+    get_claim_retriever,
+)
+
+# GraphRAG Phase 6: Drift Search (dynamic global+local)
+from .drift_search import (
+    DriftSearchEngine,
+    DriftSearchResult,
+    DriftConfig,
+    DriftPhase,
+    get_drift_search_engine,
+)
+
+# GraphRAG Phase 7: Query Decomposition (multi-hop query handling)
+from .query_decomposer import (
+    QueryDecomposer,
+    DecompositionResult,
+    SubQuery,
+    QueryType as DecompositionQueryType,
+    DecomposeAndRetrieve,
+    get_query_decomposer,
+    decompose_query,
+)
+
 __all__ = [
     # Base classes
     "BaseRetriever",
@@ -284,4 +313,23 @@ __all__ = [
     "V5Config",
     "V5RetrievalResult",
     "get_v5_engine",
+    # GraphRAG Phase 5: Claim-based Retrieval
+    "ClaimRetriever",
+    "ClaimMatch",
+    "ClaimRetrievalResult",
+    "get_claim_retriever",
+    # GraphRAG Phase 6: Drift Search
+    "DriftSearchEngine",
+    "DriftSearchResult",
+    "DriftConfig",
+    "DriftPhase",
+    "get_drift_search_engine",
+    # GraphRAG Phase 7: Query Decomposition
+    "QueryDecomposer",
+    "DecompositionResult",
+    "SubQuery",
+    "DecompositionQueryType",
+    "DecomposeAndRetrieve",
+    "get_query_decomposer",
+    "decompose_query",
 ]

@@ -500,30 +500,76 @@ export default function SettingsPage() {
       );
     }
 
+    // Separate built-in and file-based prompts
+    const builtinPrompts: [string, string][] = [];
+    const filePrompts: [string, string][] = [];
+
+    Object.entries(settings.prompts).forEach(([name, content]) => {
+      if (name.startsWith('builtin:')) {
+        builtinPrompts.push([name.replace('builtin:', ''), content]);
+      } else if (name.startsWith('file:')) {
+        filePrompts.push([name.replace('file:', ''), content]);
+      } else {
+        // Legacy format without prefix
+        filePrompts.push([name, content]);
+      }
+    });
+
+    const renderPromptCard = (name: string, content: string, isBuiltin: boolean) => (
+      <Card key={name} className="border-2">
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className={`p-1.5 rounded-lg ${isBuiltin ? 'bg-purple-500/10' : 'bg-green-500/10'}`}>
+                <FileText className={`w-4 h-4 ${isBuiltin ? 'text-purple-500' : 'text-green-500'}`} />
+              </div>
+              <div>
+                <CardTitle className="text-base">
+                  {name.replace(/_/g, ' ').replace('.txt', '')}
+                </CardTitle>
+                <CardDescription className="text-xs">
+                  {isBuiltin ? 'Built-in prompt template' : 'File-based prompt template'}
+                </CardDescription>
+              </div>
+            </div>
+            <Badge variant={isBuiltin ? 'default' : 'secondary'} className="text-xs">
+              {isBuiltin ? 'Built-in' : 'Custom'}
+            </Badge>
+          </div>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <div className="bg-secondary/30 rounded-lg p-4 font-mono text-sm whitespace-pre-wrap max-h-96 overflow-y-auto">
+            {content}
+          </div>
+        </CardContent>
+      </Card>
+    );
+
     return (
-      <div className="space-y-4">
-        {Object.entries(settings.prompts).map(([name, content]) => (
-          <Card key={name} className="border-2">
-            <CardHeader className="pb-3">
-              <div className="flex items-center gap-2">
-                <div className="p-1.5 bg-green-500/10 rounded-lg">
-                  <FileText className="w-4 h-4 text-green-500" />
-                </div>
-                <div>
-                  <CardTitle className="capitalize text-base">
-                    {name.replace(/_/g, ' ').replace('.txt', '')}
-                  </CardTitle>
-                  <CardDescription className="text-xs">Prompt template</CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="bg-secondary/30 rounded-lg p-4 font-mono text-sm whitespace-pre-wrap max-h-96 overflow-y-auto">
-                {content}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+      <div className="space-y-6">
+        {builtinPrompts.length > 0 && (
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <Box className="w-5 h-5 text-purple-500" />
+              <h3 className="font-semibold">Built-in Prompts ({builtinPrompts.length})</h3>
+            </div>
+            <div className="space-y-4">
+              {builtinPrompts.map(([name, content]) => renderPromptCard(name, content, true))}
+            </div>
+          </div>
+        )}
+
+        {filePrompts.length > 0 && (
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <FileText className="w-5 h-5 text-green-500" />
+              <h3 className="font-semibold">Custom File Prompts ({filePrompts.length})</h3>
+            </div>
+            <div className="space-y-4">
+              {filePrompts.map(([name, content]) => renderPromptCard(name, content, false))}
+            </div>
+          </div>
+        )}
       </div>
     );
   };

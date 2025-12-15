@@ -513,6 +513,7 @@ class Neo4jClient:
         logger.info(f"Storing {len(chunks)} chunks and {len(entities)} entities for document {document_id}")
 
         # Single transaction for atomicity
+        # GraphRAG Enhancement: Store description for each entity
         query = """
         // 1. Create chunk nodes
         UNWIND $chunks AS chunk
@@ -526,7 +527,7 @@ class Neo4jClient:
 
         WITH count(c) as chunks_created
 
-        // 2. Create entity nodes
+        // 2. Create entity nodes (GraphRAG: with description)
         UNWIND $entities AS ent
         MERGE (e:Entity {name: ent.name})
         ON CREATE SET
@@ -534,6 +535,8 @@ class Neo4jClient:
             e.created_at = timestamp(),
             e.source_documents = [$document_id],
             e.confidence = ent.confidence,
+            e.description = COALESCE(ent.description, ''),
+            e.importance = COALESCE(ent.importance, 'medium'),
             e.embedding = CASE
                 WHEN ent.embedding IS NOT NULL THEN ent.embedding
                 ELSE NULL
@@ -543,6 +546,16 @@ class Neo4jClient:
                 WHEN NOT $document_id IN e.source_documents
                 THEN e.source_documents + [$document_id]
                 ELSE e.source_documents
+            END,
+            e.description = CASE
+                WHEN COALESCE(ent.description, '') <> '' AND COALESCE(e.description, '') = '' THEN ent.description
+                WHEN COALESCE(ent.description, '') <> '' AND size(ent.description) > size(COALESCE(e.description, '')) THEN ent.description
+                ELSE e.description
+            END,
+            e.importance = CASE
+                WHEN ent.importance = 'high' THEN 'high'
+                WHEN e.importance IS NULL THEN ent.importance
+                ELSE e.importance
             END,
             e.embedding = CASE
                 WHEN ent.embedding IS NOT NULL THEN ent.embedding

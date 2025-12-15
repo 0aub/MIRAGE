@@ -202,17 +202,35 @@ class GlobalSearchEngine:
         )
 
     def _get_communities_at_level(self, level: int) -> List[Dict]:
-        """Get all communities with summaries at a specific level."""
+        """
+        Get all communities with summaries at a specific level.
+
+        GraphRAG Enhancement: Now includes entity descriptions for richer context
+        in the map phase, enabling more accurate partial answers.
+        """
         query = """
         MATCH (c:Community {level: $level})
         WHERE c.summary IS NOT NULL AND c.summary <> ''
+
+        // GraphRAG: Get entity descriptions for richer context
+        OPTIONAL MATCH (e:Entity)-[:BELONGS_TO]->(c)
+        WHERE e.description IS NOT NULL AND e.description <> ''
+
+        WITH c,
+             COLLECT(DISTINCT {
+                 name: e.name,
+                 type: e.type,
+                 description: e.description
+             })[0..5] as entity_details
+
         RETURN
             c.id as community_id,
             c.level as level,
             c.summary as summary,
             c.size as size,
             c.key_entities as key_entities,
-            c.themes as themes
+            c.themes as themes,
+            entity_details
         ORDER BY c.size DESC
         """
 
@@ -222,6 +240,42 @@ class GlobalSearchEngine:
         except Exception as e:
             logger.error(f"Error getting communities at level {level}: {e}")
             return []
+
+    def _select_optimal_level(self, query: str) -> int:
+        """
+        GraphRAG Enhancement: Select optimal community level based on query type.
+
+        - Broad/thematic queries → Higher levels (coarser communities)
+        - Specific/entity queries → Lower levels (finer communities)
+        """
+        # Keywords indicating broad queries (use higher levels)
+        broad_keywords = [
+            'الموضوعات', 'المجالات', 'الاتجاهات', 'الأنماط', 'الملخص',
+            'بشكل عام', 'إجمالي', 'كل', 'جميع', 'الرئيسية',
+            'themes', 'topics', 'trends', 'patterns', 'summary',
+            'overall', 'total', 'all', 'main', 'general', 'overview'
+        ]
+
+        # Keywords indicating specific queries (use lower levels)
+        specific_keywords = [
+            'من', 'ما هو', 'ما هي', 'أين', 'متى', 'كم',
+            'بالتحديد', 'محدد', 'معين',
+            'who', 'what is', 'where', 'when', 'how many',
+            'specific', 'exactly', 'particular'
+        ]
+
+        query_lower = query.lower()
+
+        # Count keyword matches
+        broad_score = sum(1 for kw in broad_keywords if kw in query_lower)
+        specific_score = sum(1 for kw in specific_keywords if kw in query_lower)
+
+        if broad_score > specific_score:
+            return 1  # Higher level for broad queries
+        elif specific_score > broad_score:
+            return 0  # Lower level for specific queries
+        else:
+            return self.community_level  # Default to configured level
 
     def _map_phase(
         self,
@@ -263,18 +317,22 @@ class GlobalSearchEngine:
         query: str,
         community: Dict
     ) -> Optional[PartialAnswer]:
-        """Generate partial answer from a single community."""
+        """
+        Generate partial answer from a single community.
 
+        GraphRAG Enhancement: Now uses entity descriptions for richer context.
+        """
         community_id = community.get('community_id', '')
         summary = community.get('summary', '')
         key_entities = community.get('key_entities', []) or []
         level = community.get('level', 0)
+        entity_details = community.get('entity_details', []) or []
 
         if not summary:
             return None
 
-        # Build prompt
-        prompt = self._build_map_prompt(query, summary, key_entities)
+        # Build prompt with entity details (GraphRAG enhancement)
+        prompt = self._build_map_prompt(query, summary, key_entities, entity_details)
 
         # Call LLM
         try:
@@ -323,25 +381,43 @@ class GlobalSearchEngine:
         self,
         query: str,
         summary: str,
-        key_entities: List[str]
+        key_entities: List[str],
+        entity_details: List[Dict] = None
     ) -> str:
-        """Build prompt for generating partial answer from community summary."""
+        """
+        Build prompt for generating partial answer from community summary.
 
+        GraphRAG Enhancement: Now includes entity descriptions for richer context.
+        """
         entities_text = ", ".join(key_entities[:10]) if key_entities else "غير محدد"
 
-        prompt = f"""أنت محلل بيانات. استخدم الملخص التالي للإجابة على السؤال.
+        # GraphRAG: Add entity descriptions for richer context
+        entity_context = ""
+        if entity_details:
+            entity_lines = []
+            for e in entity_details[:5]:  # Limit to 5 for token budget
+                name = e.get('name', '')
+                desc = e.get('description', '')
+                if name and desc:
+                    # Truncate long descriptions
+                    desc_short = desc[:100] + "..." if len(desc) > 100 else desc
+                    entity_lines.append(f"• {name}: {desc_short}")
+            if entity_lines:
+                entity_context = f"\n\nتفاصيل الكيانات:\n" + "\n".join(entity_lines)
+
+        prompt = f"""أنت محلل بيانات. استخدم المعلومات التالية للإجابة على السؤال.
 
 ملخص المجموعة:
 {summary}
 
-الكيانات الرئيسية: {entities_text}
+الكيانات الرئيسية: {entities_text}{entity_context}
 
 السؤال: {query}
 
 التعليمات:
-1. إذا كان الملخص يحتوي على معلومات ذات صلة، اكتب إجابة موجزة (2-3 جمل)
-2. قيّم مدى صلة الملخص بالسؤال (0.0 = لا صلة، 1.0 = صلة كاملة)
-3. اذكر النقاط الرئيسية (1-3 نقاط)
+1. إذا كانت المعلومات ذات صلة بالسؤال، اكتب إجابة موجزة (2-3 جمل)
+2. قيّم مدى صلة المعلومات بالسؤال (0.0 = لا صلة، 1.0 = صلة كاملة)
+3. اذكر النقاط الرئيسية المستخلصة (1-3 نقاط)
 
 الإجابة بالتنسيق التالي:
 الصلة: [رقم بين 0 و 1]
@@ -514,18 +590,38 @@ class GlobalSearchEngine:
         answers_text: str,
         num_answers: int
     ) -> str:
-        """Build prompt for reduce phase - simplified for smaller LLMs."""
+        """
+        Build prompt for reduce phase.
 
-        # Simpler, more direct prompt for Allam/smaller models
-        prompt = f"""اجمع هذه المعلومات للإجابة على السؤال.
+        GraphRAG Enhancement: Improved synthesis prompt that:
+        - Preserves key insights from each partial answer
+        - Identifies common themes across communities
+        - Produces coherent, well-structured response
+        """
+        # Adaptive prompt based on number of answers
+        if num_answers <= 2:
+            instruction = "اكتب إجابة موجزة في 2-3 جمل"
+        elif num_answers <= 4:
+            instruction = "اكتب إجابة شاملة في 3-4 جمل تجمع المعلومات"
+        else:
+            instruction = "اكتب إجابة شاملة في 4-5 جمل تجمع أهم النقاط من جميع المصادر"
+
+        prompt = f"""أنت محلل بيانات متخصص. مهمتك دمج المعلومات التالية في إجابة واحدة متماسكة.
 
 السؤال: {query}
 
-المعلومات:
+المعلومات من مصادر متعددة ({num_answers} مصادر):
 {answers_text}
 
-اكتب إجابة شاملة في 3-4 جمل تجمع أهم النقاط:
-"""
+التعليمات:
+1. {instruction}
+2. احتفظ بالمعلومات الرئيسية من كل مصدر
+3. تجنب التكرار
+4. إذا تعارضت المعلومات، اذكر وجهات النظر المختلفة
+5. ابدأ الإجابة مباشرة بدون مقدمات
+
+الإجابة:"""
+
         return prompt
 
     def _clean_reduce_response(self, response: str) -> str:
@@ -635,6 +731,31 @@ class GlobalSearchEngine:
         combined = " كما أن ".join(parts) if len(parts) > 1 else parts[0]
 
         return combined[:600] if combined else "لم يتم العثور على معلومات كافية."
+
+    def search_auto_level(self, query: str) -> GlobalSearchResult:
+        """
+        GraphRAG Enhancement: Search with automatic level selection.
+
+        Automatically selects the optimal community level based on query type:
+        - Broad/thematic queries → Higher levels (coarser communities)
+        - Specific/entity queries → Lower levels (finer communities)
+
+        Args:
+            query: User query string
+
+        Returns:
+            GlobalSearchResult with auto-selected level
+        """
+        optimal_level = self._select_optimal_level(query)
+        original_level = self.community_level
+
+        logger.info(f"Auto-selected level {optimal_level} for query: '{query[:50]}...'")
+
+        self.community_level = optimal_level
+        result = self.search(query)
+        self.community_level = original_level  # Restore original
+
+        return result
 
     def search_multi_level(
         self,

@@ -512,8 +512,11 @@ class EnsembleEntityExtractor:
                 if entity.confidence > existing.confidence:
                     existing.confidence = entity.confidence
 
-                # Merge attributes
-                existing.attributes.update(entity.attributes)
+                # Merge attributes (ensure both are dicts)
+                if isinstance(entity.attributes, dict) and isinstance(existing.attributes, dict):
+                    existing.attributes.update(entity.attributes)
+                elif isinstance(entity.attributes, dict):
+                    existing.attributes = entity.attributes
             else:
                 # New entity
                 entity.sources = [source]
@@ -648,13 +651,17 @@ class EnsembleEntityExtractor:
 
             # Merge entities
             for e_dict in result.get("entities", []):
+                # Ensure attributes is always a dict
+                attrs = e_dict.get("attributes", {})
+                if not isinstance(attrs, dict):
+                    attrs = {}
                 entity = ExtractedEntity(
                     text=e_dict["text"],
                     type=e_dict["type"],
                     confidence=e_dict["confidence"],
                     sources=e_dict.get("sources", []),
                     frequency=e_dict.get("frequency", 1),
-                    attributes=e_dict.get("attributes", {})
+                    attributes=attrs
                 )
                 self._merge_entities(all_entities, [entity], "chunk")
 

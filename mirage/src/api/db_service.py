@@ -371,10 +371,11 @@ async def check_all_databases():
     # Overall status
     all_healthy = all(r.get("status") == "healthy" for r in results)
 
+    from datetime import datetime
     return {
         "overall_status": "healthy" if all_healthy else "degraded",
         "databases": results,
-        "timestamp": logger._core.handlers[0].levelname if hasattr(logger, '_core') else "unknown",
+        "timestamp": datetime.now().isoformat(),
     }
 
 
@@ -573,17 +574,46 @@ async def get_system_settings():
             with open(chunking_file, "r", encoding="utf-8") as f:
                 settings_data["chunking_strategies"] = yaml.safe_load(f)
 
-        # Read prompts from prompts directory
+        # Read prompts from prompts directory (file-based prompts)
         prompts_dir = config_dir / "prompts"
+        prompts = {}
+
+        # Load file-based prompts
         if prompts_dir.exists() and prompts_dir.is_dir():
-            prompts = {}
             for prompt_file in prompts_dir.glob("*.txt"):
                 try:
                     with open(prompt_file, "r", encoding="utf-8") as f:
-                        prompts[prompt_file.name] = f.read()
+                        prompts[f"file:{prompt_file.name}"] = f.read()
                 except Exception as e:
                     logger.warning(f"Failed to load prompt {prompt_file.name}: {e}")
-            settings_data["prompts"] = prompts
+
+        # Load built-in prompts from PromptManager
+        try:
+            from src.core.generation.prompt_manager import PromptManager
+            prompt_manager = PromptManager()
+
+            # Get all registered templates
+            for prompt_type, versions in prompt_manager._templates.items():
+                for version, template in versions.items():
+                    prompt_key = f"builtin:{template.name}"
+                    prompt_content = f"""--- {template.name} (v{template.version}) ---
+Type: {template.type.value}
+Description: {template.description}
+
+=== System Message ===
+{template.system_message}
+
+=== Template ===
+{template.template}
+
+=== Settings ===
+Chain-of-Thought: {'Yes' if template.use_cot else 'No'}
+Languages: {', '.join(template.languages)}"""
+                    prompts[prompt_key] = prompt_content
+        except Exception as e:
+            logger.warning(f"Failed to load built-in prompts: {e}")
+
+        settings_data["prompts"] = prompts
 
         return {
             "settings": settings_data,

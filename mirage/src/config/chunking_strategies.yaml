@@ -74,6 +74,40 @@ pdf:
   preserve_figures: false       # Skip figure captions (no image processing yet)
 
 # ============================================================
+# POLICY DOCUMENTS (PDF regulations, laws, guidelines)
+# ============================================================
+policy:
+  strategy: "policy"
+  description: "Section-aware chunking for policy/regulation documents"
+
+  # Policy-specific chunking
+  max_chunk_size: 1500          # Keep sections together
+  min_chunk_size: 200           # Don't split small sections
+  overlap_sentences: 1          # Context overlap between chunks
+
+  # Section detection
+  detect_headers: true          # Detect Section, Article, المادة headers
+  preserve_articles: true       # Keep full articles in single chunk
+  preserve_definitions: true    # Keep definition blocks together
+
+  # Language support
+  supported_languages:
+    - en                        # English: Section, Article, Chapter
+    - ar                        # Arabic: المادة، الباب، الفصل
+
+  # Header patterns (compiled at runtime)
+  english_headers:
+    - "^(?:SECTION|Section)\\s+(\\d+)"
+    - "^(?:ARTICLE|Article)\\s+(\\d+)"
+    - "^(?:CHAPTER|Chapter)\\s+(\\d+)"
+    - "^(\\d+)\\.\\s+([A-Z])"
+
+  arabic_headers:
+    - "^المادة\\s+(?:الأولى|الثانية|الثالثة)"
+    - "^الباب\\s+(?:الأول|الثاني|الثالث)"
+    - "^الفصل\\s+(?:الأول|الثاني|الثالث)"
+
+# ============================================================
 # PLAIN TEXT FILES
 # ============================================================
 text_file:

@@ -275,23 +275,30 @@ class CommunitySummarizer:
         """
         Get context for Level 0 community (entities + relationships).
 
+        GraphRAG Enhancement: Now includes entity descriptions for richer summaries.
         Returns context optimized for Allam's 2K token limit.
         """
         query = """
         MATCH (c:Community {id: $community_id})
         MATCH (e:Entity)-[:BELONGS_TO]->(c)
 
-        // Get relationships between entities in this community
+        // Get relationships between entities in this community (with descriptions)
         OPTIONAL MATCH (e1:Entity)-[r]->(e2:Entity)
         WHERE (e1)-[:BELONGS_TO]->(c)
           AND (e2)-[:BELONGS_TO]->(c)
 
         WITH c,
-             COLLECT(DISTINCT {name: e.name, type: e.type}) as entities,
+             COLLECT(DISTINCT {
+                 name: e.name,
+                 type: e.type,
+                 description: COALESCE(e.description, ''),
+                 importance: COALESCE(e.importance, 'medium')
+             }) as entities,
              COLLECT(DISTINCT {
                  source: e1.name,
                  target: e2.name,
-                 type: type(r)
+                 type: type(r),
+                 description: COALESCE(r.description, '')
              }) as relationships
 
         RETURN
@@ -483,48 +490,82 @@ class CommunitySummarizer:
             return "", []
 
     def _build_level0_prompt(self, context: Dict) -> str:
-        """Build prompt for Level 0 community (entities + relationships)."""
+        """
+        Build prompt for Level 0 community (entities + relationships).
 
+        GraphRAG Enhancement: Now includes entity and relationship descriptions
+        for richer, more informative community summaries.
+        """
         entities = context.get('entities', [])
         relationships = context.get('relationships', [])
 
-        # Format entities - group by type for better context
+        # Format entities with descriptions (GraphRAG style)
+        # Group by type, include description if available
         entities_by_type = {}
         for e in entities:
             etype = e.get('type', 'Unknown')
             if etype not in entities_by_type:
                 entities_by_type[etype] = []
-            entities_by_type[etype].append(e['name'])
+
+            # Include description if available
+            name = e.get('name', '')
+            desc = e.get('description', '').strip()
+            if desc and len(desc) > 10:
+                # Truncate long descriptions to save tokens
+                if len(desc) > 150:
+                    desc = desc[:150] + "..."
+                entities_by_type[etype].append(f"{name}: {desc}")
+            else:
+                entities_by_type[etype].append(name)
 
         entity_lines = []
-        for etype, names in entities_by_type.items():
-            entity_lines.append(f"• {etype}: {', '.join(names)}")
+        for etype, items in entities_by_type.items():
+            if any(':' in item for item in items):
+                # Has descriptions - format as bullet list
+                entity_lines.append(f"## {etype}:")
+                for item in items[:5]:  # Limit per type for token budget
+                    entity_lines.append(f"  • {item}")
+            else:
+                # No descriptions - compact format
+                entity_lines.append(f"• {etype}: {', '.join(items[:8])}")
 
         entities_text = "\n".join(entity_lines)
 
-        # Format relationships
+        # Format relationships with descriptions (GraphRAG style)
         rel_lines = []
-        for r in relationships:
+        for r in relationships[:10]:  # Limit for token budget
             if r.get('source') and r.get('target'):
-                rel_lines.append(f"• {r['source']} ← {r['type']} → {r['target']}")
+                rel_type = r.get('type', 'RELATED_TO')
+                rel_desc = r.get('description', '').strip()
 
-        relationships_text = "\n".join(rel_lines[:8]) if rel_lines else "(مترابطة ضمنياً)"
+                if rel_desc and len(rel_desc) > 10:
+                    # Truncate long descriptions
+                    if len(rel_desc) > 100:
+                        rel_desc = rel_desc[:100] + "..."
+                    rel_lines.append(
+                        f"• {r['source']} → {r['target']} ({rel_type}): {rel_desc}"
+                    )
+                else:
+                    rel_lines.append(f"• {r['source']} → {r['target']} ({rel_type})")
 
-        # Direct task prompt - no meta-instructions
-        prompt = f"""أنت محلل بيانات. اكتب ملخصاً مباشراً لهذه المجموعة:
+        relationships_text = "\n".join(rel_lines) if rel_lines else "(مترابطة ضمنياً)"
 
-الكيانات:
+        # Direct task prompt with GraphRAG-style instructions
+        prompt = f"""أنت محلل بيانات متخصص. اكتب ملخصاً شاملاً لهذه المجموعة من الكيانات والعلاقات:
+
+الكيانات وأوصافها:
 {entities_text}
 
 العلاقات:
 {relationships_text}
 
-اكتب فقرة واحدة (3-4 جمل) تصف:
-- ما هو الموضوع الرئيسي لهذه المجموعة؟
-- ما هي الكيانات الأهم ولماذا؟
-- كيف ترتبط هذه الكيانات ببعضها؟
+اكتب فقرة واحدة (4-5 جمل) تصف:
+- ما هو الموضوع أو المجال الرئيسي لهذه المجموعة؟
+- ما هي الكيانات الأهم وما دورها؟
+- كيف ترتبط هذه الكيانات ببعضها وما أهمية هذه العلاقات؟
+- ما الأنماط أو الاتجاهات البارزة؟
 
-ابدأ الملخص مباشرة (بدون مقدمات):"""
+ابدأ الملخص مباشرة (بدون مقدمات أو عناوين):"""
 
         return prompt
 

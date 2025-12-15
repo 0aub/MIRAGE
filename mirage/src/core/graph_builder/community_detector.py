@@ -29,6 +29,11 @@ class Community:
     size: int
     parent_community: Optional[str] = None
     child_communities: List[str] = field(default_factory=list)
+    # GraphRAG Enhancement: Store descriptions and summaries
+    resolution: float = 1.0
+    summary: Optional[str] = None
+    key_entities: List[str] = field(default_factory=list)
+    entity_descriptions: Dict[str, str] = field(default_factory=dict)
 
     def to_dict(self) -> Dict:
         """Convert to dictionary for JSON serialization."""
@@ -38,7 +43,10 @@ class Community:
             "entities": self.entities,
             "size": self.size,
             "parent_community": self.parent_community,
-            "child_communities": self.child_communities
+            "child_communities": self.child_communities,
+            "resolution": self.resolution,
+            "summary": self.summary,
+            "key_entities": self.key_entities
         }
 
 
@@ -697,3 +705,336 @@ class CommunityDetector:
         except Exception as e:
             logger.error(f"Error getting community statistics: {e}")
             return {'levels': [], 'total_communities': 0}
+
+    # =========================================================================
+    # GraphRAG Enhancement: Multi-resolution detection and entity descriptions
+    # =========================================================================
+
+    # Resolution levels for GraphRAG hierarchical communities
+    RESOLUTION_LEVELS = [
+        (0, 2.0, "subtopic"),   # Level 0: Fine-grained (many small communities)
+        (1, 1.0, "topic"),      # Level 1: Topic-level (default granularity)
+        (2, 0.5, "domain"),     # Level 2: Domain-level groupings
+        (3, 0.1, "macro"),      # Level 3: Very broad themes
+    ]
+
+    def detect_multi_resolution_communities(
+        self,
+        min_community_size: int = 2
+    ) -> CommunityDetectionResult:
+        """
+        GraphRAG Enhancement: Detect communities at multiple resolution levels.
+
+        This creates a hierarchical community structure similar to Microsoft GraphRAG:
+        - Level 0 (resolution=2.0): Fine-grained subtopics
+        - Level 1 (resolution=1.0): Standard topics
+        - Level 2 (resolution=0.5): Broader domains
+        - Level 3 (resolution=0.1): High-level themes
+
+        Args:
+            min_community_size: Minimum entities per community
+
+        Returns:
+            CommunityDetectionResult with hierarchical communities
+        """
+        logger.info("Starting multi-resolution community detection (GraphRAG style)...")
+
+        # Load graph from Neo4j
+        graph = self._load_graph_from_neo4j()
+
+        if graph.number_of_nodes() == 0:
+            logger.warning("Graph is empty, no communities to detect")
+            return CommunityDetectionResult(
+                communities=[],
+                hierarchy_levels=0,
+                total_communities=0,
+                modularity=0.0
+            )
+
+        logger.info(f"Loaded graph: {graph.number_of_nodes()} nodes, {graph.number_of_edges()} edges")
+
+        all_communities = []
+
+        for level, resolution, level_name in self.RESOLUTION_LEVELS:
+            logger.info(f"Detecting level {level} ({level_name}) with resolution {resolution}...")
+
+            # Run Louvain with specific resolution
+            try:
+                partition = community_louvain.best_partition(
+                    graph,
+                    resolution=resolution,
+                    random_state=42
+                )
+
+                # Group nodes by community
+                communities_dict = defaultdict(list)
+                for node, comm_id in partition.items():
+                    communities_dict[comm_id].append(str(node))
+
+                # Filter small communities (except at finest level)
+                filtered = {}
+                for comm_id, entities in communities_dict.items():
+                    if len(entities) >= min_community_size or (level == 0 and len(entities) >= 1):
+                        filtered[comm_id] = entities
+
+                logger.info(f"Level {level}: {len(filtered)} communities after filtering")
+
+                # Create Community objects with entity descriptions
+                for comm_id, entities in filtered.items():
+                    # Get key entities (top 5 by importance/confidence)
+                    key_entities = self._get_key_entities(entities, limit=5)
+
+                    # Get entity descriptions for context
+                    entity_descriptions = self._get_entity_descriptions(entities)
+
+                    community = Community(
+                        id=f"L{level}_C{comm_id}",
+                        level=level,
+                        entities=entities,
+                        size=len(entities),
+                        resolution=resolution,
+                        key_entities=key_entities,
+                        entity_descriptions=entity_descriptions
+                    )
+                    all_communities.append(community)
+
+            except Exception as e:
+                logger.error(f"Error detecting communities at level {level}: {e}")
+
+        # Build hierarchy relationships
+        all_communities = self._build_hierarchy_relationships(all_communities)
+
+        # Calculate modularity at default level (level 1)
+        level_1_communities = [c for c in all_communities if c.level == 1]
+        modularity = 0.0
+        if level_1_communities:
+            partition = {}
+            for comm in level_1_communities:
+                for entity in comm.entities:
+                    partition[entity] = comm.id
+            try:
+                modularity = community_louvain.modularity(partition, graph)
+            except:
+                pass
+
+        logger.info(
+            f"Multi-resolution detection complete: {len(all_communities)} communities "
+            f"across {len(self.RESOLUTION_LEVELS)} levels"
+        )
+
+        return CommunityDetectionResult(
+            communities=all_communities,
+            hierarchy_levels=len(self.RESOLUTION_LEVELS),
+            total_communities=len(all_communities),
+            modularity=modularity
+        )
+
+    def _get_key_entities(self, entity_names: List[str], limit: int = 5) -> List[str]:
+        """Get key entities by importance and confidence from Neo4j."""
+        if not entity_names:
+            return []
+
+        try:
+            query = """
+            MATCH (e:Entity)
+            WHERE e.name IN $names
+            RETURN e.name AS name
+            ORDER BY
+                CASE e.importance WHEN 'high' THEN 3 WHEN 'medium' THEN 2 ELSE 1 END DESC,
+                e.confidence DESC
+            LIMIT $limit
+            """
+            results = self.neo4j_client.execute_query(query, {
+                "names": entity_names,
+                "limit": limit
+            })
+            return [r["name"] for r in results if r.get("name")]
+        except Exception as e:
+            logger.warning(f"Could not get key entities: {e}")
+            return entity_names[:limit]
+
+    def _get_entity_descriptions(self, entity_names: List[str]) -> Dict[str, str]:
+        """Get descriptions for entities from Neo4j (GraphRAG requirement)."""
+        if not entity_names:
+            return {}
+
+        try:
+            query = """
+            MATCH (e:Entity)
+            WHERE e.name IN $names AND e.description IS NOT NULL AND e.description <> ''
+            RETURN e.name AS name, e.description AS description
+            """
+            results = self.neo4j_client.execute_query(query, {"names": entity_names})
+            return {r["name"]: r["description"] for r in results if r.get("description")}
+        except Exception as e:
+            logger.warning(f"Could not get entity descriptions: {e}")
+            return {}
+
+    def get_community_for_summarization(self, community_id: str) -> Optional[Dict]:
+        """
+        Get community data formatted for LLM summarization.
+
+        Returns entity names, descriptions, and relationships for summary generation.
+
+        Args:
+            community_id: Community identifier
+
+        Returns:
+            Dict with entities, descriptions, relationships for summarization
+        """
+        # Get community info
+        community_info = self.get_community_info(community_id)
+        if not community_info:
+            return None
+
+        entities = community_info.get('entities', [])
+
+        # Get entity descriptions
+        descriptions = self._get_entity_descriptions(entities)
+
+        # Get relationships within community
+        relationships = self._get_community_relationships(entities)
+
+        return {
+            "community_id": community_id,
+            "level": community_info.get('level'),
+            "entity_count": len(entities),
+            "entities": entities,
+            "entity_descriptions": descriptions,
+            "relationships": relationships,
+            "key_entities": entities[:5]  # Top entities
+        }
+
+    def _get_community_relationships(self, entity_names: List[str], limit: int = 30) -> List[Dict]:
+        """Get relationships between entities in a community."""
+        if not entity_names or len(entity_names) < 2:
+            return []
+
+        try:
+            query = """
+            MATCH (e1:Entity)-[r]->(e2:Entity)
+            WHERE e1.name IN $names AND e2.name IN $names
+              AND type(r) <> 'BELONGS_TO'
+            RETURN e1.name AS source, e2.name AS target, type(r) AS type,
+                   r.description AS description
+            LIMIT $limit
+            """
+            results = self.neo4j_client.execute_query(query, {
+                "names": entity_names,
+                "limit": limit
+            })
+            return [
+                {
+                    "source": r["source"],
+                    "target": r["target"],
+                    "type": r["type"],
+                    "description": r.get("description", "")
+                }
+                for r in results
+            ]
+        except Exception as e:
+            logger.warning(f"Could not get community relationships: {e}")
+            return []
+
+    def update_community_summary(self, community_id: str, summary: str) -> bool:
+        """
+        Update a community's summary in Neo4j.
+
+        Args:
+            community_id: Community identifier
+            summary: Generated summary text
+
+        Returns:
+            True if successful
+        """
+        try:
+            query = """
+            MATCH (c:Community {id: $community_id})
+            SET c.summary = $summary, c.summary_updated_at = timestamp()
+            RETURN c.id
+            """
+            result = self.neo4j_client.execute_query(query, {
+                "community_id": community_id,
+                "summary": summary
+            })
+            return bool(result)
+        except Exception as e:
+            logger.error(f"Failed to update community summary: {e}")
+            return False
+
+    def get_communities_needing_summaries(self, level: Optional[int] = None) -> List[str]:
+        """
+        Get community IDs that don't have summaries yet.
+
+        Args:
+            level: Optional filter by hierarchy level
+
+        Returns:
+            List of community IDs needing summaries
+        """
+        try:
+            if level is not None:
+                query = """
+                MATCH (c:Community {level: $level})
+                WHERE c.summary IS NULL OR c.summary = ''
+                RETURN c.id AS id
+                ORDER BY c.size DESC
+                """
+                results = self.neo4j_client.execute_query(query, {"level": level})
+            else:
+                query = """
+                MATCH (c:Community)
+                WHERE c.summary IS NULL OR c.summary = ''
+                RETURN c.id AS id
+                ORDER BY c.level, c.size DESC
+                """
+                results = self.neo4j_client.execute_query(query, {})
+
+            return [r["id"] for r in results]
+        except Exception as e:
+            logger.error(f"Failed to get communities needing summaries: {e}")
+            return []
+
+    def get_communities_with_summaries(self, level: Optional[int] = None) -> List[Dict]:
+        """
+        Get all communities that have summaries (for global search).
+
+        Args:
+            level: Optional filter by hierarchy level
+
+        Returns:
+            List of community dicts with summaries
+        """
+        try:
+            if level is not None:
+                query = """
+                MATCH (c:Community {level: $level})
+                WHERE c.summary IS NOT NULL AND c.summary <> ''
+                RETURN c.id AS id, c.level AS level, c.size AS size,
+                       c.summary AS summary, c.key_entities AS key_entities
+                ORDER BY c.size DESC
+                """
+                results = self.neo4j_client.execute_query(query, {"level": level})
+            else:
+                query = """
+                MATCH (c:Community)
+                WHERE c.summary IS NOT NULL AND c.summary <> ''
+                RETURN c.id AS id, c.level AS level, c.size AS size,
+                       c.summary AS summary, c.key_entities AS key_entities
+                ORDER BY c.level, c.size DESC
+                """
+                results = self.neo4j_client.execute_query(query, {})
+
+            return [
+                {
+                    "id": r["id"],
+                    "level": r["level"],
+                    "size": r["size"],
+                    "summary": r["summary"],
+                    "key_entities": r.get("key_entities", [])
+                }
+                for r in results
+            ]
+        except Exception as e:
+            logger.error(f"Failed to get communities with summaries: {e}")
+            return []

@@ -58,8 +58,8 @@ class Settings(BaseSettings):
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 30
 
-    # CORS
-    allowed_origins: Union[List[str], str] = ["http://localhost:3000", "http://localhost:8080"]
+    # CORS - Allow all origins in development for easier testing
+    allowed_origins: Union[List[str], str] = ["*"]
 
     # Logging
     log_level: str = "INFO"

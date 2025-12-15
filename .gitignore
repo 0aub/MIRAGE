@@ -39,3 +39,19 @@ Thumbs.db
 data/
 *.db
 *.sqlite
+
+# Docker-created files (root-owned)
+mirage/benchmark_results/
+mirage/scripts/
+mirage/tools/
+mirage/test_graphrag_pipeline.py
+
+# Benchmark results (large files)
+benchmark_results/
+evaluation_results/
+
+# Project PDFs
+*.pdf
+
+# Claude Code
+.claude/

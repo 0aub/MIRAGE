@@ -9,6 +9,7 @@ from typing import Dict, Any, Optional
 from loguru import logger
 
 from .semantic_chunker import SemanticChunker
+from .policy_chunker import PolicyChunker
 from ..embeddings import JinaEmbedder
 
 
@@ -108,6 +109,9 @@ class ChunkerFactory:
             )
             return self._create_semantic_chunker(strategy_config, embedder)
 
+        elif strategy_name == "policy":
+            return self._create_policy_chunker(strategy_config)
+
         else:
             logger.error(
                 f"Unknown chunking strategy: {strategy_name}. "
@@ -149,6 +153,35 @@ class ChunkerFactory:
             max_chunk_size=max_chunk_size,
             similarity_threshold=similarity_threshold,
             min_sentences_per_chunk=min_sentences_per_chunk,
+        )
+
+    def _create_policy_chunker(
+        self,
+        config: Dict[str, Any],
+    ) -> PolicyChunker:
+        """
+        Create PolicyChunker for policy/regulation documents
+
+        Args:
+            config: Strategy configuration
+
+        Returns:
+            Configured PolicyChunker instance
+        """
+        max_chunk_size = config.get("max_chunk_size", 1500)
+        min_chunk_size = config.get("min_chunk_size", 200)
+        overlap_sentences = config.get("overlap_sentences", 1)
+
+        logger.debug(
+            f"Creating PolicyChunker: "
+            f"max_chunk_size={max_chunk_size}, "
+            f"min_chunk_size={min_chunk_size}"
+        )
+
+        return PolicyChunker(
+            max_chunk_size=max_chunk_size,
+            min_chunk_size=min_chunk_size,
+            overlap_sentences=overlap_sentences,
         )
 
     def get_strategy_info(self, content_type: str) -> Dict[str, Any]:

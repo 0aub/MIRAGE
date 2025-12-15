@@ -64,6 +64,8 @@ class PDFProcessor:
                     })
                     full_text.append(text)
 
+            # Get page count before closing
+            total_pages = len(doc)
             doc.close()
 
             result = {
@@ -71,14 +73,14 @@ class PDFProcessor:
                 "metadata": metadata,
                 "structure": {
                     "pages": pages,
-                    "total_pages": len(doc),
+                    "total_pages": total_pages,
                     "total_chars": sum(p["char_count"] for p in pages),
                     "total_words": sum(p["word_count"] for p in pages),
                 },
             }
 
             logger.info(
-                f"Successfully processed PDF: {metadata['pages']} pages, "
+                f"Successfully processed PDF: {total_pages} pages, "
                 f"{result['structure']['total_words']} words"
             )
 

@@ -54,7 +54,7 @@ export default function GraphPage() {
   const loadGraph = async () => {
     try {
       setIsLoading(true);
-      const response = await graphApi.visualizeFull(1000);  // Increased from 100 to 1000
+      const response = await graphApi.visualizeFull(3000);  // Show up to 3000 most connected entities
 
       // Convert API response to vis-network format
       const nodes = response.nodes.map((node, idx) => ({
