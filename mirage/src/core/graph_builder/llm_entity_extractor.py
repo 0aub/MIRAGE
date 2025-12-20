@@ -262,36 +262,85 @@ class LLMEntityExtractor:
         """Extract entities and relationships from a single chunk"""
 
         # Create language-specific prompt
-        # SIMPLIFIED prompt for reliable JSON output from smaller LLMs (Qwen, ALLaM)
+        # Domain-agnostic prompt for multi-domain knowledge graph extraction
         if language == "ar":
-            system_prompt = """أنت مستخرج كيانات. استخرج الكيانات والعلاقات من النص بتنسيق JSON فقط.
+            system_prompt = """أنت مستخرج معرفة متخصص لبناء رسم بياني معرفي (Knowledge Graph).
+مهمتك: استخراج الكيانات المسماة والعلاقات بينها. العلاقات مهمة جداً!
 
-الكيانات: text (الاسم), type (النوع: Person/Organization/Location/Event/Program/Policy), importance (high/medium/low)
-العلاقات: source, target, type (نوع العلاقة), weight (0.0-1.0)
+**أنواع الكيانات:**
+- Organization: منظمات، شركات، مؤسسات، جهات حكومية
+- Person: أشخاص، مناصب، أدوار
+- Location: أماكن، مدن، دول، مناطق
+- Concept: مفاهيم، مصطلحات، تعريفات
+- Event: أحداث، مناسبات، تواريخ مهمة
+- Product: منتجات، خدمات، أنظمة
+- Document: وثائق، سياسات، قوانين، تقارير
 
-مثال:
-{"entities": [{"text": "هيئة الحكومة الرقمية", "type": "Organization", "importance": "high"}], "relationships": [{"source": "هيئة الحكومة الرقمية", "target": "رؤية 2030", "type": "تدعم", "weight": 0.9}]}
+**أنواع العلاقات (مهم جداً!):**
+- RELATED_TO: علاقة عامة بين كيانين
+- PART_OF: كيان جزء من كيان أكبر
+- CONTAINS: كيان يحتوي على كيان آخر
+- CAUSES: كيان يسبب شيء آخر
+- USES: كيان يستخدم كيان آخر
+- CREATED_BY: كيان أنشأه كيان آخر
+- LOCATED_IN: كيان موجود في مكان
+- BELONGS_TO: كيان ينتمي لكيان آخر
+- DEPENDS_ON: كيان يعتمد على كيان آخر
+- AFFECTS: كيان يؤثر على كيان آخر
+- أو أي علاقة وصفية مناسبة للسياق
 
-أجب بـ JSON فقط، بدون نص إضافي."""
+**صيغة JSON:**
+{
+  "entities": [{"text": "اسم", "type": "النوع", "importance": "high/medium/low"}],
+  "relationships": [{"source": "المصدر", "target": "الهدف", "type": "RELATIONSHIP_TYPE", "weight": 0.8}]
+}
 
-            user_prompt = f"""استخرج الكيانات والعلاقات من النص التالي:
+مهم: استخرج علاقات بين الكيانات! لا تستخرج كيانات بدون علاقات."""
+
+            user_prompt = f"""استخرج الكيانات والعلاقات بينها:
 
 {chunk}
 
 JSON:"""
 
         else:  # English
-            system_prompt = """You are an entity extractor. Extract entities and relationships from text in JSON format only.
+            system_prompt = """You are a knowledge extractor for building a Knowledge Graph.
+Extract named entities AND relationships between them. Relationships are critical!
 
-Entities: text (name), type (Person/Organization/Location/Event/Program/Policy/Technology), importance (high/medium/low)
-Relationships: source, target, type (relationship type), weight (0.0-1.0)
+**Entity Types:**
+- Organization: Companies, institutions, agencies, departments
+- Person: People, roles, positions, titles
+- Location: Places, cities, countries, regions
+- Concept: Ideas, terms, definitions, topics
+- Event: Events, dates, milestones, occurrences
+- Product: Products, services, systems, tools
+- Document: Documents, policies, laws, reports, papers
 
-Example:
-{"entities": [{"text": "Digital Government Authority", "type": "Organization", "importance": "high"}], "relationships": [{"source": "Digital Government Authority", "target": "Vision 2030", "type": "supports", "weight": 0.9}]}
+**Relationship Types (CRITICAL!):**
+- RELATED_TO: General association between entities
+- PART_OF: Entity is component/member of another
+- CONTAINS: Entity contains another entity
+- CAUSES: Entity causes/leads to something
+- USES: Entity uses/utilizes another
+- CREATED_BY: Entity was created by another
+- LOCATED_IN: Entity is located in a place
+- BELONGS_TO: Entity belongs to another
+- DEPENDS_ON: Entity depends on another
+- AFFECTS: Entity affects/impacts another
+- WORKS_FOR: Person works for organization
+- OWNS: Entity owns another entity
+- PRODUCES: Entity produces/creates something
+- Or any descriptive relationship fitting the context
 
-Respond with JSON only, no additional text."""
+**JSON format:**
+{
+  "entities": [{"text": "Name", "type": "Type", "importance": "high/medium/low"}],
+  "relationships": [{"source": "Source", "target": "Target", "type": "RELATIONSHIP_TYPE", "weight": 0.8}]
+}
 
-            user_prompt = f"""Extract entities and relationships from this text:
+IMPORTANT: Extract relationships between entities! Do not return entities without relationships."""
+
+            user_prompt = f"""Extract entities AND relationships:
 
 {chunk}
 
@@ -388,12 +437,42 @@ JSON:"""
                 logger.error("All JSON repair attempts failed")
                 return {"entities": [], "relationships": []}
 
+            # Handle case where LLM returns a list instead of dict
+            # This can happen with some models returning just the entities array
+            if isinstance(result, list):
+                # Check if it looks like entities (list of dicts with text/type)
+                if all(isinstance(item, dict) for item in result):
+                    result = {"entities": result, "relationships": []}
+                else:
+                    logger.warning(f"LLM returned unexpected list format: {result[:100]}")
+                    return {"entities": [], "relationships": []}
+
+            # Ensure result is a dict with expected keys
+            if not isinstance(result, dict):
+                logger.warning(f"LLM returned unexpected type: {type(result)}")
+                return {"entities": [], "relationships": []}
+
+            # Handle nested entities (some models return {"entities": {"entities": [...]}})
+            entities = result.get("entities", [])
+            if isinstance(entities, dict) and "entities" in entities:
+                entities = entities.get("entities", [])
+            elif not isinstance(entities, list):
+                entities = []
+
+            relationships = result.get("relationships", [])
+            if not isinstance(relationships, list):
+                relationships = []
+
+            result = {"entities": entities, "relationships": relationships}
+
             # Add confidence scores
             for entity in result.get("entities", []):
-                entity["confidence"] = 0.9 if entity.get("importance") == "high" else 0.7
+                if isinstance(entity, dict):
+                    entity["confidence"] = 0.9 if entity.get("importance") == "high" else 0.7
 
             for rel in result.get("relationships", []):
-                rel["confidence"] = 0.8
+                if isinstance(rel, dict):
+                    rel["confidence"] = 0.8
 
             return result
 
@@ -634,61 +713,9 @@ JSON:"""
             logger.warning(f"Filtering overly long entity name ({len(text)} chars): {text[:50]}...")
             return True
 
-        # Blacklist of generic terms in Arabic
-        arabic_generic_terms = {
-            "فرصة", "فرص", "فرصة كبيرة", "فرصة جيدة",  # opportunity
-            "قطاع", "قطاعات",  # sector
-            "مجال", "مجالات",  # field
-            "جانب", "جوانب",  # aspect
-            "نقطة", "نقاط",  # point
-            "عنصر", "عناصر",  # element
-            "جزء", "أجزاء",  # part
-            "شيء", "أشياء",  # thing
-            "موضوع", "مواضيع",  # topic
-            "حالة", "حالات",  # case
-            "مثال", "أمثلة",  # example
-            "طريقة", "طرق",  # method
-            "نوع", "أنواع",  # type
-            "مستوى", "مستويات",  # level
-            "درجة",  # degree
-            "إمكانية", "إمكانيات",  # possibility
-            "هدف", "أهداف",  # goal (unless it's a specific program name)
-            "نتيجة", "نتائج",  # result
-            "تحدي", "تحديات",  # challenge
-        }
-
-        # Blacklist of generic terms in English
-        english_generic_terms = {
-            "opportunity", "opportunities", "big opportunity", "good opportunity",
-            "sector", "sectors",
-            "field", "fields",
-            "aspect", "aspects",
-            "point", "points",
-            "element", "elements",
-            "part", "parts",
-            "thing", "things",
-            "topic", "topics",
-            "case", "cases",
-            "example", "examples",
-            "method", "methods",
-            "type", "types",
-            "level", "levels",
-            "degree",
-            "possibility", "possibilities",
-            "goal", "goals",  # unless specific program
-            "result", "results",
-            "challenge", "challenges",
-            "item", "items",
-            "area", "areas",
-            "way", "ways",
-        }
-
-        text_lower = text.lower()
-
-        # Check against blacklists
-        if text_lower in arabic_generic_terms or text_lower in english_generic_terms:
-            logger.debug(f"Filtering generic entity: {text}")
-            return True
+        # NO static blacklists - the LLM decides dynamically what is a valid entity
+        # The extraction prompt instructs the LLM to only extract specific named entities
+        # This approach is more flexible and doesn't require manual maintenance
 
         # Filter entities that are just numbers or dates without context
         if entity_type in ["Date", "Time", "Money", "Percentage"] and len(text.split()) <= 2:
@@ -708,32 +735,10 @@ JSON:"""
         Returns:
             True if relationship should be filtered out
         """
-        rel_type = relationship.get("type", "").lower().strip()
+        # NO static blacklists - the LLM decides dynamically what relationships to extract
+        # The extraction prompt instructs the LLM to only extract specific relationship types
 
-        # Blacklist of weak/generic relationship types
-        weak_types = {
-            # English
-            "related_to", "related to",
-            "has_relationship_with", "has relationship with",
-            "connected_to", "connected to",
-            "associated_with", "associated with",
-            "linked_to", "linked to",
-            "has_connection_with", "has connection with",
-            "relates_to", "relates to",
-
-            # Arabic
-            "مرتبط_بـ", "مرتبط ب", "مرتبط",
-            "له_علاقة_مع", "له علاقة مع", "له علاقة",
-            "متصل_بـ", "متصل ب",
-            "مقترن_بـ", "مقترن ب",
-            "يتعلق_بـ", "يتعلق ب", "يتعلق",
-        }
-
-        if rel_type in weak_types:
-            logger.debug(f"Filtering weak relationship type: {rel_type}")
-            return True
-
-        # Filter relationships where source and target are identical
+        # Only filter self-referential relationships (source == target)
         source = relationship.get("source", "").lower().strip()
         target = relationship.get("target", "").lower().strip()
         if source == target:
@@ -741,6 +746,121 @@ JSON:"""
             return True
 
         return False
+
+    def validate_entities_with_llm(
+        self,
+        entities: List[Dict[str, Any]],
+        language: str = "auto"
+    ) -> List[Dict[str, Any]]:
+        """
+        Use LLM to dynamically validate entities and filter false positives.
+        This provides smarter filtering than static blacklists.
+
+        Args:
+            entities: List of entities to validate
+            language: Language code ("ar", "en", or "auto")
+
+        Returns:
+            List of validated entities (false positives removed)
+        """
+        if not entities or not self.provider:
+            return entities
+
+        # Detect language
+        if language == "auto":
+            sample_text = " ".join([e.get("text", "") for e in entities[:5]])
+            arabic_ratio = len([c for c in sample_text if '\u0600' <= c <= '\u06FF']) / max(len(sample_text), 1)
+            language = "ar" if arabic_ratio > 0.3 else "en"
+
+        # Batch entities for validation (max 20 at a time)
+        batch_size = 20
+        validated_entities = []
+
+        for i in range(0, len(entities), batch_size):
+            batch = entities[i:i + batch_size]
+            entity_names = [e.get("text", "") for e in batch]
+
+            # Create validation prompt
+            if language == "ar":
+                system_prompt = """أنت مدقق كيانات. راجع قائمة الكيانات وحدد أيها كيانات حقيقية (أسماء، منظمات، أماكن، برامج) وأيها مصطلحات عامة أو عبارات شائعة.
+
+أجب بـ JSON فقط: {"valid": ["كيان1", "كيان2"], "invalid": ["مصطلح عام1"]}
+
+الكيانات العامة التي يجب رفضها:
+- العبارات الدينية (باذن الله، إن شاء الله)
+- المصطلحات العامة (البيانات، التشغيل، السياسات)
+- الكلمات الوصفية المجردة"""
+
+                user_prompt = f"""راجع هذه الكيانات وصنفها:
+
+{json.dumps(entity_names, ensure_ascii=False)}
+
+JSON:"""
+            else:
+                system_prompt = """You are an entity validator. Review the list of entities and identify which are real named entities (names, organizations, places, programs) and which are generic terms or common phrases.
+
+Respond with JSON only: {"valid": ["entity1", "entity2"], "invalid": ["generic term1"]}
+
+Generic entities to reject:
+- Religious/cultural phrases
+- Generic operational terms (data, system, process, policy)
+- Abstract descriptive words"""
+
+                user_prompt = f"""Review these entities and classify them:
+
+{json.dumps(entity_names, ensure_ascii=False)}
+
+JSON:"""
+
+            try:
+                if self.provider == "tgi":
+                    response = requests.post(
+                        f"{self.tgi_endpoint}/v1/chat/completions",
+                        json={
+                            "model": "tgi",
+                            "messages": [
+                                {"role": "system", "content": system_prompt},
+                                {"role": "user", "content": user_prompt}
+                            ],
+                            "temperature": 0.1,
+                            "max_tokens": 1024,
+                        },
+                        timeout=30
+                    )
+                    response.raise_for_status()
+                    content = response.json()["choices"][0]["message"]["content"]
+                else:
+                    response = completion(
+                        model=self.model,
+                        messages=[
+                            {"role": "system", "content": system_prompt},
+                            {"role": "user", "content": user_prompt}
+                        ],
+                        temperature=0.1,
+                        max_tokens=1024,
+                        response_format={"type": "json_object"},
+                    )
+                    content = response.choices[0].message.content
+
+                # Parse response
+                result = self._parse_json_with_repair(content)
+                if result and "valid" in result:
+                    valid_names = set(result["valid"])
+                    for entity in batch:
+                        if entity.get("text", "") in valid_names:
+                            validated_entities.append(entity)
+                        else:
+                            logger.debug(f"LLM filtered entity: {entity.get('text')}")
+                else:
+                    # If parsing fails, keep all entities from this batch
+                    validated_entities.extend(batch)
+
+            except Exception as e:
+                logger.warning(f"LLM validation failed, keeping batch: {e}")
+                validated_entities.extend(batch)
+
+        logger.info(f"LLM validation: {len(entities)} -> {len(validated_entities)} entities")
+        return validated_entities
 
     def _filter_quality(
         self,

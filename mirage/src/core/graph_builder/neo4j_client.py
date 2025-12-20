@@ -934,16 +934,19 @@ class Neo4jClient:
             with self.driver.session() as session:
                 # OPTIMIZED: Only match relationships FROM entities belonging to this document
                 # OLD SLOW QUERY: MATCH ()-[r]->() scanned ALL relationships in graph!
+                # Added chunk_count from HAS_CHUNK relationship (stored in Neo4j, not Qdrant)
                 query = """
                 MATCH (d:Document)
+                OPTIONAL MATCH (d)-[:HAS_CHUNK]->(c:Chunk)
+                WITH d, count(c) as chunk_count
                 OPTIONAL MATCH (e:Entity)
                 WHERE d.document_id IN e.source_documents
-                WITH d, count(DISTINCT e) as entity_count
+                WITH d, chunk_count, count(DISTINCT e) as entity_count
                 OPTIONAL MATCH (e2:Entity)-[r]->(e3:Entity)
                 WHERE d.document_id IN e2.source_documents
                   AND d.document_id IN r.source_documents
-                WITH d, entity_count, count(DISTINCT r) as rel_count
-                RETURN d, entity_count, rel_count
+                WITH d, chunk_count, entity_count, count(DISTINCT r) as rel_count
+                RETURN d, chunk_count, entity_count, rel_count
                 ORDER BY d.created_at DESC
                 """
                 result = session.run(query)
@@ -951,6 +954,7 @@ class Neo4jClient:
                 documents = []
                 for record in result:
                     doc = dict(record["d"])
+                    doc["chunk_count"] = record["chunk_count"]
                     doc["entity_count"] = record["entity_count"]
                     doc["relationship_count"] = record["rel_count"]
                     documents.append(doc)

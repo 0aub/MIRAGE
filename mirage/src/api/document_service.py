@@ -93,9 +93,8 @@ async def list_all_documents(
             created_at = doc.get("created_at")
             document_id = doc.get("document_id", "")
 
-            # Note: Removed chunk_count query from list endpoint for performance
-            # It was making individual Qdrant queries per document (slow)
-            # Chunk count can be fetched on-demand in detail view if needed
+            # chunk_count now comes from Neo4j (HAS_CHUNK relationship) - efficient!
+            # Previously was making individual Qdrant queries per document (slow)
 
             documents.append(DocumentMetadata(
                 document_id=document_id,
@@ -106,7 +105,7 @@ async def list_all_documents(
                 language=doc.get("language"),
                 entity_count=doc.get("entity_count", 0),
                 relationship_count=doc.get("relationship_count", 0),
-                chunk_count=None,  # Removed for performance - use total_words instead
+                chunk_count=doc.get("chunk_count", 0),  # Now from Neo4j HAS_CHUNK relationship
                 created_at=created_at,
                 total_chars=doc.get("total_chars"),
                 total_words=doc.get("total_words"),

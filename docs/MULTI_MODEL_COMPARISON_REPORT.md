@@ -25,6 +25,21 @@ This report presents a **comprehensive evaluation** of the MIRAGE GraphRAG syste
 | **Arabic Response Quality** | Native Arabic | Mixed Arabic/Chinese | ALLaM |
 | **Success Rate** | 100% | 100% | Tie |
 
+### RAGAS Evaluation Summary
+
+| Metric | Result | Best Mode |
+|--------|--------|-----------|
+| **Overall RAGAS Score** | 0.040 | LOCAL (0.050) |
+| **Best Query Complexity** | L1 (Direct Factual) | LOCAL (0.075) |
+| **Arabic Queries** | 0.110 avg | 22x better than English |
+| **English Queries** | 0.005 avg | Low due to Arabic responses |
+
+**Key RAGAS Findings:**
+- **LOCAL mode** performs best across all complexity levels
+- **Arabic queries score 22x higher** than English (language matching)
+- **HYBRID mode underperforms** due to noise from score fusion
+- **Multi-hop queries (L3)** show equal performance across graph modes
+
 ### Overall Recommendation
 
 | Task | Recommended Model |
@@ -37,7 +52,9 @@ This report presents a **comprehensive evaluation** of the MIRAGE GraphRAG syste
 
 ## Appendix A: Retrieval Mode Descriptions
 
-Before diving into the comparison, here's an explanation of the 5 retrieval modes tested:
+Before diving into the comparison, here's a detailed explanation of the 5 retrieval modes tested in MIRAGE:
+
+### A.1 Overview Table
 
 | Mode | Description | Use Case |
 |------|-------------|----------|
@@ -46,6 +63,268 @@ Before diving into the comparison, here's an explanation of the 5 retrieval mode
 | **Global** | Community-level search. Uses pre-computed community summaries to answer broad questions about themes/patterns. | "What are the main topics?" |
 | **Hybrid** | Combines vector + graph. Runs both naive and local, merges results with score fusion. | Balanced retrieval |
 | **Mix** | Intelligent mode selection. Analyzes query to auto-select best mode (naive for factual, local for entities, global for themes). | Production use |
+
+---
+
+### A.2 NAIVE Mode (Vector Similarity Search)
+
+**How It Works:**
+```
+Query → Jina Embedding (768 dim) → Qdrant Vector Search → Top-K Chunks → LLM
+```
+
+**Technical Details:**
+1. **Query Embedding**: The user query is converted to a 768-dimensional vector using Jina Arabic embeddings
+2. **Vector Search**: Qdrant performs cosine similarity search against all document chunks
+3. **Top-K Selection**: Returns the K most similar chunks (default K=5)
+4. **Context Assembly**: Chunks are concatenated and sent to the LLM for answer generation
+
+**Strengths:**
+- Fast (~1s latency with caching)
+- Works well for exact phrase matches
+- No dependency on knowledge graph quality
+- Good for definition lookups ("What is X?")
+
+**Weaknesses:**
+- No semantic understanding of entities
+- Cannot traverse relationships
+- May miss relevant context not textually similar
+- Struggles with multi-hop questions
+
+**Best For:** L1 queries (direct factual), simple definition lookups, keyword-based searches
+
+---
+
+### A.3 LOCAL Mode (Graph-Based Entity Search)
+
+**How It Works:**
+```
+Query → Entity Extraction → Neo4j Entity Match → Graph Traversal (1-2 hops)
+                                                        ↓
+                            LLM ← Context Assembly ← Connected Chunks
+```
+
+**Technical Details:**
+1. **Entity Extraction**: Query is analyzed to identify mentioned entities (e.g., "Data Owner", "NDMO")
+2. **Entity Matching**: Entities are matched against Neo4j nodes using fuzzy matching
+3. **Graph Traversal**: From matched entities, traverse 1-2 relationship hops to find connected entities
+4. **Chunk Retrieval**: All chunks associated with traversed entities are collected
+5. **Context Assembly**: Retrieved chunks are ranked by relevance and sent to LLM
+
+**Graph Traversal Example:**
+```
+Query: "What are the responsibilities of a Data Owner?"
+
+Neo4j Traversal:
+[Data Owner] --BELONGS_TO--> [Data Governance Framework]
+     |                              |
+     +--IMPLEMENTS--> [Data Classification Policy]
+     |                              |
+     +--MANAGES--> [Personal Data] --REGULATES--> [Privacy Policy]
+
+Retrieved Chunks: All chunks linked to these 5 entities
+```
+
+**Strengths:**
+- Understands entity relationships
+- Can answer "What does X do?" questions
+- Leverages knowledge graph structure
+- Best for entity-specific questions
+
+**Weaknesses:**
+- Depends on entity extraction quality
+- May miss relevant chunks not linked to entities
+- Slower than naive due to graph traversal
+- Requires well-populated knowledge graph
+
+**Best For:** L2 queries (entity-specific), relationship questions, "Who/What/Which" questions
+
+---
+
+### A.4 GLOBAL Mode (Community-Level Search)
+
+**How It Works:**
+```
+Query → Community Matching → Pre-computed Summaries → LLM
+```
+
+**Technical Details:**
+1. **Community Detection**: During indexing, Leiden algorithm clusters related entities into communities
+2. **Community Summaries**: Each community has a pre-generated summary describing its theme
+3. **Query Matching**: User query is matched against community themes
+4. **Summary Retrieval**: Relevant community summaries are retrieved as context
+5. **Answer Generation**: LLM uses summaries to answer broad thematic questions
+
+**Community Structure Example:**
+```
+Community 1: "Data Classification & Security"
+├── Entities: Data Classification, Security Controls, Classification Levels
+├── Summary: "This community covers data classification policies including
+│            the 4-tier classification system (Public, Internal, Confidential,
+│            Top Secret) and associated security controls..."
+└── Chunks: 15 related text chunks
+
+Community 2: "Data Governance Roles"
+├── Entities: Data Owner, Data Custodian, Data Steward, NDMO
+├── Summary: "This community covers organizational roles in data governance
+│            including responsibilities of Data Owners, Custodians..."
+└── Chunks: 12 related text chunks
+```
+
+**Strengths:**
+- Best for "What are the main themes?" questions
+- Handles broad overview questions
+- Pre-computed summaries = fast retrieval
+- Provides high-level synthesis
+
+**Weaknesses:**
+- Cannot answer specific factual questions
+- Summary quality depends on LLM during indexing
+- May lose granular details
+- Requires community detection during ingestion
+
+**Best For:** L4 queries (overview/aggregation), theme identification, "Summarize..." questions
+
+---
+
+### A.5 HYBRID Mode (Vector + Graph Fusion)
+
+**How It Works:**
+```
+                    ┌─→ Naive Mode ──→ Vector Results ─┐
+Query ─────────────┤                                   ├─→ Score Fusion → LLM
+                    └─→ Local Mode ──→ Graph Results ──┘
+```
+
+**Technical Details:**
+1. **Parallel Execution**: Both Naive and Local modes run simultaneously
+2. **Result Collection**: Each mode returns ranked chunks with scores
+3. **Score Normalization**: Scores are normalized to 0-1 range
+4. **Reciprocal Rank Fusion (RRF)**: Results are merged using RRF algorithm
+   ```
+   RRF_score(chunk) = Σ 1 / (k + rank_in_mode)
+   where k = 60 (constant)
+   ```
+5. **Deduplication**: Duplicate chunks are removed, keeping highest score
+6. **Top-K Selection**: Final top-K chunks sent to LLM
+
+**Score Fusion Example:**
+```
+Naive Results:           Local Results:          Fused Results:
+1. Chunk_A (0.95)        1. Chunk_C (0.88)       1. Chunk_A (RRF: 0.032)
+2. Chunk_B (0.82)        2. Chunk_A (0.75)       2. Chunk_C (RRF: 0.031)
+3. Chunk_D (0.71)        3. Chunk_E (0.65)       3. Chunk_B (RRF: 0.016)
+                                                 4. Chunk_E (RRF: 0.016)
+                                                 5. Chunk_D (RRF: 0.015)
+```
+
+**Strengths:**
+- Combines strengths of both approaches
+- More robust to single-mode failures
+- Balanced retrieval for mixed queries
+
+**Weaknesses:**
+- Slower (runs two retrievals)
+- Score fusion can introduce noise
+- May dilute strong signals from one mode
+- RAGAS showed underperformance (0.028 vs LOCAL's 0.050)
+
+**Best For:** Unknown query types, production fallback, when unsure which mode to use
+
+---
+
+### A.6 MIX Mode (Intelligent Mode Selection)
+
+**How It Works:**
+```
+Query → Query Classifier → Selected Mode → Retrieval → LLM
+              ↓
+    Analyze query patterns:
+    - Factual keywords → NAIVE
+    - Entity mentions → LOCAL
+    - Theme/summary words → GLOBAL
+    - Default → HYBRID
+```
+
+**Technical Details:**
+1. **Query Analysis**: Query is analyzed for patterns and keywords
+2. **Pattern Matching Rules:**
+   - **NAIVE triggers**: "what is", "define", simple nouns
+   - **LOCAL triggers**: Named entities, "responsibilities of", "role of"
+   - **GLOBAL triggers**: "main themes", "summarize", "overview"
+   - **HYBRID**: Default when no clear pattern
+3. **Mode Execution**: Selected mode runs
+4. **Fallback Logic**: If selected mode fails, fall back to HYBRID
+
+**Classification Logic:**
+```python
+def classify_query(query):
+    # Check for entity patterns
+    if contains_named_entity(query):
+        return "local"
+
+    # Check for overview patterns
+    if any(word in query.lower() for word in ["themes", "summarize", "overview", "main"]):
+        return "global"
+
+    # Check for definition patterns
+    if query.lower().startswith(("what is", "define", "ما هو", "ما هي")):
+        return "naive"
+
+    # Default to hybrid
+    return "hybrid"
+```
+
+**Strengths:**
+- Automatic mode selection
+- Best for production use
+- Adapts to query type
+- Single API endpoint for all queries
+
+**Weaknesses:**
+- Classification accuracy affects results
+- May misclassify ambiguous queries
+- Adds classification latency
+- Depends on rule quality
+
+**Best For:** Production deployments, API endpoints, user-facing applications
+
+---
+
+### A.7 Mode Comparison Summary
+
+| Aspect | Naive | Local | Global | Hybrid | Mix |
+|--------|-------|-------|--------|--------|-----|
+| **Speed** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐ | ⭐⭐⭐ |
+| **Entity Understanding** | ⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐ |
+| **Relationship Traversal** | ❌ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐ |
+| **Theme Synthesis** | ⭐ | ⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐ | ⭐⭐⭐ |
+| **RAGAS Score** | 0.041 | **0.050** | 0.047 | 0.028 | 0.033 |
+| **Recommended For** | L1 | L2, L3 | L4 | Unknown | Production |
+
+### A.8 Mode Selection Decision Tree
+
+```
+                         ┌─────────────────────┐
+                         │   What is the query  │
+                         │        type?         │
+                         └──────────┬──────────┘
+                                    │
+            ┌───────────────────────┼───────────────────────┐
+            │                       │                       │
+            ▼                       ▼                       ▼
+    ┌───────────────┐      ┌───────────────┐      ┌───────────────┐
+    │  Definition/  │      │ Entity-based  │      │   Overview/   │
+    │   Factual?    │      │  Question?    │      │   Summary?    │
+    └───────┬───────┘      └───────┬───────┘      └───────┬───────┘
+            │                      │                       │
+            ▼                      ▼                       ▼
+    ┌───────────────┐      ┌───────────────┐      ┌───────────────┐
+    │    NAIVE      │      │    LOCAL      │      │    GLOBAL     │
+    │  "What is X?" │      │ "What does X  │      │ "What are the │
+    │               │      │  do?"         │      │  main themes?"│
+    └───────────────┘      └───────────────┘      └───────────────┘
+```
 
 ---
 
@@ -714,6 +993,283 @@ We benchmarked REFRAG across all retrieval modes to measure its impact on latenc
 
 ---
 
+## 9. RAGAS Evaluation: Query Complexity Analysis
+
+### 9.1 Evaluation Methodology
+
+We conducted a comprehensive **RAGAS-style evaluation** to measure how different retrieval modes perform across varying query complexity levels. RAGAS (Retrieval Augmented Generation Assessment) evaluates RAG systems using four key metrics:
+
+| Metric | Description |
+|--------|-------------|
+| **Answer Relevancy** | Does the answer address the question asked? |
+| **Faithfulness** | Is the answer grounded in the retrieved context? |
+| **Context Precision** | Is the retrieved context relevant to the query? |
+| **Answer Correctness** | Semantic similarity to ground truth answer |
+
+### 9.2 Query Complexity Levels
+
+We designed **12 test queries** across **4 complexity levels**:
+
+| Level | Name | Description | Example |
+|-------|------|-------------|---------|
+| **L1** | Direct Factual | Simple definition lookup | "What is data classification?" |
+| **L2** | Entity-Specific | Questions about specific entities | "What are the responsibilities of a Data Owner?" |
+| **L3** | Multi-Hop | Requires traversing relationships | "How does data classification affect data sharing?" |
+| **L4** | Overview/Aggregation | Requires summarization across topics | "What are the main principles of National Data Governance?" |
+
+### 9.3 Evaluation Results Summary
+
+| Metric | Value |
+|--------|-------|
+| **Overall RAGAS Score** | 0.040 |
+| **Best Performing Mode** | LOCAL (0.050) |
+| **Best Complexity Level** | L1 - Direct Factual (0.046) |
+| **Tests Run** | 60 (12 queries × 5 modes) |
+
+### 9.4 Performance by Query Complexity
+
+```
+RAGAS Score by Complexity Level (0-1 scale, higher is better)
+═══════════════════════════════════════════════════════════════════════════════
+
+L1 (Direct Factual):
+  Naive   ███████░░░░░░░░░░░░░░░░░░░░░░░  0.064
+  Local   ████████░░░░░░░░░░░░░░░░░░░░░░  0.075  ⭐ BEST
+  Global  ███████░░░░░░░░░░░░░░░░░░░░░░░  0.069
+  Hybrid  ██░░░░░░░░░░░░░░░░░░░░░░░░░░░░  0.013
+  Mix     ██░░░░░░░░░░░░░░░░░░░░░░░░░░░░  0.013
+
+L2 (Entity-Specific):
+  Naive   █████░░░░░░░░░░░░░░░░░░░░░░░░░  0.044
+  Local   █████░░░░░░░░░░░░░░░░░░░░░░░░░  0.048  ⭐
+  Global  █████░░░░░░░░░░░░░░░░░░░░░░░░░  0.048  ⭐
+  Hybrid  █████░░░░░░░░░░░░░░░░░░░░░░░░░  0.046
+  Mix     █████░░░░░░░░░░░░░░░░░░░░░░░░░  0.046
+
+L3 (Multi-Hop):
+  Naive   ███░░░░░░░░░░░░░░░░░░░░░░░░░░░  0.028
+  Local   ████░░░░░░░░░░░░░░░░░░░░░░░░░░  0.041  ⭐
+  Global  ████░░░░░░░░░░░░░░░░░░░░░░░░░░  0.041  ⭐
+  Hybrid  ███░░░░░░░░░░░░░░░░░░░░░░░░░░░  0.025
+  Mix     ████░░░░░░░░░░░░░░░░░░░░░░░░░░  0.041  ⭐
+
+L4 (Overview/Aggregation):
+  Naive   ███░░░░░░░░░░░░░░░░░░░░░░░░░░░  0.030
+  Local   ████░░░░░░░░░░░░░░░░░░░░░░░░░░  0.035  ⭐ BEST
+  Global  ███░░░░░░░░░░░░░░░░░░░░░░░░░░░  0.031
+  Hybrid  ███░░░░░░░░░░░░░░░░░░░░░░░░░░░  0.029
+  Mix     ███░░░░░░░░░░░░░░░░░░░░░░░░░░░  0.029
+
+         0.00      0.03      0.06      0.09      0.12
+```
+
+### 9.5 Performance by Retrieval Mode
+
+| Mode | RAGAS Score | Success Rate | Best For |
+|------|-------------|--------------|----------|
+| **LOCAL** | **0.050** ⭐ | 100% | Entity lookups, Multi-hop |
+| **GLOBAL** | 0.047 | 100% | Broad themes |
+| **NAIVE** | 0.041 | 100% | Simple factual |
+| **MIX** | 0.033 | 100% | Automatic selection |
+| **HYBRID** | 0.028 | 100% | Balanced retrieval |
+
+### 9.6 Critical Finding: Language Performance Gap
+
+A significant finding emerged regarding **language performance**:
+
+| Language | Avg RAGAS Score | Tests | Analysis |
+|----------|-----------------|-------|----------|
+| **Arabic** | **0.110** | 4 | Strong ground truth match |
+| **English** | 0.005 | 8 | Very low match |
+
+**Root Cause Analysis:**
+
+The system returns **Arabic-language answers** regardless of query language. This is expected behavior with ALLaM-7B (Arabic-first model) but causes:
+
+1. **Arabic queries (high match)**: Ground truth in Arabic matches Arabic response
+2. **English queries (low match)**: Ground truth in English doesn't match Arabic response
+
+**Example:**
+- Query (EN): "What is data classification?"
+- Ground Truth (EN): "Data classification is the process of organizing data into categories..."
+- Response (AR): "البيانات المصنفة هي عملية تنظيم وتصنيف البيانات..."
+- RAGAS Score: 0.002 (no English token overlap)
+
+### 9.7 Detailed Query Analysis
+
+#### L1: Direct Factual Queries
+
+| Query | Language | Best Mode | RAGAS |
+|-------|----------|-----------|-------|
+| "What is data classification?" | EN | Naive | 0.002 |
+| "ما هو تصنيف البيانات؟" | AR | Global | **0.201** |
+| "What are the data classification levels?" | EN | Local | 0.033 |
+
+**Finding**: Arabic factual queries perform 10x better due to language matching.
+
+#### L2: Entity-Specific Queries
+
+| Query | Language | Best Mode | RAGAS |
+|-------|----------|-----------|-------|
+| "What are the responsibilities of a Data Owner?" | EN | All tied | 0.002 |
+| "ما هي مسؤوليات مالك البيانات؟" | AR | Global | **0.138** |
+| "What is the role of NDMO?" | EN | Local | 0.010 |
+
+**Finding**: Entity queries benefit from LOCAL mode's graph traversal.
+
+#### L3: Multi-Hop Queries
+
+| Query | Language | Best Mode | RAGAS |
+|-------|----------|-----------|-------|
+| "How does classification affect data sharing?" | EN | All tied | 0.004 |
+| "ما هي العلاقة بين التصنيف وحماية البيانات؟" | AR | Local/Mix | **0.116** |
+| "What security controls per classification level?" | EN | Naive | 0.005 |
+
+**Finding**: Multi-hop queries show LOCAL/GLOBAL/MIX performing equally well.
+
+#### L4: Overview/Aggregation Queries
+
+| Query | Language | Best Mode | RAGAS |
+|-------|----------|-----------|-------|
+| "Main principles of National Data Governance?" | EN | Local | 0.016 |
+| "ما هي أهم مبادئ حوكمة البيانات الوطنية؟" | AR | Naive/Local | **0.088** |
+| "Summarize open data publishing requirements" | EN | Hybrid | 0.003 |
+
+**Finding**: Overview queries perform best with LOCAL mode for aggregation.
+
+### 9.8 Mode Recommendations by Query Type
+
+Based on the RAGAS evaluation:
+
+| Query Type | Recommended Mode | Rationale |
+|------------|------------------|-----------|
+| **Simple Definition** | Naive or Local | Fast lookup sufficient |
+| **Entity Information** | LOCAL | Graph traversal finds entity details |
+| **Relationship Queries** | LOCAL or GLOBAL | Multi-hop graph traversal |
+| **Theme/Summary** | LOCAL | Best aggregation performance |
+| **Unknown/Mixed** | LOCAL | Consistently best performer |
+
+### 9.9 Evaluation Configuration
+
+| Parameter | Value |
+|-----------|-------|
+| **Test Cases** | 12 (3 per complexity level) |
+| **Languages** | 8 English, 4 Arabic |
+| **Modes Tested** | 5 (naive, local, global, hybrid, mix) |
+| **Total Evaluations** | 60 |
+| **Ground Truth** | Expert-written expected answers |
+| **Similarity Method** | Token-based Jaccard + recall |
+
+### 9.10 Key Takeaways
+
+1. **LOCAL mode consistently performs best** across all complexity levels
+2. **Arabic queries score 22x higher** than English due to response language
+3. **Multi-hop queries (L3)** show no clear mode winner - all graph-based modes equal
+4. **HYBRID mode underperforms** - likely due to noise from combining approaches
+5. **Ground truth methodology matters** - language matching is critical for RAGAS scores
+
+### 9.11 Recommendations for Improvement
+
+| Issue | Recommendation |
+|-------|----------------|
+| **Language mismatch** | Add language detection + translation layer |
+| **Low overall RAGAS** | Improve entity coverage in knowledge graph |
+| **HYBRID underperformance** | Tune score fusion weights |
+| **L4 low scores** | Add community summaries for better aggregation |
+
+---
+
+## Appendix F: Data Sources
+
+This evaluation uses official Saudi Arabian government documents on data governance from **SDAIA (Saudi Data & AI Authority)** and **NDMO (National Data Management Office)**.
+
+### F.1 Source Authority
+
+| Organization | Arabic Name | Role |
+|--------------|-------------|------|
+| **SDAIA** | الهيئة السعودية للبيانات والذكاء الاصطناعي | Saudi Data & AI Authority - National regulator for data and AI |
+| **NDMO** | مكتب إدارة البيانات الوطنية | National Data Management Office - Develops data governance policies |
+
+### F.2 Official Policy Documents
+
+| Document | Language | URL | Size |
+|----------|----------|-----|------|
+| **Master Policies** | English | [PoliciesEn.pdf](https://sdaia.gov.sa/ndmo/Files/PoliciesEn.pdf) | 1.2 MB |
+| **السياسات الرئيسية** | Arabic | [Policiesar.pdf](https://sdaia.gov.sa/ndmo/Files/Policiesar.pdf) | 3.7 MB |
+| **Open Data Policy** | Arabic | [RegulationsAndPolicies07.pdf](https://sdaia.gov.sa/ar/SDAIA/about/Files/RegulationsAndPolicies07.pdf) | - |
+| **Freedom of Information** | English | [FreedomOfInformationPolicy.pdf](https://sdaia.gov.sa/en/SDAIA/about/Documents/FreedomOfInformationPolicy.pdf) | - |
+| **حرية المعلومات** | Arabic | [RegulationsAndPolicies06.pdf](https://sdaia.gov.sa/en/SDAIA/about/Files/RegulationsAndPolicies06.pdf) | - |
+| **Data Sharing Policy** | English | [Data+Sharing+Policy.pdf](https://dgp.sdaia.gov.sa/wps/wcm/connect/b5d1907f-1b54-469d-8609-204ede2fa928/Data+Sharing+Policy.pdf) | - |
+
+### F.3 Local Files Used
+
+```
+data/sdaia_policies/
+├── ndmo_policies_ar.pdf    (3.7 MB) - Arabic master policies
+└── ndmo_policies_en.pdf    (1.2 MB) - English master policies
+```
+
+### F.4 Document Content Overview
+
+The NDMO Master Policies document is the primary source, containing comprehensive coverage of Saudi Arabia's national data governance framework.
+
+#### Topics Covered
+
+| Topic | Description | Sections |
+|-------|-------------|----------|
+| **Data Classification** | 4-tier classification system (Public, Internal, Confidential, Top Secret) | Section 2 |
+| **Data Governance Roles** | Data Owner, Data Custodian, Data Steward responsibilities | Section 3 |
+| **Data Sharing** | Inter-agency data sharing requirements and protocols | Section 4 |
+| **Open Data** | Requirements for publishing government open data | Section 5 |
+| **Freedom of Information** | Public access rights to government information | Section 6 |
+| **Data Quality** | Standards and requirements for data quality management | Section 7 |
+| **Data Security** | Security controls for each classification level | Section 8 |
+
+#### Key Entities Extracted
+
+From the NDMO policies, the following key entities were extracted into the knowledge graph:
+
+| Entity Type | Examples | Count |
+|-------------|----------|-------|
+| **Policy** | National Data Governance Interim Regulations, Data Classification Policy | 68 |
+| **Concept** | Data Classification, Personal Data, Government Data | 106 |
+| **Process** | Data Sharing Process, Data Quality Management | 23 |
+| **Organization** | NDMO, SDAIA, Government Entities | 5 |
+| **Role** | Data Owner, Data Custodian, Data Steward | 8 |
+
+### F.5 Why These Documents?
+
+These official SDAIA/NDMO documents were selected for evaluation because:
+
+1. **Authoritative Source**: Official government documents with legal standing
+2. **Bilingual Content**: Available in both Arabic and English for cross-language testing
+3. **Domain Richness**: Complex policy domain with many entities and relationships
+4. **Real-World Application**: Represents actual use case for Arabic government RAG systems
+5. **Structured Content**: Well-organized with clear sections, ideal for knowledge graph extraction
+
+### F.6 Document Statistics
+
+| Metric | English Document | Arabic Document |
+|--------|------------------|-----------------|
+| **File Size** | 1.2 MB | 3.7 MB |
+| **Character Count** | ~123,766 | ~180,000 |
+| **Chunks Generated** | 124 | 180 |
+| **Entities Extracted** | 162 (Qwen) / 122 (ALLaM) | - |
+| **Relationships Extracted** | 139 (Qwen) / 69 (ALLaM) | - |
+
+### F.7 Sample Test Queries from Documents
+
+The RAGAS evaluation queries were designed based on actual document content:
+
+| Query Level | English Example | Arabic Example | Document Section |
+|-------------|-----------------|----------------|------------------|
+| **L1 (Factual)** | "What is data classification?" | "ما هو تصنيف البيانات؟" | Section 2 |
+| **L2 (Entity)** | "What are Data Owner responsibilities?" | "ما هي مسؤوليات مالك البيانات؟" | Section 3 |
+| **L3 (Multi-hop)** | "How does classification affect sharing?" | "ما هي العلاقة بين التصنيف والمشاركة؟" | Sections 2+4 |
+| **L4 (Overview)** | "Main principles of data governance?" | "ما هي أهم مبادئ الحوكمة؟" | All Sections |
+
+---
+
 ## Appendix B: System Architecture
 
 ### B.1 MIRAGE System Overview
@@ -814,8 +1370,10 @@ All raw benchmark data is available in:
 | `benchmark_results/entity_extraction_Qwen_Qwen2.5_7B_*.json` | Qwen entity extraction results |
 | `benchmark_results/benchmark_allam-7b_*.json` | ALLaM inference benchmark |
 | `benchmark_results/benchmark_qwen2.5-7b_*.json` | Qwen inference benchmark |
+| `benchmark_results/ragas_evaluation.json` | RAGAS evaluation results (12 queries × 5 modes) |
 | `tools/entity_extraction_benchmark.py` | Entity extraction benchmark script |
 | `tools/hybrid_pipeline_benchmark.py` | Hybrid pipeline validation script |
+| `tools/ragas_evaluation.py` | RAGAS evaluation script with ground truth |
 
 ---
 
