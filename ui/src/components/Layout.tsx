@@ -44,9 +44,7 @@ export const Layout = ({ children }: LayoutProps) => {
     { path: "/graph", label: "Graph", icon: Network },
     { path: "/vectors", label: "Vectors", icon: Database },
     { path: "/chat", label: "Chat", icon: MessageSquare },
-    { path: "/benchmark", label: "Benchmark", icon: BarChart3 },
-    { path: "/refrag-benchmark", label: "REFRAG Test", icon: Minimize2 },
-    { path: "/ragas", label: "RAGAS Eval", icon: Target },
+    { path: "/evaluations", label: "Evaluations", icon: BarChart3 },
     { path: "/logs", label: "Logs", icon: Terminal },
   ];
 

@@ -29,7 +29,8 @@ async function fetchApi<T>(endpoint: string, options: RequestInit = {}): Promise
     const response = await fetch(url, {
       ...options,
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json; charset=utf-8',
+        'Accept': 'application/json; charset=utf-8',
         ...options.headers,
       },
       signal: controller.signal,
@@ -156,6 +157,10 @@ export const documentsApi = {
       message: string;
       stats: any;
     }>(`/documents/documents/${documentId}`, { method: 'DELETE' });
+  },
+
+  getContent: (documentId: string, type: 'raw' | 'processed' = 'raw') => {
+    return fetchApi<{ content: string }>(`/documents/documents/${documentId}/content?type=${type}`);
   },
 };
 
@@ -293,6 +298,15 @@ export const dbApi = {
         next_offset: any;
         has_more: boolean;
       }>(`/db/vector/chunks?${params}`);
+    },
+
+    getStats: () => {
+      return fetchApi<{
+        total_chunks: number;
+        total_documents: number;
+        avg_chunk_size: number;
+        total_vectors: number;
+      }>('/db/vector/stats');
     },
   },
 };

@@ -247,20 +247,59 @@ async def check_vector_health():
 @router.get("/vector/stats")
 async def get_vector_statistics():
     """
-    Get detailed statistics about the vector database
+    Get detailed statistics about the vector database for UI display
     """
     logger.info("Getting vector database statistics")
 
     try:
-        # Get stats
+        # Get basic stats from Qdrant
         stats = qdrant_client.get_stats()
+        points_count = stats.get("points_count", 0)
 
-        return VectorDatabaseInfo(
-            collection_name=stats.get("collection_name", "unknown"),
-            vectors_count=stats.get("vectors_count", 0),
-            points_count=stats.get("points_count", 0),
-            status=stats.get("indexed", "unknown"),
-        )
+        # Get unique document count by scrolling through all points
+        # This is expensive but necessary for accurate stats
+        unique_docs = set()
+        total_chars = 0
+        chunk_count = 0
+
+        if points_count > 0:
+            try:
+                # Scroll through all points to get unique documents and avg size
+                offset = None
+                while True:
+                    results, offset = qdrant_client.client.scroll(
+                        collection_name=qdrant_client.collection_name,
+                        limit=100,
+                        offset=offset,
+                        with_payload=True,
+                        with_vectors=False,
+                    )
+
+                    if not results:
+                        break
+
+                    for point in results:
+                        if point.payload:
+                            doc_id = point.payload.get("document_id")
+                            if doc_id:
+                                unique_docs.add(doc_id)
+                            char_count = point.payload.get("char_count", 0)
+                            total_chars += char_count
+                            chunk_count += 1
+
+                    if offset is None:
+                        break
+            except Exception as e:
+                logger.warning(f"Error scrolling chunks for stats: {e}")
+
+        avg_chunk_size = total_chars / chunk_count if chunk_count > 0 else 0
+
+        return {
+            "total_chunks": points_count,
+            "total_documents": len(unique_docs),
+            "avg_chunk_size": avg_chunk_size,
+            "total_vectors": stats.get("vectors_count", 0),
+        }
 
     except Exception as e:
         logger.error(f"Error getting vector statistics: {e}")

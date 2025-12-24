@@ -1,12 +1,13 @@
 """
 PDF Processor
 Extracts text from PDF files using PyMuPDF while preserving structure
-Handles Arabic RTL text properly
+Handles Arabic RTL text properly with correct character shaping
 """
 
 import pymupdf
 from typing import Dict, List, Any
 from loguru import logger
+import unicodedata
 
 
 class PDFProcessor:
@@ -14,6 +15,40 @@ class PDFProcessor:
 
     def __init__(self):
         self.supported_extensions = [".pdf"]
+
+    def _extract_text_from_page(self, page) -> str:
+        """
+        Extract text from a page while preserving Arabic character shaping.
+
+        Uses blocks mode to preserve natural text flow and character joins.
+        Critical for Arabic, Urdu, Persian, and other RTL languages.
+
+        Args:
+            page: PyMuPDF page object
+
+        Returns:
+            Properly shaped text string
+        """
+        # Use "blocks" mode to preserve text shaping and natural order
+        # This prevents Arabic character decomposition that happens with "text" mode
+        blocks = page.get_text("blocks", sort=True)
+
+        # Extract text from blocks, preserving natural order
+        text_parts = []
+        for block in blocks:
+            # block[4] is the text content
+            if len(block) > 4 and block[4].strip():
+                text_parts.append(block[4])
+
+        # Join with newlines to preserve block structure
+        text = "\n".join(text_parts)
+
+        # Normalize Unicode to ensure consistent representation
+        # NFC = Canonical Decomposition followed by Canonical Composition
+        # This ensures characters like ة ى are properly normalized
+        text = unicodedata.normalize('NFC', text)
+
+        return text
 
     def process(self, file_path: str) -> Dict[str, Any]:
         """
@@ -52,8 +87,8 @@ class PDFProcessor:
             for page_num in range(len(doc)):
                 page = doc[page_num]
 
-                # Extract text with layout preservation
-                text = page.get_text("text", sort=True)
+                # Extract text with proper Arabic shaping
+                text = self._extract_text_from_page(page)
 
                 if text.strip():
                     pages.append({

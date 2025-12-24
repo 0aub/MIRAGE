@@ -1373,3 +1373,86 @@ class Neo4jClient:
         except Exception as e:
             logger.error(f"Error searching entities semantically: {e}")
             return []
+
+    def get_relationships_between(
+        self,
+        entity_names: List[str],
+        limit: int = 15
+    ) -> List[Dict[str, Any]]:
+        """
+        Get relationships strictly between a set of entities using simple type matching.
+        Optimized for SLM context window (limited to most relevant).
+
+        Args:
+            entity_names: List of entity names to check
+            limit: Maximum relationships to return
+
+        Returns:
+            List of relationship dicts (formatted for context)
+        """
+        if not self._connected:
+            self.connect()
+
+        if not entity_names:
+            return []
+
+        # Simple query matching relationships between any two entities in the list
+        query = """
+        MATCH (a:Entity)-[r]->(b:Entity)
+        WHERE a.name IN $names AND b.name IN $names
+        RETURN 
+            a.name as source, 
+            type(r) as type, 
+            b.name as target,
+            r.description as description,
+            r.confidence as confidence
+        ORDER BY r.confidence DESC
+        LIMIT $limit
+        """
+
+        try:
+            results = self.execute_query(query, {"names": entity_names, "limit": limit})
+            return results
+        except Exception as e:
+            logger.error(f"Error getting relationships between entities: {e}")
+            return []
+
+    def get_entity_communities(
+        self,
+        entity_names: List[str],
+        level: int = 0
+    ) -> List[Dict[str, Any]]:
+        """
+        Get community summaries for a list of entities.
+        Used to provide broader context ("This entity belongs to Community X which is about...").
+
+        Args:
+            entity_names: Entities to look up
+            level: Community level (0 = lowest/most specific)
+
+        Returns:
+            List of community summaries
+        """
+        if not self._connected:
+            self.connect()
+
+        # Assuming community structure: (Entity)-[:IN_COMMUNITY]->(Community)
+        # Note: Adjust logic if your community structure differs (e.g. Leiden algo properties)
+        query = """
+        MATCH (e:Entity)-[:IN_COMMUNITY]->(c:Community)
+        WHERE e.name IN $names AND c.level = $level
+        RETURN DISTINCT
+            c.id as community_id,
+            c.summary as summary,
+            c.title as title,
+            count(e) as entity_count_in_context
+        ORDER BY entity_count_in_context DESC
+        LIMIT 3
+        """
+
+        try:
+            results = self.execute_query(query, {"names": entity_names, "level": level})
+            return results
+        except Exception as e:
+            logger.error(f"Error getting entity communities: {e}")
+            return []

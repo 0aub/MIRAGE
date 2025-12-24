@@ -317,11 +317,16 @@ class QdrantVectorStore:
 
             return {
                 "collection_name": self.collection_name,
-                "vectors_count": collection_info.vectors_count,
-                "points_count": collection_info.points_count,
-                "indexed": collection_info.status,
+                "vectors_count": collection_info.vectors_count or 0,
+                "points_count": collection_info.points_count or 0,
+                "indexed": collection_info.status or "unknown",
             }
 
         except Exception as e:
             logger.error(f"Error getting vector store stats: {e}")
-            return {}
+            return {
+                "collection_name": self.collection_name,
+                "vectors_count": 0,
+                "points_count": 0,
+                "indexed": "error",
+            }

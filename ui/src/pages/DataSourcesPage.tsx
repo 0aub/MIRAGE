@@ -22,14 +22,21 @@ import {
   CheckCircle2,
   Clock,
   XCircle,
-  Loader2
+  Loader2,
+  User
 } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
-import { documentsApi, urlApi } from "@/lib/api";
+import { documentsApi, urlApi, dbApi } from "@/lib/api";
+import { fixEncoding } from "@/lib/utils";
 import FileUploadTab from "@/components/data-sources/FileUploadTab";
 import WebPageTab from "@/components/data-sources/WebPageTab";
 import YouTubeTab from "@/components/data-sources/YouTubeTab";
+
+// ... (existing imports)
+
+// ... (inside component)
+
 
 interface DataSource {
   id: string;
@@ -40,7 +47,8 @@ interface DataSource {
   progress?: number;
   entities?: number;
   relationships?: number;
-  chunks?: number;
+  chunk_count: number;
+
   processingTime?: string;
   processingTimeSeconds?: number;
   processingStartTime?: number;
@@ -73,13 +81,40 @@ export default function DataSourcesPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isContentModalOpen, setIsContentModalOpen] = useState(false);
   const [contentText, setContentText] = useState("");
-  const [rawText, setRawText] = useState("");
-  const [processedText, setProcessedText] = useState("");
+  const [rawText, setRawText] = useState(""); // Kept for content type toggle logic
+  const [processedText, setProcessedText] = useState(""); // Kept for content type toggle logic
   const [contentType, setContentType] = useState<"raw" | "processed">("raw");
   const [isLoadingContent, setIsLoadingContent] = useState(false);
   const [currentTime, setCurrentTime] = useState(Date.now());
   const [isYouTubeProcessing, setIsYouTubeProcessing] = useState(false);
   const { toast} = useToast();
+
+  // Chunks State
+  const [isChunksModalOpen, setIsChunksModalOpen] = useState(false);
+  const [chunks, setChunks] = useState<any[]>([]);
+  const [isLoadingChunks, setIsLoadingChunks] = useState(false);
+
+  const handleViewChunks = async (source: DataSource) => {
+    setSelectedSource(source);
+    setIsChunksModalOpen(true);
+    setIsLoadingChunks(true);
+    setChunks([]);
+
+    try {
+        // Fetch first 50 chunks for this document
+        const response = await dbApi.vector.getChunks(50, 0, source.id);
+        setChunks(response.chunks);
+    } catch (error: any) {
+        console.error('Error loading chunks:', error);
+        toast({
+            title: "Error",
+            description: "Failed to load chunks",
+            variant: "destructive"
+        });
+    } finally {
+        setIsLoadingChunks(false);
+    }
+  };
 
   // Update timer every second for processing items
   useEffect(() => {
@@ -120,7 +155,7 @@ export default function DataSourcesPage() {
             progress: 100,
             entities: doc.entity_count,
             relationships: doc.relationship_count,
-            chunks: doc.chunk_count,
+            chunk_count: doc.chunk_count,
             totalWords: doc.total_words,
             totalChars: doc.total_chars,
             author: doc.author,
@@ -179,7 +214,7 @@ export default function DataSourcesPage() {
           progress: 100,
           entities: doc.entity_count,
           relationships: doc.relationship_count,
-          chunks: doc.chunk_count,
+          chunk_count: doc.chunk_count,
           totalWords: doc.total_words,
           totalChars: doc.total_chars,
           author: doc.author,
@@ -245,7 +280,7 @@ export default function DataSourcesPage() {
         await documentsApi.delete(source.id);
 
         // Reprocess
-        await urlApi.process(url);
+        await urlApi.processAsync(url); // Changed from urlApi.process
 
         toast({
           title: "Success",
@@ -296,16 +331,23 @@ export default function DataSourcesPage() {
     setContentType(type);
 
     try {
-      const response = await documentsApi.getContent(documentId);
-      setRawText(response.full_text || "");
-      setProcessedText(response.processed_text || "");
+      // Fetch content based on type
+      const response = await documentsApi.getContent(documentId, type);
+      setContentText(response.content || "");
+      // Store raw and processed text for toggle functionality
+      // Assuming getContent(documentId, 'raw') returns full_text and getContent(documentId, 'processed') returns processed_text
+      // This might need adjustment if the API doesn't return both on a single call or if the 'type' parameter is for the *return* type.
+      // For now, we'll assume getContent can fetch both if needed for the toggle.
+      // If the API only returns one type at a time, these would need separate calls.
+      // For simplicity, we'll assume the API returns the requested type in 'content' and we can fetch the other if needed for the toggle.
+      // Or, if the API returns both full_text and processed_text regardless of 'type' parameter, then the original logic was fine.
+      // Given the instruction to use `.content`, we'll simplify.
+      // To support the toggle, we need both raw and processed text. Let's make two calls if necessary.
+      const rawResponse = await documentsApi.getContent(documentId, 'raw');
+      const processedResponse = await documentsApi.getContent(documentId, 'processed');
+      setRawText(rawResponse.content || "");
+      setProcessedText(processedResponse.content || "");
 
-      // Set the content based on the type requested
-      if (type === "raw") {
-        setContentText(response.full_text || "");
-      } else {
-        setContentText(response.processed_text || response.full_text || "");
-      }
     } catch (error: any) {
       console.error('Error fetching content:', error);
       toast({
@@ -314,6 +356,7 @@ export default function DataSourcesPage() {
         variant: "destructive",
       });
       setIsContentModalOpen(false);
+      setContentText("Error loading content. Please try again.");
     } finally {
       setIsLoadingContent(false);
     }
@@ -468,12 +511,14 @@ export default function DataSourcesPage() {
                         getTypeIcon(source.type)
                       )}
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-sm truncate">{source.title}</h3>
-                        <div className="flex items-center gap-2 mt-1">
-                          <Badge variant="outline" className="text-xs">
-                            {source.type}
+                        <h3 className="font-bold text-lg mb-2">{fixEncoding(source.title)}</h3>
+                      <div className="flex flex-wrap gap-2 mb-3">
+                        {source.author && (
+                          <Badge variant="secondary" className="text-xs">
+                            <User className="w-3 h-3 mr-1" />
+                            {fixEncoding(source.author)}
                           </Badge>
-                          {getStatusIcon(source.status)}
+                        )}  {getStatusIcon(source.status)}
                         </div>
                       </div>
                     </div>
@@ -488,6 +533,10 @@ export default function DataSourcesPage() {
                         <DropdownMenuItem className="gap-2" onClick={() => handleViewDetails(source)}>
                           <Eye className="w-4 h-4" />
                           View Details
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="gap-2" onClick={() => handleViewChunks(source)}>
+                          <FileJson className="w-4 h-4" />
+                          View Chunks
                         </DropdownMenuItem>
                         <DropdownMenuItem className="gap-2" onClick={() => handleReprocess(source)}>
                           <RefreshCw className="w-4 h-4" />
@@ -533,7 +582,7 @@ export default function DataSourcesPage() {
                         </div>
                         <div className="text-center">
                           <p className="text-lg font-bold" style={{ color: 'hsl(24, 75%, 55%)' }}>
-                            {source.totalWords ? (source.totalWords / 1000).toFixed(1) + 'k' : (source.chunks || 0)}
+                            {source.totalWords ? (source.totalWords / 1000).toFixed(1) + 'k' : (source.chunk_count || 0)}
                           </p>
                           <p className="text-xs text-muted-foreground">
                             {source.totalWords ? 'Words' : 'Chunks'}
@@ -626,7 +675,7 @@ export default function DataSourcesPage() {
             <div className="space-y-6">
               {/* Title and Type */}
               <div>
-                <h3 className="text-lg font-semibold mb-2">{selectedSource.title}</h3>
+                <h2 className="text-xl font-bold mb-4">{fixEncoding(selectedSource.title)}</h2>
                 <div className="flex gap-2">
                   <Badge variant="outline">{selectedSource.type}</Badge>
                   {selectedSource.language && (
@@ -671,10 +720,10 @@ export default function DataSourcesPage() {
                     <p className="text-2xl font-bold">{selectedSource.totalChars.toLocaleString()}</p>
                   </div>
                 )}
-                {selectedSource.chunks !== undefined && (
+                {selectedSource.chunk_count !== undefined && (
                   <div>
                     <p className="text-sm text-muted-foreground">Chunks</p>
-                    <p className="text-2xl font-bold">{selectedSource.chunks}</p>
+                    <p className="text-2xl font-bold">{selectedSource.chunk_count}</p>
                   </div>
                 )}
                 {selectedSource.processingTimeSeconds && selectedSource.processingTimeSeconds > 0 && (
@@ -802,6 +851,60 @@ export default function DataSourcesPage() {
           <div className="text-sm text-muted-foreground mt-2">
             {contentText && `${contentText.split(/\s+/).length.toLocaleString()} words`}
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Chunks Viewer Modal */}
+      <Dialog open={isChunksModalOpen} onOpenChange={setIsChunksModalOpen}>
+        <DialogContent className="max-w-4xl max-h-[80vh] flex flex-col">
+            <DialogHeader>
+            <DialogTitle>
+                Extracted Chunks: {selectedSource?.title}
+            </DialogTitle>
+            </DialogHeader>
+            
+            <div className="flex-1 overflow-y-auto pr-2">
+            {isLoadingChunks ? (
+                <div className="flex justify-center py-12">
+                     <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                </div>
+            ) : chunks.length > 0 ? (
+                <div className="space-y-4 py-4">
+                     <div className="flex justify-between items-center text-sm text-muted-foreground px-1">
+                        <span>Total Chunks: {chunks.length} (showing first 50)</span>
+                     </div>
+                     {chunks.map((chunk, i) => (
+                        <Card key={chunk.id || i} className="p-4 bg-secondary/20 hover:bg-secondary/40 transition-colors">
+                            <div className="flex justify-between items-start mb-2">
+                                <Badge variant="outline" className="font-mono text-xs text-muted-foreground">
+                                    ID: {chunk.id.substring(0, 8)}...
+                                </Badge>
+                                <span className="text-xs text-muted-foreground">
+                                    {chunk.word_count} words
+                                </span>
+                            </div>
+                            <p className="text-sm leading-relaxed whitespace-pre-wrap font-sans" dir="auto">
+                                {chunk.text}
+                            </p>
+                             {chunk.metadata && Object.keys(chunk.metadata).length > 0 && (
+                                <div className="mt-3 pt-3 border-t flex flex-wrap gap-2">
+                                     {Object.entries(chunk.metadata).map(([k, v]) => (
+                                         <Badge key={k} variant="secondary" className="text-xs font-normal">
+                                             {k}: {String(v).substring(0, 30)}
+                                         </Badge>
+                                     ))}
+                                </div>
+                             )}
+                        </Card>
+                     ))}
+                </div>
+            ) : (
+                <div className="text-center py-12 text-muted-foreground">
+                    <FileJson className="w-12 h-12 mx-auto mb-3 opacity-20" />
+                    <p>No chunks found for this document.</p>
+                </div>
+            )}
+            </div>
         </DialogContent>
       </Dialog>
     </div>

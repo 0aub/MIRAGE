@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Search, ChevronLeft, ChevronRight, Loader2, Database } from "lucide-react";
+import { Search, ChevronLeft, ChevronRight, Loader2, Database, FileText, Hash, List } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { dbApi } from "@/lib/api";
 
@@ -18,19 +18,47 @@ interface VectorChunk {
   metadata: Record<string, any>;
 }
 
+interface VectorStats {
+  total_chunks: number;
+  total_documents: number;
+  avg_chunk_size: number;
+  total_vectors: number;
+}
+
 export default function VectorsPage() {
   const [chunks, setChunks] = useState<VectorChunk[]>([]);
+  const [stats, setStats] = useState<VectorStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingStats, setIsLoadingStats] = useState(true);
   const [total, setTotal] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
-  const [limit] = useState(50);
+  const [limit] = useState(50); // Reduced from 100 to improve UI performance
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredDocId, setFilteredDocId] = useState("");
   const { toast } = useToast();
 
+  // Load stats on mount
+  useEffect(() => {
+    loadStats();
+  }, []);
+
+  // Load chunks when page or filter changes
   useEffect(() => {
     loadChunks();
   }, [currentPage, filteredDocId]);
+
+  const loadStats = async () => {
+    try {
+      setIsLoadingStats(true);
+      const response = await dbApi.vector.getStats();
+      setStats(response);
+    } catch (error: any) {
+      console.error('Error loading vector stats:', error);
+      // Don't show error toast for stats, they're optional
+    } finally {
+      setIsLoadingStats(false);
+    }
+  };
 
   const loadChunks = async () => {
     try {
@@ -63,18 +91,15 @@ export default function VectorsPage() {
     setCurrentPage(0);
   };
 
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
   const totalPages = Math.ceil(total / limit);
 
-  const filteredChunks = chunks.filter(chunk => {
-    if (!searchQuery) return true;
-    const lowerQuery = searchQuery.toLowerCase();
-    return (
-      chunk.document_id.toLowerCase().includes(lowerQuery) ||
-      chunk.text.toLowerCase().includes(lowerQuery)
-    );
-  });
-
-  const truncateText = (text: string, maxLength: number = 200) => {
+  const truncateText = (text: string, maxLength: number = 300) => {
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength) + "...";
   };
@@ -82,16 +107,63 @@ export default function VectorsPage() {
   return (
     <div className="space-y-6 animate-fade-in pb-20 md:pb-0">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold mb-2">Vector Store</h1>
-          <p className="text-muted-foreground">Browse document chunks stored in Qdrant</p>
-        </div>
-        <div className="hidden md:flex items-center gap-2 text-sm text-muted-foreground">
-          <Database className="w-4 h-4" />
-          <span>{total.toLocaleString()} total chunks</span>
-        </div>
+      <div>
+        <h1 className="text-3xl font-bold mb-2">Vector Store</h1>
+        <p className="text-muted-foreground">Browse and manage document chunks in Qdrant vector database</p>
       </div>
+
+      {/* Stats Cards */}
+      {!isLoadingStats && stats && (
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Card className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-blue-500/10 rounded-lg">
+                <List className="w-5 h-5 text-blue-500" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Total Chunks</p>
+                <p className="text-2xl font-bold">{stats.total_chunks.toLocaleString()}</p>
+              </div>
+            </div>
+          </Card>
+
+          <Card className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-green-500/10 rounded-lg">
+                <FileText className="w-5 h-5 text-green-500" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Documents</p>
+                <p className="text-2xl font-bold">{stats.total_documents.toLocaleString()}</p>
+              </div>
+            </div>
+          </Card>
+
+          <Card className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-purple-500/10 rounded-lg">
+                <Hash className="w-5 h-5 text-purple-500" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Avg. Chunk Size</p>
+                <p className="text-2xl font-bold">{Math.round(stats.avg_chunk_size)}</p>
+              </div>
+            </div>
+          </Card>
+
+          <Card className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-orange-500/10 rounded-lg">
+                <Database className="w-5 h-5 text-orange-500" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Total Vectors</p>
+                <p className="text-2xl font-bold">{stats.total_vectors.toLocaleString()}</p>
+              </div>
+            </div>
+          </Card>
+        </div>
+      )}
 
       {/* Search and Filter */}
       <Card className="p-6">
@@ -99,16 +171,18 @@ export default function VectorsPage() {
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
-              placeholder="Search by document ID or text..."
+              type="text"
+              placeholder="Search by document ID..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-              className="pl-9"
+              onKeyPress={handleKeyPress}
+              className="pl-10"
             />
           </div>
           <div className="flex gap-2">
             <Button onClick={handleSearch} variant="default">
-              Filter
+              <Search className="w-4 h-4 mr-2" />
+              Search
             </Button>
             {filteredDocId && (
               <Button onClick={handleClearFilter} variant="outline">
@@ -117,117 +191,107 @@ export default function VectorsPage() {
             )}
           </div>
         </div>
+
         {filteredDocId && (
           <div className="mt-4">
-            <Badge variant="secondary">Filtered by: {filteredDocId}</Badge>
+            <Badge variant="secondary">
+              Filtered by: {filteredDocId}
+            </Badge>
           </div>
         )}
       </Card>
 
       {/* Chunks List */}
-      {isLoading ? (
-        <div className="text-center py-12">
-          <Loader2 className="w-12 h-12 mx-auto text-primary animate-spin mb-4" />
-          <p className="text-muted-foreground">Loading chunks...</p>
-        </div>
-      ) : filteredChunks.length === 0 ? (
-        <Card className="p-12 text-center">
-          <Database className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
-          <h3 className="text-xl font-semibold mb-2">No chunks found</h3>
-          <p className="text-muted-foreground">
-            {filteredDocId
-              ? "Try clearing the filter or using a different search query"
-              : "Process some documents to populate the vector store"}
+      <Card className="p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-semibold">
+            Chunks ({total.toLocaleString()})
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            Page {currentPage + 1} of {totalPages || 1}
           </p>
-        </Card>
-      ) : (
-        <>
-          {/* Grid Layout: 3 blocks per row on desktop, 2 on tablet, 1 on mobile */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredChunks.map((chunk) => (
-              <Card key={chunk.id} className="p-4 hover:shadow-lg transition-shadow flex flex-col h-full">
-                <div className="space-y-3 flex flex-col h-full">
-                  {/* Header */}
-                  <div className="flex items-start justify-between gap-2">
-                    <Badge variant="outline" className="font-mono text-xs">
-                      Chunk {chunk.chunk_index}
-                    </Badge>
-                    <span className="text-xs text-muted-foreground">
-                      {chunk.word_count}w
-                    </span>
-                  </div>
+        </div>
 
-                  {/* Document ID */}
-                  <div className="text-xs text-muted-foreground truncate">
-                    {chunk.document_id}
-                  </div>
-
-                  {/* Chunk Text - takes available space */}
-                  <div className="bg-secondary/30 rounded-lg p-3 flex-1 overflow-hidden">
-                    <p className="text-xs leading-relaxed whitespace-pre-wrap line-clamp-6">
-                      {truncateText(chunk.text, 200)}
-                    </p>
-                  </div>
-
-                  {/* Metadata */}
-                  {chunk.metadata && Object.keys(chunk.metadata).length > 0 && (
-                    <div className="pt-2 border-t">
-                      <details className="text-xs">
-                        <summary className="cursor-pointer text-muted-foreground hover:text-foreground">
-                          Metadata ({Object.keys(chunk.metadata).length})
-                        </summary>
-                        <pre className="mt-2 p-2 bg-secondary/30 rounded text-xs overflow-x-auto max-h-32 overflow-y-auto">
-                          {JSON.stringify(chunk.metadata, null, 2)}
-                        </pre>
-                      </details>
+        {isLoading ? (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+            <p className="ml-3 text-muted-foreground">Loading chunks...</p>
+          </div>
+        ) : chunks.length === 0 ? (
+          <div className="text-center py-12">
+            <Database className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+            <h3 className="text-xl font-semibold mb-2">No chunks found</h3>
+            <p className="text-muted-foreground">
+              {filteredDocId ? 'No chunks match your filter criteria' : 'No chunks in the vector store yet'}
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {chunks.map((chunk) => (
+              <Card key={chunk.id} className="p-4 hover:shadow-md transition-shadow">
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Badge variant="outline" className="font-mono text-xs">
+                        {chunk.document_id}
+                      </Badge>
+                      <Badge variant="secondary" className="text-xs">
+                        Chunk {chunk.chunk_index}
+                      </Badge>
                     </div>
-                  )}
-
-                  {/* Footer Stats */}
-                  <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t">
-                    <span title={chunk.id}>{chunk.id.substring(0, 8)}...</span>
-                    <span>{chunk.char_count} chars</span>
+                  </div>
+                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                    <span title="Word count">{chunk.word_count}w</span>
+                    <span title="Character count">{chunk.char_count} chars</span>
                   </div>
                 </div>
+
+                <div className="text-sm leading-relaxed bg-muted/30 rounded-lg p-3 font-mono">
+                  {truncateText(chunk.text)}
+                </div>
+
+                {chunk.metadata && Object.keys(chunk.metadata).length > 0 && (
+                  <div className="mt-3 pt-3 border-t text-xs text-muted-foreground">
+                    <span className="font-semibold">Metadata:</span>{' '}
+                    {JSON.stringify(chunk.metadata)}
+                  </div>
+                )}
               </Card>
             ))}
           </div>
+        )}
 
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <Card className="p-4">
-              <div className="flex items-center justify-between">
-                <div className="text-sm text-muted-foreground">
-                  Page {currentPage + 1} of {totalPages}
-                  <span className="ml-2">
-                    (Showing {currentPage * limit + 1}-{Math.min((currentPage + 1) * limit, total)} of {total.toLocaleString()})
-                  </span>
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setCurrentPage(Math.max(0, currentPage - 1))}
-                    disabled={currentPage === 0}
-                  >
-                    <ChevronLeft className="w-4 h-4 mr-1" />
-                    Previous
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setCurrentPage(Math.min(totalPages - 1, currentPage + 1))}
-                    disabled={currentPage >= totalPages - 1}
-                  >
-                    Next
-                    <ChevronRight className="w-4 h-4 ml-1" />
-                  </Button>
-                </div>
-              </div>
-            </Card>
-          )}
-        </>
-      )}
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-2 mt-6">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(Math.max(0, currentPage - 1))}
+              disabled={currentPage === 0}
+            >
+              <ChevronLeft className="w-4 h-4 mr-1" />
+              Previous
+            </Button>
+
+            <div className="flex items-center gap-2 px-4">
+              <span className="text-sm text-muted-foreground">
+                Page {currentPage + 1} of {totalPages}
+              </span>
+            </div>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(Math.min(totalPages - 1, currentPage + 1))}
+              disabled={currentPage >= totalPages - 1}
+            >
+              Next
+              <ChevronRight className="w-4 h-4 ml-1" />
+            </Button>
+          </div>
+        )}
+      </Card>
     </div>
   );
 }

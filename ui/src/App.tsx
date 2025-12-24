@@ -11,9 +11,7 @@ import VectorsPage from "./pages/VectorsPage";
 import SettingsPage from "./pages/SettingsPage";
 import ChatPage from "./pages/ChatPage";
 import LogsPage from "./pages/LogsPage";
-import BenchmarkPage from "./pages/BenchmarkPage";
-import RefragBenchmarkPage from "./pages/RefragBenchmarkPage";
-import RagasEvaluationPage from "./pages/RagasEvaluationPage";
+import EvaluationsPage from "./pages/EvaluationsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,9 +29,7 @@ const App = () => (
             <Route path="/graph" element={<GraphPage />} />
             <Route path="/vectors" element={<VectorsPage />} />
             <Route path="/chat" element={<ChatPage />} />
-            <Route path="/benchmark" element={<BenchmarkPage />} />
-            <Route path="/refrag-benchmark" element={<RefragBenchmarkPage />} />
-            <Route path="/ragas" element={<RagasEvaluationPage />} />
+            <Route path="/evaluations" element={<EvaluationsPage />} />
             <Route path="/logs" element={<LogsPage />} />
             <Route path="/settings" element={<SettingsPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
