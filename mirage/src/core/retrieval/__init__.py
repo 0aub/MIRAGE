@@ -63,7 +63,7 @@ from .fusion import (
     rrf_score,
 )
 
-from .retrieval_engine import (
+from .engine import (
     RetrievalEngine,
     RetrievalEngineConfig,
     get_retrieval_engine,
