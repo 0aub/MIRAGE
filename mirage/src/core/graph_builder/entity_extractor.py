@@ -13,7 +13,7 @@ from loguru import logger
 # Required imports - no fallback (enforced in Docker)
 import spacy
 from camel_tools.ner import NERecognizer
-from .llm_entity_extractor import LLMEntityExtractor
+from .extraction import LLMEntityExtractor
 from .entity_resolver import EntityResolver
 from .ensemble_extractor import EnsembleEntityExtractor, get_ensemble_extractor
 

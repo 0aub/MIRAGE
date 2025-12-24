@@ -717,7 +717,7 @@ def get_ensemble_extractor(**kwargs) -> EnsembleEntityExtractor:
         # Try to get LLM extractor
         llm_extractor = None
         try:
-            from .llm_entity_extractor import LLMEntityExtractor
+            from .extraction import LLMEntityExtractor
             llm_extractor = LLMEntityExtractor()
         except Exception as e:
             logger.warning(f"Could not initialize LLM extractor: {e}")

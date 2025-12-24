@@ -14,7 +14,6 @@ from src.core.retrieval import preload_reranker
 from src.core.models.embedding_manager import get_embedding_manager
 from src.api import (
     document_service,
-    chat_service,
     graph_service,
     refrag_service,
     file_service,
@@ -24,6 +23,7 @@ from src.api import (
 )
 from src.api.benchmark import router as benchmark_router
 from src.api.url import router as url_router
+from src.api.chat import router as chat_router
 
 # Configure logger
 logger.remove()  # Remove default handler
@@ -100,7 +100,7 @@ app.include_router(
 )
 
 app.include_router(
-    chat_service.router,
+    chat_router,
     prefix="/chat",
     tags=["Chat & Conversation"],
 )
