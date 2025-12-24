@@ -22,7 +22,7 @@ GraphRAG Components:
 
 from .entity_extractor import EntityExtractor
 from .relationship_extractor import RelationshipExtractor
-from .neo4j_client import Neo4jClient
+from .neo4j import Neo4jClient
 from .entity_normalizer import EntityNormalizer, normalize_entity
 
 # Phase 2 Enhancement: Ensemble Entity Extraction (required, no fallback)
