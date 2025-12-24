@@ -1,6 +1,5 @@
 """
-Graph Builder Module
-Phase 2: Dynamic Graph Construction + GraphRAG Components
+Graph Builder Module - Dynamic Graph Construction + GraphRAG Components
 
 Handles:
 - Entity extraction (CAMeLTools for Arabic, spaCy for English)
@@ -9,13 +8,12 @@ Handles:
 - Neo4j graph storage
 - Dynamic schema evolution
 
-GraphRAG Components (COMPLETE - Phases 1-6):
+GraphRAG Components:
 - Entity normalization (prevent duplicates)
 - Entity disambiguation (link query entities to graph)
 - Multi-hop graph traversal
 - Community detection (Louvain algorithm)
-- Community visualization
-- Community summarization (Allam LLM)
+- Community summarization (LLM)
 - Global search (map-reduce over summaries)
 - Local search (entity-centric traversal)
 - Hybrid search (global + local + routing)
@@ -43,7 +41,6 @@ from .entity_disambiguator import (
 
 from .graph_traversal import GraphTraversal, TraversalResult
 from .community_detector import CommunityDetector, Community, CommunityDetectionResult
-from .community_visualizer import CommunityVisualizer, print_community_tree
 from .community_summarizer import CommunitySummarizer, CommunitySummary
 from .global_search import GlobalSearchEngine, SearchResult
 from .local_search import LocalSearchEngine, LocalSearchResult
@@ -66,21 +63,6 @@ from .relationship_enricher import (
     EnrichedRelationship,
     get_relationship_enricher,
     enrich_relationship,
-)
-
-# MIRAGE V5: Incremental Graph Updates
-from .incremental_updater import (
-    IncrementalGraphUpdater,
-    UpdateResult,
-    AffectedCommunity,
-    get_incremental_updater,
-)
-
-# MIRAGE V5: Coreference Resolution
-from .coreference_resolver import (
-    CoreferenceResolver,
-    ResolvedEntity,
-    get_coreference_resolver,
 )
 
 # GraphRAG Phase 5: Claim Extraction
@@ -112,8 +94,6 @@ __all__ = [
     "CommunityDetector",
     "Community",
     "CommunityDetectionResult",
-    "CommunityVisualizer",
-    "print_community_tree",
     # Phase 3: Community summarization
     "CommunitySummarizer",
     "CommunitySummary",
@@ -140,15 +120,6 @@ __all__ = [
     "EnrichedRelationship",
     "get_relationship_enricher",
     "enrich_relationship",
-    # MIRAGE V5: Incremental Graph Updates
-    "IncrementalGraphUpdater",
-    "UpdateResult",
-    "AffectedCommunity",
-    "get_incremental_updater",
-    # MIRAGE V5: Coreference Resolution
-    "CoreferenceResolver",
-    "ResolvedEntity",
-    "get_coreference_resolver",
     # GraphRAG Phase 5: Claim Extraction
     "ClaimExtractor",
     "Claim",

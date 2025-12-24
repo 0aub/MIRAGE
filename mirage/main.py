@@ -19,11 +19,11 @@ from src.api import (
     refrag_service,
     file_service,
     db_service,
-    url_service,
-    benchmark_service,
     graphrag_service,
     logs_service,
 )
+from src.api.benchmark import router as benchmark_router
+from src.api.url import router as url_router
 
 # Configure logger
 logger.remove()  # Remove default handler
@@ -130,13 +130,13 @@ app.include_router(
 )
 
 app.include_router(
-    url_service.router,
+    url_router,
     prefix="/url",
     tags=["URL Processing"],
 )
 
 app.include_router(
-    benchmark_service.router,
+    benchmark_router,
     prefix="/benchmark",
     tags=["Benchmarking & Evaluation"],
 )
