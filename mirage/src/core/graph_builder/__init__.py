@@ -40,7 +40,7 @@ from .entity_disambiguator import (
 )
 
 from .graph_traversal import GraphTraversal, TraversalResult
-from .community_detector import CommunityDetector, Community, CommunityDetectionResult
+from .community import CommunityDetector, Community, CommunityDetectionResult
 from .community_summarizer import CommunitySummarizer, CommunitySummary
 from .global_search import GlobalSearchEngine, SearchResult
 from .local_search import LocalSearchEngine, LocalSearchResult
