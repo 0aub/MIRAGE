@@ -1,13 +1,15 @@
 # MIRAGE Codebase Cleanup Report
 
 **Audit Date:** 2024-12-24
-**Cleanup Status:** PHASE 1 COMPLETE
+**Phase 1 Status:** COMPLETE
+**Phase 2 Status:** PLANNED (see PHASE2_REFACTORING_PLAN.md)
 **Total Files Audited:** 375
 **Files Removed/Moved:** ~70+
+**Lines Deleted:** 24,803+
 
 ---
 
-## CLEANUP COMPLETED
+## PHASE 1 CLEANUP COMPLETED
 
 ### Deleted:
 - `/docs/archives/` - 30+ archived docs
@@ -17,21 +19,20 @@
 - 4 root-level test files
 - 11 scattered test files in mirage/
 - 8 duplicate tool scripts
+- Empty directories: `models/`, `utils/`, `config/components/`, `data/`
+- Docker-owned directories (via sudo): `benchmark_results/`, `docs_to_ingest/`, `tools/`, etc.
 
 ### Moved:
 - 12 utility scripts → `/tools/scripts/`
 - 11 unique tools → `/tools/`
 - Data files → `/data/`
 
-### Requires Manual Cleanup (sudo):
-```bash
-sudo rm -rf mirage/benchmark_results/
-sudo rm -rf mirage/data/sdaia_policies/
-sudo rm -rf mirage/docs_to_ingest/
-sudo rm -rf mirage/tools/
-sudo rm -rf mirage/.pytest_cache/
-sudo rm -rf mirage/__pycache__/
-```
+## PHASE 2 PLANNED
+
+See **PHASE2_REFACTORING_PLAN.md** for details:
+- Split 7 monster files (>1000 lines each)
+- Remove ~1,484 lines of confirmed dead code
+- Consolidate module structure
 
 ---
 
