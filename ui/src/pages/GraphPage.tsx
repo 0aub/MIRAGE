@@ -4,10 +4,11 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search, Download, Filter, ZoomIn, ZoomOut, Maximize2, Loader2, Network as NetworkIcon, Layers } from "lucide-react";
+import { Search, Download, Filter, ZoomIn, ZoomOut, Maximize2, Loader2, Network as NetworkIcon, Layers, Info, Image as ImageIcon, FileJson } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { graphApi, graphragApi } from "@/lib/api";
+import { fixEncoding } from "@/lib/utils";
 
 interface Community {
   id: string;
@@ -46,15 +47,27 @@ export default function GraphPage() {
     return () => observer.disconnect();
   }, []);
 
+  const [graphStats, setGraphStats] = useState<{ nodes: number; edges: number } | null>(null);
+  
   // Load graph data from backend
   useEffect(() => {
     loadGraph();
+    loadStats();
   }, []);
+
+  const loadStats = async () => {
+    try {
+      const stats = await graphApi.stats();
+      setGraphStats({ nodes: stats.total_nodes, edges: stats.total_edges });
+    } catch (error) {
+      console.error('Error loading graph stats:', error);
+    }
+  };
 
   const loadGraph = async () => {
     try {
       setIsLoading(true);
-      const response = await graphApi.visualizeFull(5000);  // Show up to 5000 entities (backend max)
+      const response = await graphApi.visualizeFull(500);  // Cap at 500 for performance
 
       // Convert API response to vis-network format
       const nodes = response.nodes.map((node, idx) => ({
@@ -181,12 +194,25 @@ export default function GraphPage() {
       },
       groups,
       physics: {
-        stabilization: true,
-        barnesHut: {
-          gravitationalConstant: -2000,
-          springConstant: 0.001,
-          springLength: 200,
+        solver: 'barnesHut',
+        adaptiveTimestep: true,
+        stabilization: {
+          enabled: true,
+          iterations: 1000,
+          updateInterval: 50,
+          onlyDynamicEdges: false,
+          fit: true
         },
+        barnesHut: {
+          gravitationalConstant: -3000,
+          centralGravity: 0.3,
+          springLength: 95,
+          springConstant: 0.04,
+          damping: 0.2,
+          avoidOverlap: 0.5
+        },
+        maxVelocity: 30,
+        minVelocity: 0.75,
       },
       interaction: {
         hover: true,
@@ -245,325 +271,96 @@ export default function GraphPage() {
     network?.fit();
   };
 
-  const handleExport = () => {
-    if (!network || !networkRef.current) return;
+  // Search implementation
+  useEffect(() => {
+    if (!network || !searchQuery) return;
 
-    // Get current theme colors
-    const bgColor = isDarkMode ? '#1a1a1a' : '#f5f5f0';
-    const textColor = isDarkMode ? '#f3f4f6' : '#1f2937';
-    const borderColor = isDarkMode ? '#383838' : '#e5e7eb';
+    const query = searchQuery.toLowerCase();
+    const matchingNodes = graphData.nodes.filter(n => 
+      n.label.toLowerCase().includes(query) || 
+      n.group.toLowerCase().includes(query)
+    );
 
-    // Prepare graph data for export
-    const graphDataJson = JSON.stringify({
-      nodes: graphData.nodes,
-      edges: graphData.edges
-    });
-
-    // Create HTML content with embedded vis-network
-    const htmlContent = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MIRAGE Knowledge Graph Export</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    body {
-      font-family: 'Inter', 'Noto Naskh Arabic', sans-serif;
-      background: ${bgColor};
-      color: ${textColor};
-      padding: 2rem;
-    }
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-    }
-    .header {
-      margin-bottom: 2rem;
-      padding-bottom: 1rem;
-      border-bottom: 2px solid ${borderColor};
-    }
-    h1 {
-      font-size: 2rem;
-      font-weight: bold;
-      margin-bottom: 0.5rem;
-    }
-    .stats {
-      display: flex;
-      gap: 2rem;
-      font-size: 0.875rem;
-      color: ${isDarkMode ? '#9ca3af' : '#6b7280'};
-    }
-    .graph-container {
-      position: relative;
-      background: ${isDarkMode ? '#262626' : '#ffffff'};
-      border: 1px solid ${borderColor};
-      border-radius: 0.75rem;
-      height: 600px;
-      overflow: hidden;
-    }
-    #network {
-      width: 100%;
-      height: 100%;
-    }
-    .controls {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      display: flex;
-      gap: 0.5rem;
-      z-index: 100;
-    }
-    .control-btn {
-      background: ${isDarkMode ? '#404040' : '#ffffff'};
-      border: 1px solid ${borderColor};
-      color: ${textColor};
-      padding: 0.5rem;
-      border-radius: 0.5rem;
-      cursor: pointer;
-      font-size: 0.875rem;
-      transition: all 0.2s;
-    }
-    .control-btn:hover {
-      background: ${isDarkMode ? '#505050' : '#f5f5f0'};
-    }
-    .footer {
-      margin-top: 2rem;
-      text-align: center;
-      font-size: 0.875rem;
-      color: ${isDarkMode ? '#9ca3af' : '#6b7280'};
-    }
-    .legend {
-      margin-top: 2rem;
-      padding: 1.5rem;
-      background: ${isDarkMode ? '#262626' : '#ffffff'};
-      border: 1px solid ${borderColor};
-      border-radius: 0.75rem;
-    }
-    .legend h2 {
-      font-size: 1.25rem;
-      font-weight: 600;
-      margin-bottom: 1rem;
-    }
-    .legend-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 0.75rem;
-    }
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .legend-color {
-      width: 1rem;
-      height: 1rem;
-      border-radius: 50%;
-      border: 2px solid;
-      flex-shrink: 0;
-    }
-    .legend-label {
-      font-size: 0.875rem;
-      text-transform: capitalize;
-    }
-    .legend-count {
-      margin-left: auto;
-      font-size: 0.75rem;
-      color: ${isDarkMode ? '#9ca3af' : '#6b7280'};
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="header">
-      <h1>MIRAGE Knowledge Graph</h1>
-      <div class="stats">
-        <span>Nodes: ${graphData.nodes.length}</span>
-        <span>Edges: ${graphData.edges.length}</span>
-        <span>Exported: ${new Date().toLocaleString()}</span>
-      </div>
-    </div>
-
-    <div class="graph-container">
-      <div class="controls">
-        <button class="control-btn" onclick="zoomIn()">Zoom In</button>
-        <button class="control-btn" onclick="zoomOut()">Zoom Out</button>
-        <button class="control-btn" onclick="fitGraph()">Fit</button>
-      </div>
-      <div id="network"></div>
-    </div>
-
-    <div class="legend">
-      <h2>Node Types</h2>
-      <div class="legend-grid">
-        ${Array.from(new Set(graphData.nodes.map(n => n.group)))
-          .sort()
-          .map(type => {
-            const getColorForType = (typeName: string): string => {
-              const colorMap: Record<string, string> = {
-                document: "hsl(160, 60%, 45%)",
-                person: "hsl(217, 70%, 58%)",
-                organization: "hsl(142, 55%, 50%)",
-                location: "hsl(24, 75%, 55%)",
-                concept: "hsl(173, 55%, 48%)",
-                event: "hsl(280, 50%, 58%)",
-                technology: "hsl(340, 60%, 54%)",
-                entity: "hsl(200, 55%, 52%)",
-              };
-              if (colorMap[typeName]) return colorMap[typeName];
-              let hash = 0;
-              for (let i = 0; i < typeName.length; i++) {
-                hash = typeName.charCodeAt(i) + ((hash << 5) - hash);
-              }
-              const hue = Math.abs(hash % 360);
-              const saturation = 50 + (Math.abs(hash >> 8) % 20);
-              const lightness = 48 + (Math.abs(hash >> 16) % 12);
-              return 'hsl(' + hue + ', ' + saturation + '%, ' + lightness + '%)';
-            };
-            const color = getColorForType(type);
-            const count = graphData.nodes.filter(n => n.group === type).length;
-            return '<div class="legend-item">' +
-              '<div class="legend-color" style="background-color: ' + color + '; border-color: ' + color + ';"></div>' +
-              '<span class="legend-label">' + type + '</span>' +
-              '<span class="legend-count">' + count + '</span>' +
-              '</div>';
-          })
-          .join('')}
-      </div>
-    </div>
-
-    <div class="footer">
-      <p>Generated by MIRAGE - Multilingual Information Retrieval with Accelerated Graph Embeddings</p>
-    </div>
-  </div>
-
-  <script>
-    // Graph data
-    const graphData = ${graphDataJson};
-
-    // Color mapping function
-    function getColorForType(typeName) {
-      const colorMap = {
-        document: { background: "hsl(160, 60%, 45%)", border: "hsl(160, 60%, 35%)" },
-        person: { background: "hsl(217, 70%, 58%)", border: "hsl(217, 70%, 48%)" },
-        organization: { background: "hsl(142, 55%, 50%)", border: "hsl(142, 55%, 40%)" },
-        location: { background: "hsl(24, 75%, 55%)", border: "hsl(24, 75%, 45%)" },
-        concept: { background: "hsl(173, 55%, 48%)", border: "hsl(173, 55%, 38%)" },
-        event: { background: "hsl(280, 50%, 58%)", border: "hsl(280, 50%, 48%)" },
-        technology: { background: "hsl(340, 60%, 54%)", border: "hsl(340, 60%, 44%)" },
-        entity: { background: "hsl(200, 55%, 52%)", border: "hsl(200, 55%, 42%)" },
-      };
-
-      if (colorMap[typeName]) return colorMap[typeName];
-
-      let hash = 0;
-      for (let i = 0; i < typeName.length; i++) {
-        hash = typeName.charCodeAt(i) + ((hash << 5) - hash);
+    if (matchingNodes.length > 0) {
+      // Highlight matching nodes
+      network.selectNodes(matchingNodes.map(n => n.id));
+      
+      // Focus on the first match if it's a specific search
+      if (matchingNodes.length === 1 || (searchQuery.length > 3 && matchingNodes.length < 5)) {
+        network.focus(matchingNodes[0].id, {
+          scale: 1.2,
+          animation: { duration: 1000, easingFunction: "easeInOutQuad" }
+        });
+        setSelectedNode(matchingNodes[0]);
       }
-      const hue = Math.abs(hash % 360);
-      const saturation = 50 + (Math.abs(hash >> 8) % 20);
-      const lightness = 48 + (Math.abs(hash >> 16) % 12);
-
-      return {
-        background: 'hsl(' + hue + ', ' + saturation + '%, ' + lightness + '%)',
-        border: 'hsl(' + hue + ', ' + saturation + '%, ' + (lightness - 10) + '%)'
-      };
+    } else {
+        network.unselectAll();
     }
+  }, [searchQuery, network, graphData]);
 
-    // Generate groups for all node types
-    const groups = {};
-    Array.from(new Set(graphData.nodes.map(n => n.group))).forEach(type => {
-      groups[type] = { color: getColorForType(type) };
-    });
+  const handleExportHtml = async () => {
+    try {
+        toast({ title: "Generating Export", description: "Fetching full graph data..." });
+        
+        // Fetch ALL data for export
+        const response = await graphApi.visualizeFull(2000); 
+        
+        const nodes = response.nodes.map((node, idx) => ({
+            id: idx + 1,
+            label: fixEncoding(node.label || node.id),
+            group: node.type.toLowerCase(),
+            title: `${node.type}: ${node.label}`
+        }));
 
-    // Network options
-    const options = {
-      nodes: {
-        shape: "dot",
-        size: 25,
-        font: {
-          size: 14,
-          face: "Noto Naskh Arabic, Inter",
-          color: "${isDarkMode ? '#f9fafb' : '#111827'}",
-        },
-        borderWidth: 2,
-        shadow: true,
-      },
-      edges: {
-        width: 2,
-        shadow: true,
-        smooth: {
-          enabled: true,
-          type: "continuous",
-          roundness: 0.5,
-        },
-        font: {
-          size: 12,
-          face: "Inter",
-          color: "${isDarkMode ? '#d1d5db' : '#374151'}",
-          strokeWidth: 0,
-        },
-      },
-      groups: groups,
-      physics: {
-        stabilization: true,
-        barnesHut: {
-          gravitationalConstant: -2000,
-          springConstant: 0.001,
-          springLength: 200,
-        },
-      },
-      interaction: {
-        hover: true,
-        tooltipDelay: 100,
-        navigationButtons: false,
-        keyboard: true,
-      },
-    };
+        const nodeIdMap = new Map(response.nodes.map((node, idx) => [node.id, idx + 1]));
 
-    // Initialize network
-    const container = document.getElementById('network');
-    const network = new vis.Network(container, graphData, options);
-
-    // Control functions
-    function zoomIn() {
-      const scale = network.getScale();
-      network.moveTo({ scale: scale * 1.2 });
+        const edges = response.edges.map(edge => ({
+            from: nodeIdMap.get(edge.source) || 1,
+            to: nodeIdMap.get(edge.target) || 1,
+            label: edge.relationship
+        }));
+        
+        const htmlContent = `<!DOCTYPE html>
+            <html>
+            <head>
+            <title>MIRAGE Graph Full Export</title>
+            <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+            <style type="text/css">
+                #mynetwork { width: 100vw; height: 100vh; border: 1px solid lightgray; }
+            </style>
+            </head>
+            <body>
+            <div id="mynetwork"></div>
+            <script type="text/javascript">
+                var nodes = new vis.DataSet(${JSON.stringify(nodes)});
+                var edges = new vis.DataSet(${JSON.stringify(edges)});
+                var container = document.getElementById('mynetwork');
+                var data = { nodes: nodes, edges: edges };
+                var options = {
+                    nodes: { shape: 'dot', size: 16 },
+                    physics: { 
+                        stabilization: false,
+                        barnesHut: { gravitationalConstant: -2000, springLength: 200 } 
+                    } 
+                };
+                var network = new vis.Network(container, data, options);
+            </script>
+            </body>
+            </html>`;
+            
+        const blob = new Blob([htmlContent], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `mirage-graph-full-${new Date().toISOString().slice(0, 10)}.html`;
+        a.click();
+        URL.revokeObjectURL(url);
+        
+        toast({ title: "Export Complete", description: "Full graph exported to HTML" });
+        
+    } catch (e) {
+        toast({ title: "Export Failed", description: "Could not fetch full graph", variant: "destructive" });
     }
-
-    function zoomOut() {
-      const scale = network.getScale();
-      network.moveTo({ scale: scale * 0.8 });
-    }
-
-    function fitGraph() {
-      network.fit();
-    }
-
-    // Fit graph on load
-    network.once('stabilizationIterationsDone', function() {
-      network.fit();
-    });
-  </script>
-</body>
-</html>`;
-
-    // Download HTML file
-    const blob = new Blob([htmlContent], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'mirage-graph.html';
-    a.click();
-    URL.revokeObjectURL(url);
   };
 
   return (
@@ -598,12 +395,22 @@ export default function GraphPage() {
             <div className="space-y-1 text-sm">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Total Nodes:</span>
-                <span className="font-semibold">{graphData.nodes.length}</span>
+                <span className="font-semibold">{graphStats?.nodes?.toLocaleString() || graphData.nodes.length}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Total Edges:</span>
-                <span className="font-semibold">{graphData.edges.length}</span>
+                <span className="font-semibold">{graphStats?.edges?.toLocaleString() || graphData.edges.length}</span>
               </div>
+            </div>
+            {/* Value Cap Warning */}
+             <div className="mt-3 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-md text-xs text-yellow-600 dark:text-yellow-400">
+              <p className="font-medium flex items-center gap-1">
+                <Info className="w-3 h-3" />
+                Performance Cap Active
+              </p>
+              <p className="mt-1 opacity-90">
+                Showing <strong>Top 500</strong> nodes by connectivity. Use Search to explore specific subgraphs.
+              </p>
             </div>
           </div>
 
@@ -693,10 +500,10 @@ export default function GraphPage() {
                 <Maximize2 className="w-4 h-4" />
                 Fit View
               </Button>
-              <Button variant="outline" size="sm" className="w-full gap-2" onClick={handleExport}>
-                <Download className="w-4 h-4" />
-                Export HTML
-              </Button>
+               <Button variant="outline" size="sm" className="w-full gap-2" onClick={handleExportHtml}>
+                  <Download className="w-4 h-4" />
+                  Export Full HTML
+                </Button>
             </div>
           </div>
         </Card>
@@ -727,7 +534,7 @@ export default function GraphPage() {
 
           {selectedNode && (
             <Card className="mt-4 p-4 bg-secondary/50">
-              <h3 className="font-semibold mb-2">Selected Node</h3>
+                <h3 className="font-bold text-lg mb-2">{fixEncoding(selectedNode.label)}</h3>
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <Badge variant="outline">{selectedNode.group}</Badge>
@@ -798,13 +605,22 @@ export default function GraphPage() {
                   <Card key={community.id} className="p-4 hover:shadow-lg transition-shadow">
                     <div className="space-y-3">
                       {/* Header */}
-                      <div className="flex items-start justify-between gap-2">
-                        <Badge variant="outline" className="text-xs">
-                          Level {community.level}
-                        </Badge>
-                        <Badge variant="secondary" className="text-xs">
-                          {community.member_count} members
-                        </Badge>
+                      <div className="flex flex-col gap-2 mb-2">
+                         <div className="flex items-start justify-between gap-2">
+                            <h3 className="font-semibold text-sm leading-tight">
+                                {community.themes && community.themes.length > 0 
+                                    ? community.themes[0] 
+                                    : "Community Group"}
+                            </h3>
+                            <Badge variant="outline" className="text-xs shrink-0">
+                                Level {community.level}
+                            </Badge>
+                         </div>
+                         <div className="flex items-center gap-2">
+                            <Badge variant="secondary" className="text-xs">
+                                {community.member_count} members
+                            </Badge>
+                         </div>
                       </div>
 
                       {/* Community ID */}

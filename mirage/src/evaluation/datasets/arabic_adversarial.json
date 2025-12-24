@@ -1,0 +1,58 @@
+{
+  "samples": [
+  {
+    "id": "AR_BREAK_MULTI_01",
+    "query": "من هي الجهة المسؤولة عن تعيين الشخص المختص بالرد على طلبات حرية المعلومات؟",
+    "complexity": "L2",
+    "type": "reasoning",
+    "expected_behavior": "Naive might hallucinate 'Crisis Authority'. Local should find 'Director General'.",
+    "ground_truth_answer": "يتم تعيين الشخص المسؤول عن الرد على طلبات حرية المعلومات من قبل المدير العام (أو رئيس الجهة) في إدارة البيانات.",
+    "reference": "Freedom of Information Policy"
+  },
+  {
+    "id": "AR_BREAK_AMBIG_01",
+    "query": "كيف تعرف 'الهيئة' صلاحياتها في التدقيق والمراجعة؟",
+    "complexity": "L3",
+    "type": "ambiguity",
+    "expected_behavior": "Naive might mix SDAIA and NDMO. Local should distinguish contexts or ask for clarification.",
+    "ground_truth_answer": "تختلف الإجابة بحسب السياق: الهيئة الوطنية (SDAIA) تراقب الامتثال لنظام حماية البيانات، بينما مكتب البيانات (NDMO) يدقق في تصنيف البيانات.",
+    "reference": "Multiple Docs"
+  },
+  {
+    "id": "AR_BREAK_CONSTRAINT_01",
+    "query": "ما هي الشروط المسبقة لتصدير البيانات المصنفة كـ 'سري للغاية' خارج المملكة؟",
+    "complexity": "L3",
+    "type": "constraint",
+    "expected_behavior": "Naive might give general export rules. Local must find the prohibition.",
+    "ground_truth_answer": "يمنع منعاً باتاً تصدير البيانات المصنفة كـ 'سري للغاية' خارج المملكة، ولا توجد شروط تسمح بذلك.",
+    "reference": "Data Classification Policy"
+  },
+  {
+    "id": "AR_BREAK_COM_01",
+    "query": "ما هي المتطلبات اللازمة لكي تتمكن الجهة من استخدام بياناتها لأغراض تجارية؟",
+    "complexity": "L3",
+    "type": "multi_doc",
+    "expected_behavior": "Requires checking Data Sharing and Personal Data Law policies.",
+    "ground_truth_answer": "يجب الحصول على موافقة خطية من مكتب إدارة البيانات الوطنية، وضمان عدم انتهاك خصوصية الأفراد، ودفع الرسوم المقررة.",
+    "reference": "Data Sharing + PDL"
+  },
+  {
+    "id": "AR_BREAK_PROC_01",
+    "query": "في حال حدوث تسرب للبيانات الشخصية، ما هي المدد الزمنية المحددة لإبلاغ الهيئة المختصة؟",
+    "complexity": "L2",
+    "type": "factual_procedural",
+    "expected_behavior": "Specific hours (e.g., 72 hours). Naive often misses specific numbers.",
+    "ground_truth_answer": "يجب إبلاغ الجهة المختصة فوراً وخلال مدة لا تتجاوز 72 ساعة من وقت العلم بحدوث التسرب.",
+    "reference": "Personal Data Law Regulations"
+  },
+  {
+    "id": "AR_BREAK_AGG_01",
+    "query": "لخص جميع العقوبات المالية المذكورة في نظام حماية البيانات الشخصية ولوائحه.",
+    "complexity": "L4",
+    "type": "aggregation",
+    "expected_behavior": "Global search should aggregate multiple penalties. Naive typically finds just one example.",
+    "ground_truth_answer": "تشمل العقوبات: غرامة لا تزيد عن 3 ملايين ريال للإفصاح غير المشروع، والسجن لمدة تصل لسنتين، ومصادرة الأموال المتحصلة من المخالفة.",
+    "reference": "PDL + Regulations"
+  }
+]
+}

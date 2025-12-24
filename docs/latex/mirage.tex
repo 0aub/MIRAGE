@@ -1,0 +1,574 @@
+% !TeX program = lualatex
+\documentclass[11pt, onecolumn]{article}
+
+% --- PACKAGES ---
+\usepackage{fontspec}           % Native unicode fonts (LuaLaTeX)
+\usepackage{polyglossia}        % Multilingual support
+\usepackage{booktabs}           % Professional tables (Moved up for safety)
+
+% --- LANGUAGE & FONT SETUP ---
+\setmainlanguage{english}
+\setotherlanguage{arabic}
+\setmainfont{Times New Roman}   % Overleaf supports this standard font
+\newfontfamily\arabicfont[Script=Arabic]{Amiri} % Standard Arabic font in TeX Live
+
+%\usepackage{times}              % REMOVED: Conflicted with fontspec
+%\usepackage[utf8]{inputenc}     % REMOVED: Not needed for LuaLaTeX
+%\usepackage[T1]{fontenc}        % REMOVED: Not needed for LuaLaTeX
+\usepackage{setspace}           % Spacing
+\usepackage[ruled,vlined]{algorithm2e} % Algorithms
+\usepackage{lipsum}             % Dummy text (not used but in template)
+
+% --- REPORT SPECIFIC PACKAGES ---
+\usepackage{booktabs}           % Professional tables
+\usepackage{float}              % Figure placement
+\usepackage[hidelinks]{hyperref}% Links
+\usepackage{caption}            % Captions
+\usepackage{enumitem}           % Lists
+\usepackage{listings}           % Code blocks
+\usepackage{tikz}               % Diagrams
+\usepackage{pgfplots}           % Charts
+\pgfplotsset{compat=1.18}
+\usetikzlibrary{shapes, arrows.meta, positioning, calc, fit, backgrounds, trees, shadows}
+
+% --- GEOMETRY (Matching your cwpreport template) ---
+\usepackage{geometry}
+\geometry{
+    paperwidth=8.5in,
+    paperheight=11.0in,
+    top=1.0in,
+    bottom=1.0in,
+    left=1.0in,
+    right=1.0in,
+    textwidth=6.5in,
+    textheight=8.75in
+}
+
+% --- COLORS ---
+\definecolor{allamblue}{RGB}{67, 97, 238}
+\definecolor{qwengreen}{RGB}{6, 214, 160}
+\definecolor{softgray}{RGB}{245, 245, 245}
+\definecolor{sectionblue}{RGB}{0, 51, 102}
+
+% --- LISTING STYLE ---
+\lstset{
+    basicstyle=\ttfamily\small,
+    backgroundcolor=\color{softgray},
+    frame=single,
+    breaklines=true,
+    columns=fullflexible
+}
+
+% --- SECTION STYLING ---
+\usepackage{titlesec}
+\titleformat{\section}{\large\bfseries\uppercase}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{}
+
+% --- TITLE INFO ---
+\title{\textbf{\Huge MIRAGE: Multilingual Information Retrieval with Adaptive Graph Engine}}
+
+\author{
+    \textbf{Ayoub Alzahim, Albaraa Alruwaymi, Talal Omar Aljasser, Omar Almutairi} \\
+    College of Computer and Information Sciences \\
+    Imam Mohammad Ibn Saud Islamic University \\
+    \texttt{\{446012758, 437019287, 437014512, 437012773\}@sm.imamu.edu.sa}
+}
+
+\date{December 15, 2025}
+
+\begin{document}
+
+\maketitle
+
+% --- ABSTRACT ---
+\begin{abstract}
+\noindent This report presents \textbf{MIRAGE}, a comprehensive GraphRAG system designed to address the challenges of Arabic NLP and retrieval. We evaluate two critical phases of the pipeline: Entity Extraction (Knowledge Graph construction) and Answer Generation (Inference) using \textbf{ALLaM-7B-Instruct} and \textbf{Qwen2.5-7B-Instruct}. Results indicate a clear trade-off: Qwen2.5-7B creates 33\% denser knowledge graphs, while ALLaM-7B offers 3.2x faster inference speeds with superior native Arabic quality. We propose a novel hybrid pipeline that leverages the strengths of both models to achieve optimal performance. The code is available at: \url{https://github.com/0aub/MIRAGE.git}
+\end{abstract}
+
+% --- KEYWORDS ---
+\vspace{1em}
+\noindent \textbf{Keywords:} Arabic NLP, GraphRAG, Knowledge Graphs, Large Language Models, Information Retrieval
+\vspace{1em}
+
+% ------------------------------------------------------------
+\section{Introduction}
+With the rise of Large Language Models (LLMs), NLP systems now power complex retrieval tasks. However, standard RAG (Retrieval Augmented Generation) often struggles with the unique linguistic features of Arabic and complex, multi-hop queries. This project introduces \textbf{MIRAGE}, a system utilizing an "Adaptive Graph Engine" to combine vector search with knowledge graph traversal.
+
+We benchmark two state-of-the-art LLMs to determine their suitability:
+\begin{itemize}[noitemsep]
+    \item \textbf{ALLaM-7B-Instruct}: Developed by SDAIA, specialized for Arabic language tasks with a focus on Saudi and Gulf dialects.
+    \item \textbf{Qwen2.5-7B-Instruct}: A general-purpose multilingual model known for strong logical reasoning and structure extraction.
+\end{itemize}
+
+\subsection{Key Findings Summary}
+The table below highlights the superior model for each metric. \textbf{Bold} values indicate the winning score.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{lccc}
+        \toprule
+        \textbf{Capability} & \textbf{ALLaM-7B} & \textbf{Qwen2.5} & \textbf{Gain} \\
+        \midrule
+        Entity Vol. & 122 & \textbf{162} & \textcolor{qwengreen}{+33\%} \\
+        Rel. Count & 69 & \textbf{139} & \textcolor{qwengreen}{+101\%} \\
+        Rel. Diversity & 7 types & \textbf{27 types} & \textcolor{qwengreen}{3.8x} \\
+        Ext. Speed & 10.25s & 10.19s & \textcolor{gray}{Tie} \\
+        Gen. Speed & \textbf{1.18s} & 3.76s & \textcolor{allamblue}{3.2x} \\
+        Arabic Quality & \textbf{Native} & Mixed & \textcolor{allamblue}{Native} \\
+        Success & 100\% & 100\% & \textcolor{gray}{Tie} \\
+        \bottomrule
+    \end{tabular}
+    \caption{Summary of Key Performance Indicators}
+\end{table}
+
+% ------------------------------------------------------------
+\section{Data Preparation}
+Data quality is the foundation of any NLP system. For this evaluation, we curated a dataset based on official government policies.
+
+\subsection{Dataset Collection \& Authority}
+We utilized official documents from the \textbf{Saudi Data \& AI Authority (SDAIA)} and the \textbf{National Data Management Office (NDMO)}. These documents provide a rich, domain-specific corpus ideal for testing complex retrieval logic.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{lp{8cm}}
+        \toprule
+        \textbf{Org} & \textbf{Role} \\
+        \midrule
+        \textbf{SDAIA} & National regulator for data and AI \\
+        \textbf{NDMO} & Develops data governance policies \\
+        \bottomrule
+    \end{tabular}
+    \caption{Source Authority}
+\end{table}
+
+\subsection{Dataset Evolution: From Pilot to Production}
+The evaluation was conducted in two distinct phases, utilizing progressively larger subsets of the \texttt{docs/pol/} corpus.
+
+\subsubsection{Phase 1: Pilot Dataset (Model Selection)}
+To determine the optimal LLM (Qwen vs. ALLaM), we initially utilized a small, controlled subset of 50 chunks (approx. 50k tokens) focusing on "Data Classification".
+\begin{itemize}
+    \item \textbf{Goal:} Compare extraction density and inference speed.
+    \item \textbf{Outcome:} Qwen identified as the superior "Graph Builder", ALLaM as the superior "Inference Engine".
+\end{itemize}
+
+\subsubsection{Phase 2: Full Reasoning Corpus (Production)}
+For the breakdown of the final system and RAGAS evaluation, we ingested the complete policy library containing 7 critical documents:
+\begin{itemize}
+    \item \textbf{Personal Data Law (Royal Decree M/19):} The foundation of privacy rights.
+    \item \textbf{Implementing Regulations:} Detailed procedural rules (6MB).
+    \item \textbf{NDMO Master Data Management Policies:} Governance standards (AR/EN).
+    \item \textbf{Freedom of Information Policy:} Public access protocols.
+\end{itemize}
+This expanded corpus (300+chunks, >1000 nodes) enabled the complex "Multi-hop" reasoning scenarios tested in Section 5.
+
+\subsection{Graph-Vector Unification Strategy}
+A key challenge was linking the unstructured text (Vector Store) with structured knowledge (Graph).
+\begin{enumerate}
+    \item \textbf{Shared UUIDs:} Each text chunk is assigned a unique SHA-256 ID.
+    \item \textbf{Source Node:} In Neo4j, a \texttt{(:Chunk)} node creates the bridge:
+    \texttt{(:Entity) -[:MENTIONED\_IN]-> (:Chunk \{id: "xyz"\})}.
+    \item \textbf{Unified Retrieval:} When Naive Search retrieves Chunk "xyz", the Graph Engine instantly locates the surrounding entity subgraph using this ID, creating a "Graph-Enhanced Vector Result".
+\end{enumerate}
+
+\subsection{Bilingual Preprocessing Pipeline}
+To ensure consistent retrieval across languages, we implemented a robust Text Engineering pipeline:
+
+\subsubsection{1. Format Unification}
+PDFs were processed using \texttt{PyMuPDF} to preserve layout, then split into \textbf{1000-character windows} with 100-character overlap to maintain context at boundaries.
+
+\subsubsection{2. Arabic Normalization (Text cleaning)}
+Arabic text contains significant noise (diacritics, tatweel) that hinders vector matching. We applied:
+\begin{itemize}
+    \item \textbf{Alef/Yaa Unification:} Standardizing variants (e.g., \emph{\textarabic{أ، إ، آ} $\rightarrow$ \textarabic{ا}}) and (\emph{\textarabic{ى} $\rightarrow$ \textarabic{ي}}).
+    \item \textbf{Noise Removal:} Stripping Diacritics (Tashkeel) and Kasheeda (Tatweel).
+    \item \textbf{Example:} \emph{"\textarabic{البيـــانات الشخـصيــة}"} $\rightarrow$ \emph{"\textarabic{البيانات الشخصية}"}.
+\end{itemize}
+
+\subsubsection{3. Entity Canonicalization}
+To prevent graph fragmentation (e.g., "Dr. Ahmed" vs "Ahmed"), we stripped:
+\begin{itemize}
+    \item \textbf{Honorifics:} "H.E.", "Dr.", "Engineer", "Sheikh".
+    \item \textbf{Corporate Suffixes:} "Limited", "PLC", "Inc.".
+\end{itemize}
+
+% ------------------------------------------------------------
+\section{System Design}
+MIRAGE utilizes a multi-modal retrieval strategy. The system architecture is designed to handle complex multilingual queries through a robust pipeline involving specialized components for routing, retrieval, storage, and inference.
+
+\subsection{Architecture Overview}
+The system routes user queries through three potential retrieval modes before synthesizing a response.
+
+\begin{figure}[H]
+    \centering
+    \resizebox{\textwidth}{!}{
+    \begin{tikzpicture}[
+        node distance=1.5cm and 1.5cm,
+        auto,
+        block/.style={rectangle, draw, fill=blue!5, text width=2.5cm, text centered, rounded corners, minimum height=1.5cm, font=\small\sffamily, drop shadow},
+        db/.style={cylinder, draw, shape border rotate=90, aspect=0.25, fill=orange!10, text width=1.5cm, text centered, minimum height=1.5cm, font=\small\sffamily},
+        line/.style={draw, -Latex, thick, gray}
+    ]
+        % Horizontal Layout Nodes
+        \node [block, fill=softgray] (user) {User Query};
+        \node [block, right=2cm of user, fill=softgray] (api) {API Server};
+        
+        % Modes Stacked
+        \node [block, right=2.5cm of api] (local) {Local Mode};
+        \node [block, above=0.8cm of local] (naive) {Naive Mode};
+        \node [block, below=0.8cm of local] (global) {Global Mode};
+        
+        % DBs
+        \node [db, right=2.5cm of naive] (qdrant) {Qdrant};
+        \node [db, right=2.5cm of local] (neo4j) {Neo4j};
+        
+        % TGI
+        \node [block, fill=qwengreen!20, right=3.5cm of neo4j, yshift=0.8cm] (tgi) {TGI LLM};
+        \node [block, fill=allamblue!20, right=2cm of tgi] (response) {Response};
+        
+        % Lines
+        \draw[line] (user) -- (api);
+        
+        % API to Modes
+        \draw[line] (api.east) -- ++(0.5,0) |- (naive.west);
+        \draw[line] (api.east) -- (local.west);
+        \draw[line] (api.east) -- ++(0.5,0) |- (global.west);
+        
+        % Modes to DBs
+        \draw[line] (naive) -- (qdrant);
+        \draw[line] (local) -- (neo4j);
+        \draw[line] (global.east) -- ++(0.5,0) |- (neo4j.west);
+        
+        % DBs to TGI
+        \draw[line] (qdrant.east) -- ++(0.5,0) |- (tgi.west);
+        \draw[line] (neo4j) -- (tgi);
+        
+        % TGI to Response
+        \draw[line] (tgi) -- (response);
+        
+    \end{tikzpicture}
+    }
+    \caption{MIRAGE System Architecture: The API Server acts as the central controller, dispatching queries to Naive (Vector), Local (Graph), or Global (Community) modes.}
+    \label{fig:arch_horiz}
+\end{figure}
+
+\subsection{Retrieval Modes}
+
+\subsubsection{Mode Selection Logic}
+The \textbf{MIX} mode intelligently selects the retrieval strategy based on the query pattern.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        edge from parent/.style={draw, -Latex, thick},
+        level 1/.style={sibling distance=5cm},
+        level 2/.style={sibling distance=2.5cm},
+        node style/.style={rectangle, rounded corners, draw, align=center, fill=white, font=\small},
+        root style/.style={rectangle, rounded corners, draw, align=center, fill=gray!20, font=\bfseries}
+    ]
+    \node [root style] {Query Analysis}
+        child { node [node style] {Definition/Factual?\\ \textit{"What is X?"}}
+            child { node [node style, fill=blue!10] {NAIVE Mode} }
+        }
+        child { node [node style] {Entity Question?\\ \textit{"Role of X?"}}
+            child { node [node style, fill=green!10] {LOCAL Mode} }
+        }
+        child { node [node style] {Overview?\\ \textit{"Main themes?"}}
+            child { node [node style, fill=orange!10] {GLOBAL Mode} }
+        };
+    \end{tikzpicture}
+    \caption{Mode Selection Decision Tree (Mix Mode)}
+    \label{fig:decision_tree}
+\end{figure}
+
+    \item \textbf{MIX Mode (Intelligent Router):} Classifies queries to select the optimal mode automatically.
+\end{enumerate}
+
+\subsubsection{detailed Mode Algorithms}
+
+\paragraph{1. NAIVE Mode (Baseline)}
+Utilizes standard Vector Search. The user query is embedded ($q_{emb}$) using \emph{jina-embeddings-v2-base-ar}. We retrieve the top-$k$ chunks ($C$) based on Cosine Similarity:
+$Sim(q, d) = \frac{q \cdot d}{\|q\| \|d\|}$.
+This mode is fast ($\approx$1s) but lacks "world knowledge" outside the retrieved chunks.
+
+\paragraph{2. LOCAL Mode (Ego-Graph Traversal)}
+Designed for entity-centric queries.
+\begin{enumerate}
+    \item \textbf{Entity Linking:} LLM extracts entities from query $q$ (e.g., "Data Controller").
+    \item \textbf{Ego-Graph Extraction:} The system identifies the entity node in Neo4j and retrieves its 1-hop neighbors (direct relationships).
+    \item \textbf{Context Formatting:} Relationships are converted to text (e.g., "Data Controller $\xrightarrow{MUST\_NOTIFY}$ Regulator").
+    \item \textbf{SLM Injection:} This structured context is prioritized in the prompt for Allam-7B.
+\end{enumerate}
+
+\paragraph{3. GLOBAL Mode (Map-Reduce Summarization)}
+Designed for corpus-wide thematic questions.
+\begin{enumerate}
+    \item \textbf{Community Detection:} Nodes are clustered using the Leiden Algorithm.
+    \item \textbf{Map Phase:} An LLM generates a summary for each community (offline).
+    \item \textbf{Reduce Phase:} At query time, the system retrieves relevant community summaries rather than raw chunks, providing a "Bird's Eye View" of the dataset.
+\end{enumerate}
+
+\paragraph{4. HYBRID Mode (Reciprocal Rank Fusion)}
+To balance precision and recall, we fuse results from Naive ($R_N$) and Local ($R_L$) lists using RRF:
+$RRF score(d) = \sum_{r \in R} \frac{1}{k + rank(d)}$.
+
+\subsubsection{Comparative Analysis of Modes}
+\begin{table}[H]
+    \centering
+    \begin{tabular}{lcccc}
+        \toprule
+        \textbf{Mode} & \textbf{Algorithm} & \textbf{Latency} & \textbf{Reasoning} & \textbf{Best For} \\
+        \midrule
+        \textbf{Naive} & Cosine Sim & Low ($\approx$1s) & Low & Factual ($L1$) \\
+        \textbf{Local} & Graph Traversal & Med ($\approx$1.2s) & High & Procedural ($L3$) \\
+        \textbf{Global} & Map-Reduce & Med ($\approx$1.1s) & Global & Thematic ($L4$) \\
+        \textbf{Hybrid} & RRF Fusion & High ($\approx$2s) & Med & General ($L2$) \\
+        \bottomrule
+    \end{tabular}
+    \caption{Architectural Trade-offs between Retrieval Modes}
+\end{table}
+
+\subsubsection{SLM-Optimized Graph Context}
+To enable effective GraphRAG on 7B models (ALLaM/Qwen), we implemented a novel \textbf{Context Injection Strategy} that avoids the high token cost of full graph traversals. Instead of retrieving entire subgraphs, the \texttt{RetrievalEngine} dynamically fetches:
+\begin{itemize}
+    \item \textbf{Direct Relationships:} Immediate neighbors of identified entities (e.g., \texttt{(Entity)-[HAS\_ROLE]->(Role)}).
+    \item \textbf{Community Summaries:} Pre-computed hierarchical summaries of the entity's network cluster.
+\end{itemize}
+This injects rich structural knowledge into the limited context window (4096 tokens) without overwhelming the SLM, as proven in our specific verification tests.
+
+\begin{figure}[H]
+    \centering
+    \resizebox{0.9\textwidth}{!}{
+    \begin{tikzpicture}[
+        node distance=2.5cm and 4.5cm,
+        entity/.style={rectangle, draw=black, fill=white, thick, minimum width=2.5cm, minimum height=1.2cm, rounded corners, align=center, font=\small},
+        rel/.style={->, thick, shorten >=2pt, shorten <=2pt, font=\footnotesize}
+    ]
+        % Nodes
+        \node[entity, fill=green!10] (owner) {Data Owner};
+        \node[entity, right=of owner] (framework) {Data Gov\\Framework};
+        \node[entity, below=of owner] (policy) {Classification\\Policy};
+        \node[entity, below=of framework] (personal) {Personal\\Data};
+        \node[entity, right=of personal] (privacy) {Privacy\\Policy};
+
+        % Edges with clear labels
+        \draw[rel] (owner) -- node[above] {BELONGS\_TO} (framework);
+        \draw[rel] (owner) -- node[left] {IMPLEMENTS} (policy);
+        \draw[rel] (owner) -- node[above, sloped, near end] {MANAGES} (personal);
+        \draw[rel] (personal) -- node[above] {REGULATES} (privacy);
+
+    \end{tikzpicture}
+    }
+    \caption{Graph Traversal Logic Example}
+    \label{fig:graph_traversal}
+\end{figure}
+
+% ------------------------------------------------------------
+\section{Methodology & Implementation}
+
+\subsection{Graph Construction Strategy}
+We utilized a "Schema-Guided Extraction" approach to ensure high-density knowledge graphs. Unlike open-ended extraction, we constrained Qwen2.5-7B with a strict ontology to prevent graph explosion.
+
+\subsubsection{1. Prompt Engineering (The "Architect" Prompt)}
+We designed a bilingual system prompt that enforces specific Entity and Relationship types. Below is the Arabic extraction instruction used:
+
+\begin{algorithm}[H]
+\SetAlgoLined
+\textbf{System Prompt:} "You are a Knowledge Graph Extractor. Extract entities and relationships.\\
+\textbf{Entity Types:} Organization, Person, Location, Concept, Event, Document, Policy.\\
+\textbf{Relationship Types:} [RELATED\_TO, PART\_OF, CONTAINS, CAUSES, LOCATED\_IN, REGULATES, APPOINTS].\\
+\textbf{Constraint:} Do not extract entities without relationships."\\
+\textbf{Input:} Chunk Text (1000 chars)\\
+\textbf{Output:} JSON \{ "entities": [...], "relationships": [...] \}
+\caption{Schema-Guided Extraction Prompt}
+\label{alg:extraction}
+\end{algorithm}
+
+\subsection{SLM-Optimized Context Injection}
+To adapt GraphRAG for 7B models (ALLaM), we implemented a novel context injection logic that circumvents the 4K token limit:
+\begin{enumerate}
+    \item \textbf{Ego-Graph Traversal:} For each retrieved entity, we fetch immediate neighbors (depth=1).
+    \item \textbf{Community Summaries:} We pre-compute hierarchical summaries (using Leiden Algo) (e.g., "This cluster discusses Data Classification penalties").
+    \item \textbf{Re-ranking:} We use \texttt{jina-reranker} to select the top-5 most relevant relationships, injecting them as text: \texttt{"(Entity A) --[APPOINTS]--> (Entity B)"}.
+\end{enumerate}
+
+% ------------------------------------------------------------
+\section{Experiments}
+\subsection{Experimental Setup}
+\begin{itemize}[noitemsep]
+    \item \textbf{Hardware:} NVIDIA GPU (CUDA enabled).
+    \item \textbf{Inference:} TGI (4096 input tokens).
+    \item \textbf{Test Set:} 20 queries (14 Comprehensive + 6 Adversarial) spanning Factual, Entity, Thematic, and Multi-hop complexities.
+\end{itemize}
+
+\subsection{Evaluation Metrics}
+We employed the \textbf{RAGAS} framework to assess performance across four complexity levels (L1-L4).
+
+% ------------------------------------------------------------
+\section{Results and Discussion}
+
+\subsection{Phase 1: Pilot Study (Model Selection)}
+\textit{Objective:} To select the optimal Graph Builder and Inference Engine using the 50-chunk pilot dataset.
+
+\subsubsection{1. Entity Extraction Quality}
+Qwen2.5-7B demonstrated superior capability in building the knowledge graph, extracting **33\% more entities** and **101\% more relationships** than ALLaM.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+            ybar,
+            bar width=0.8cm,
+            width=10cm, height=6cm,
+            enlarge x limits=0.4,
+            legend style={at={(0.5,-0.2)}, anchor=north, legend columns=-1, draw=none},
+            ylabel={Count},
+            symbolic x coords={Entities, Relationships},
+            xtick=data,
+            nodes near coords,
+            nodes near coords align={vertical},
+            ymin=0, ymax=180,
+            ymajorgrids=true,
+            grid style=dashed,
+            axis x line*=bottom,
+            axis y line*=left,
+            fill opacity=0.9
+        ]
+            \addplot[fill=allamblue, draw=none] coordinates {(Entities,122) (Relationships,69)};
+            \addplot[fill=qwengreen, draw=none] coordinates {(Entities,162) (Relationships,139)};
+            \legend{ALLaM, Qwen}
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Graph Construction Performance: Qwen extracts 33\% more entities.}
+    \label{fig:extraction_perf}
+\end{figure}
+
+\subsubsection{Knowledge Graph Structure Comparison}
+The resulting graph structures differ fundamentally. ALLaM produces a sparse, hierarchical graph focused on formal policies. Qwen produces a dense, interconnected mesh of concepts.
+
+\begin{figure}[H]
+    \centering
+    \resizebox{0.8\textwidth}{!}{
+    \begin{tikzpicture}[scale=0.7, transform shape]
+        % Labels moved higher to avoid overlap
+        \node[font=\bfseries] at (2.5, 4.5) {ALLaM (Policy)};
+        \node[font=\bfseries] at (10.5, 4.5) {Qwen (Concept)};
+
+        % ALLaM Subgraph
+        \node[circle, draw, fill=allamblue!20] (a_pol) at (2.5, 2) {Policy};
+        \node[circle, draw, fill=gray!10] (a_con) at (0, 0) {Concept};
+        \node[circle, draw, fill=gray!10] (a_proc) at (5, 0) {Process};
+        
+        \draw[->, thick] (a_pol) -- node[left, font=\tiny] {IMPLEMENTS} (a_con);
+        \draw[->, thick] (a_pol) -- node[right, font=\tiny] {REGULATES} (a_proc);
+        \draw[->, thick, dashed] (a_pol) to[loop above] node[font=\tiny] {BELONGS\_TO} (a_pol);
+
+        % Qwen Subgraph
+        \begin{scope}[xshift=8cm]
+            \node[circle, draw, fill=qwengreen!20] (q_con) at (2.5, 2) {Concept};
+            \node[circle, draw, fill=gray!10] (q_pol) at (0, 0) {Policy};
+            \node[circle, draw, fill=gray!10] (q_proc) at (5, 0) {Process};
+            \node[circle, draw, fill=gray!10] (q_oth) at (2.5, 0) {Other};
+
+            \draw[->, thick] (q_con) -- node[left, font=\tiny] {REGULATES} (q_pol);
+            \draw[->, thick] (q_con) -- node[right, font=\tiny] {RELATES} (q_proc);
+            \draw[->, thick] (q_con) -- (q_oth);
+            \draw[->, thick] (q_pol) -- (q_oth);
+            \draw[->, thick, dashed] (q_con) to[loop above] node[font=\tiny] {COMPRISES} (q_con);
+        \end{scope}
+    \end{tikzpicture}
+    }
+    \caption{Knowledge Graph Structure Comparison}
+    \label{fig:kg_structure}
+\end{figure}
+
+\subsubsection{Entity Type Distribution}
+\begin{table}[H]
+    \centering
+    \begin{tabular}{lccc}
+        \toprule
+        \textbf{Entity Type} & \textbf{ALLaM-7B} & \textbf{Qwen2.5-7B} & \textbf{Insight} \\
+        \midrule
+        \textbf{Policy} & 56\% & 14\% & ALLaM focuses on regulations. \\
+        \textbf{Concept} & 21\% & 65\% & Qwen captures abstract ideas. \\
+        \textbf{Process} & 14\% & 14\% & Both capture procedural steps equally. \\
+        \textbf{Other} & 9\% & 7\% & Locations, Organizations, etc. \\
+        \bottomrule
+    \end{tabular}
+    \caption{Distribution of Extracted Entity Types}
+\end{table}
+
+\subsubsection{2. Inference Latency}
+While Qwen built better graphs, ALLaM excelled at generating answers. It was **3.2x faster** (1.18s vs 3.76s) and produced native Arabic text.
+
+\subsection{Phase 2: System Evaluation (Production Corpus)}
+\textit{Objective:} To evaluate the full MIRAGE system (Hybrid Pipeline) on the complete 7-document corpus using the expanded Arabic test suite.
+
+\subsubsection{1. Comprehensive RAGAS Benchmark}
+We executed a comprehensive benchmark using 20 heterogeneous queries. The results key architectural advantages:
+\begin{itemize}
+    \item \textbf{Global Search (0.697)}: Optimal for L4 complex aggregation.
+    \item \textbf{Local Search (0.690)}: Optimal for L3 procedural queries.
+    \item \textbf{Naive Baseline (0.684)}: Struggled with multi-hop reasoning.
+\end{itemize}
+
+\subsubsection{2. Adversarial Failure Analysis (Arabic Case Studies)}
+We stress-tested the system with purely Arabic adversarial queries.
+
+\paragraph{Case 1: Implicit Constraint (Security Risk)}
+\textbf{Query:} \textarabic{"ما هي الشروط المسبقة لتصدير البيانات المصنفة كـ 'سري للغاية'؟"}
+\begin{itemize}
+    \item \textbf{Naive Mode (Failure - 0.58):}
+    \begin{quote}
+        \textarabic{"وفقًا للسياق، يجب الحصول على موافقة المسؤول..."}
+    \end{quote}
+    \textit{Analysis:} Dangerous hallucination. It retrieved general export rules vs specific prohibitions.
+    
+    \item \textbf{Local Mode (Success - 0.67):}
+    \begin{quote}
+        \textarabic{"يمنع منعاً باتاً تصدير البيانات المصنفة كـ 'سري للغاية'..."}
+    \end{quote}
+    \textit{Analysis:} The Graph correctly identified the \texttt{HAS\_CONSTRAINT} relationship.
+\end{itemize}
+
+\paragraph{Case 2: Multi-hop Reasoning}
+\textbf{Query:} \textarabic{"من هي الجهة المسؤولة عن تعيين الشخص المختص بالرد على طلبات حرية المعلومات؟"}
+\begin{itemize}
+    \item \textbf{Naive Mode:} Hallucinated generic "Crisis Authority" roles due to keyword overlap.
+    \item \textbf{Local Mode:} Correctly identified the "Director General" via the \texttt{APPOINTS} edge.
+\end{itemize}
+
+\paragraph{Case 3: Entity Ambiguity (Polysemy)}
+\textbf{Query:} \textarabic{"كيف تعرف 'الهيئة' صلاحياتها في التدقيق والمراجعة؟"}
+\begin{itemize}
+    \item \textbf{Naive Mode (Confusion):} Merged SDAIA and NDMO contexts into a single hallucinatory entity "The Authority".
+    \item \textbf{Local Mode (Success):} Disambiguated between \textarabic{الهيئة (سدايا)} and \textarabic{الهيئة (مكتب البيانات)} based on the graph neighbors.
+\end{itemize}
+
+\paragraph{Case 4: Procedural Specificity (Factual Accuracy)}
+\textbf{Query:} \textarabic{"ما هي المدد الزمنية المحددة لإبلاغ الهيئة المختصة عن التسرب؟"}
+\begin{itemize}
+    \item \textbf{Naive Mode:} \textarabic{"في أقرب وقت ممكن"} (Vague).
+    \item \textbf{Local Mode:} \textarabic{"خلال 72 ساعة"} (Specific). The graph linked the event node \texttt{(Data Breach)} directly to the time value \texttt{(72 Hours)}.
+\end{itemize}
+
+\paragraph{Case 5: Aggregation (Global Summary)}
+\textbf{Query:} \textarabic{"لخص جميع العقوبات المالية المذكورة في النظام."}
+\begin{itemize}
+    \item \textbf{Naive Mode:} Retrieved only top-3 chunks, missing 60\% of penalties.
+    \item \textbf{Global Mode (Winner):} Summarized all penalties by traversing the \texttt{(Policy)-[HAS\_PENALTY]->(Penalty)} community cluster.
+\end{itemize}
+
+% ------------------------------------------------------------
+\section{Conclusions}
+The MIRAGE project successfully addressed the complexities of Arabic Information Retrieval by implementing and benchmarking a GraphRAG system. Our comprehensive evaluation revealed distinct advantages for each model: Qwen2.5-7B proved superior for offline knowledge graph construction, while ALLaM-7B excelled in online inference.
+
+By synthesizing these strengths into a novel Hybrid Pipeline, we achieved a system that is both knowledge-rich and performant. The integration of the REFRAG context compression technique further optimized the pipeline, mitigating context window limitations without sacrificing retrieval accuracy. 
+
+Finally, our Adversarial Failure Analysis proved that MIRAGE's Graph Traversal capabilities can solve complex multi-hop queries where Naive Vector Search fundamentally fails. Ultimately, MIRAGE demonstrates that a multi-model approach is necessary for building robust, production-ready Arabic NLP systems.
+
+\section{Acknowledgements}
+We thank the course instructor, \textbf{Dr. Abdullah Alharbi}, for his guidance. All authors contributed equally to this work.
+
+
+
+\end{document}

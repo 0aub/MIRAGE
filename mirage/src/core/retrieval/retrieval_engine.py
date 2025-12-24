@@ -732,8 +732,50 @@ class RetrievalEngine:
         # Extract entity names for metadata
         entity_names = list({e.get("name", "") for e in extracted_entities if e.get("name")})
 
+        # --- SLM ADAPTATION: INJECT GRAPH CONTEXT ---
+        # Fetch relationships and community summaries to provide "global" context
+        # without expensive global search or LLM calls.
+        if self.graph_client and entity_names:
+            try:
+                # 1. Get relationships strictly between identified entities (Direct Connections)
+                relationships = self.graph_client.get_relationships_between(entity_names[:10], limit=15)
+                for rel in relationships:
+                    rel_text = f"{rel['source']} {rel['type'].replace('_', ' ')} {rel['target']}"
+                    if rel.get('description'):
+                        rel_text += f": {rel['description']}"
+                    
+                    results.append(RetrievalResult(
+                        chunk_id=f"rel_{hash(rel_text)}",
+                        document_id="graph_context",
+                        text=f"[Graph Relationship] {rel_text}",
+                        score=0.85, # High confidence as it fits the query context
+                        retrieval_mode="graph_relationship",
+                        metadata={"source": rel["source"], "target": rel["target"], "type": rel["type"]}
+                    ))
+
+                # 2. Get Community Summaries (Broader Context)
+                # Limits to top 2 communities to fit in SLM context (Allam 2K limit)
+                communities = self.graph_client.get_entity_communities(entity_names[:5], level=0)
+                for comm in communities:
+                    summary_text = f"Community Context: {comm.get('title', 'Group')} - {comm.get('summary', '')}"
+                    # Truncate if too long (SLM safety)
+                    if len(summary_text) > 400:
+                        summary_text = summary_text[:400] + "..."
+                    
+                    results.append(RetrievalResult(
+                        chunk_id=f"comm_{comm.get('community_id')}",
+                        document_id="community_context",
+                        text=f"[Community Summary] {summary_text}",
+                        score=0.80,
+                        retrieval_mode="community_context",
+                        metadata={"community_id": comm.get("community_id")}
+                    ))
+            
+            except Exception as e:
+                logger.warning(f"Failed to inject graph context: {e}")
+
         return RetrievalResponse(
-            results=results[:top_k],
+            results=results[:top_k + 5],  # Allow slight overflow for graph context
             query=query,
             mode=RetrievalMode.LOCAL,
             total_candidates=len(entity_chunks) + len(naive_response.results),
@@ -744,6 +786,7 @@ class RetrievalEngine:
                 # MIRAGE V4: Include disambiguation results
                 "disambiguated_entities": disambiguated_entities[:10] if disambiguated_entities else [],
                 "disambiguation_enabled": self.entity_disambiguator is not None,
+                "graph_context_added": True
             }
         )
 

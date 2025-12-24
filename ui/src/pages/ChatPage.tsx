@@ -9,15 +9,20 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetDescription } from "@/components/ui/sheet";
+import { Label } from "@/components/ui/label";
 import {
   Send, Bot, User, ChevronDown, Loader2, Network as NetworkIcon, GitBranch,
   Layers, Info, Settings2, Clock, Database, Minimize2,
   ArrowRight, Target, PanelRightClose, PanelRight,
-  Activity, HelpCircle
+  Activity, AlertCircle
 } from "lucide-react";
 import { Network } from "vis-network";
-import { chatApi, RetrievalMode, ChunkInfo, CompressionStats } from "@/lib/api";
+import { chatApi, documentsApi, RetrievalMode, ChunkInfo, CompressionStats } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
+
+// Helper to fix double-encoding issues (Windows-1252/Latin1 interpreted as UTF-8)
+import { fixEncoding } from "@/lib/utils";
 
 interface Message {
   id: string;
@@ -44,7 +49,7 @@ interface Message {
 
 // Mode descriptions
 const MODE_INFO: Record<RetrievalMode, { label: string; description: string; color: string }> = {
-  naive: { label: "Naive", description: "Vector similarity search with keyword fallback", color: "bg-blue-500" },
+  naive: { label: "Vector", description: "Vector similarity search with keyword fallback", color: "bg-blue-500" },
   local: { label: "Local", description: "Entity-focused graph traversal (1-2 hops)", color: "bg-green-500" },
   global: { label: "Global", description: "Relationship-focused graph traversal", color: "bg-purple-500" },
   hybrid: { label: "Hybrid", description: "Fusion of naive + local + global modes", color: "bg-orange-500" },
@@ -97,7 +102,6 @@ export default function ChatPage() {
   // Mode and options state
   const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>("local");
   const [topK, setTopK] = useState<number>(5);
-  const [showAdvanced, setShowAdvanced] = useState(false);
 
   // V5 Advanced options
   const [useHyde, setUseHyde] = useState(false);
@@ -376,58 +380,205 @@ export default function ChatPage() {
   const timingPcts = getTimingPercentages();
   const chunkEntities = getChunkEntities();
 
+  const handleModeSelect = (mode: RetrievalMode) => {
+    setRetrievalMode(mode);
+    toast({
+      title: "Mode Changed",
+      description: `Switched to ${mode} mode`,
+    });
+  };
+
   return (
-    <TooltipProvider>
-      <div className="h-[calc(100vh-8rem)] flex gap-4 animate-fade-in">
-        {/* Main Chat Area */}
-        <Card className={`flex-1 flex flex-col p-4 ${showPanel ? '' : 'max-w-4xl mx-auto'}`}>
-          {/* Compact Header */}
-          <div className="flex items-center justify-between mb-3 pb-3 border-b">
-            <div className="flex items-center gap-3">
-              <h1 className="text-xl font-bold">Chat</h1>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsRTL(!isRTL)}
-                className="h-7 px-2 text-xs"
-              >
-                {isRTL ? "EN" : "AR"}
-              </Button>
+    <div className="flex h-[calc(100vh-4rem)] animate-fade-in relative overflow-hidden">
+      {/* Main Chat Area */}
+      <div className={`flex flex-col flex-1 transition-all duration-300`}>
+        
+        {/* Chat Header */}
+        <div className="flex items-center justify-between p-4 border-b bg-background/95 backdrop-blur z-10">
+          <div className="flex items-center gap-4">
+            <h1 className="text-xl font-bold">Chat</h1>
+            <div className="flex gap-2">
+                <Badge variant={retrievalMode === 'naive' ? 'default' : 'outline'}
+                       className="cursor-pointer hover:bg-primary/90"
+                       onClick={() => handleModeSelect('naive')}>
+                    Vector
+                </Badge>
+                <Badge variant={retrievalMode === 'local' ? 'default' : 'outline'} 
+                       className="cursor-pointer hover:bg-primary/90"
+                       onClick={() => handleModeSelect('local')}>
+                    Local
+                </Badge>
+                <Badge variant={retrievalMode === 'global' ? 'default' : 'outline'}
+                       className="cursor-pointer hover:bg-primary/90"
+                       onClick={() => handleModeSelect('global')}>
+                    Global
+                </Badge>
+                <Badge variant={retrievalMode === 'hybrid' ? 'default' : 'outline'}
+                       className="cursor-pointer hover:bg-primary/90"
+                       onClick={() => handleModeSelect('hybrid')}>
+                    Hybrid
+                </Badge>
             </div>
+          </div>
+          
+          <div className="flex gap-2">
+            <Sheet>
+                <SheetTrigger asChild>
+                    <Button variant="outline" size="sm" className="gap-2">
+                        <Settings2 className="w-4 h-4" />
+                        Advanced Setup
+                    </Button>
+                </SheetTrigger>
+                <SheetContent>
+                    <SheetHeader>
+                        <SheetTitle>Retrieval Configuration</SheetTitle>
+                        <SheetDescription>
+                            Fine-tune how the system retrieves and processes information.
+                        </SheetDescription>
+                    </SheetHeader>
+                    
+                    <div className="space-y-6 py-6">
+                        {/* HyDE Toggle */}
+                        <div className="flex items-center justify-between">
+                            <div className="space-y-0.5">
+                                <Label className="text-base flex items-center gap-2">
+                                    HyDE
+                                    <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger>
+                                            <Info className="w-4 h-4 text-muted-foreground cursor-help" />
+                                        </TooltipTrigger>
+                                        <TooltipContent className="max-w-[300px]">
+                                            <p><strong>Hypothetical Document Embeddings</strong></p>
+                                            <p className="text-xs text-muted-foreground mt-1">
+                                                Generates a hypothetical answer to improve retrieval by matching semantic meaning rather than just keywords. Best for complex questions.
+                                            </p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                    </TooltipProvider>
+                                </Label>
+                            </div>
+                            <Switch checked={useHyde} onCheckedChange={setUseHyde} />
+                        </div>
 
-            {/* Quick Stats Badge - Click to expand */}
-            {lastResponseMeta && (
-              <button
-                onClick={() => setShowMetrics(!showMetrics)}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary/50 hover:bg-secondary transition-colors text-xs"
-              >
-                <Clock className="w-3 h-3" />
-                <span>{formatTime(lastResponseMeta.totalTimeMs)}</span>
-                <span className="text-muted-foreground">|</span>
-                <Layers className="w-3 h-3" />
-                <span>{lastResponseMeta.chunksCount}</span>
-                {lastResponseMeta.compressionStats?.enabled && (
-                  <>
-                    <span className="text-muted-foreground">|</span>
-                    <Minimize2 className="w-3 h-3 text-green-500" />
-                    <span className="text-green-600">{Math.round((1 - lastResponseMeta.compressionStats.compression_ratio) * 100)}%</span>
-                  </>
-                )}
-                <ChevronDown className={`w-3 h-3 transition-transform ${showMetrics ? 'rotate-180' : ''}`} />
-              </button>
-            )}
+                        {/* PPR Toggle */}
+                        <div className="flex items-center justify-between">
+                            <div className="space-y-0.5">
+                                <Label className="text-base flex items-center gap-2">
+                                    PPR Re-ranking
+                                    <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger>
+                                            <Info className="w-4 h-4 text-muted-foreground cursor-help" />
+                                        </TooltipTrigger>
+                                        <TooltipContent className="max-w-[300px]">
+                                            <p><strong>Personalized PageRank</strong></p>
+                                            <p className="text-xs text-muted-foreground mt-1">
+                                                Prioritizes nodes in the graph that are structurally relevant to the retrieved entities. Improves precision in graph mode.
+                                            </p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                    </TooltipProvider>
+                                </Label>
+                            </div>
+                            <Switch checked={usePpr} onCheckedChange={setUsePpr} />
+                        </div>
 
-            {/* Panel Toggle */}
+                        {/* Community Selection */}
+                        <div className="flex items-center justify-between">
+                            <div className="space-y-0.5">
+                                <Label className="text-base flex items-center gap-2">
+                                    Community Guidance
+                                    <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger>
+                                            <Info className="w-4 h-4 text-muted-foreground cursor-help" />
+                                        </TooltipTrigger>
+                                        <TooltipContent className="max-w-[300px]">
+                                            <p><strong>Community Detection</strong></p>
+                                            <p className="text-xs text-muted-foreground mt-1">
+                                                Uses detected communities to guide the search towards relevant clusters of information. Helpful for broad queries.
+                                            </p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                    </TooltipProvider>
+                                </Label>
+                            </div>
+                            <Switch checked={useCommunitySelection} onCheckedChange={setUseCommunitySelection} />
+                        </div>
+
+                         {/* RefRAG Toggle */}
+                         <div className="flex items-center justify-between">
+                            <div className="space-y-0.5">
+                                <Label className="text-base flex items-center gap-2">
+                                    RefRAG Optimization
+                                    <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger>
+                                            <Info className="w-4 h-4 text-muted-foreground cursor-help" />
+                                        </TooltipTrigger>
+                                        <TooltipContent className="max-w-[300px]">
+                                            <p><strong>Context Compression</strong></p>
+                                            <p className="text-xs text-muted-foreground mt-1">
+                                                Re-ranks and compresses retrieved chunks to optimize context window usage and reduce latency.
+                                            </p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                    </TooltipProvider>
+                                </Label>
+                            </div>
+                            <Switch checked={useRefrag} onCheckedChange={setUseRefrag} />
+                        </div>
+
+                        {/* Top K */}
+                        <div className="flex items-center justify-between">
+                            <div className="space-y-0.5">
+                                <Label className="text-base flex items-center gap-2">
+                                    Top K Retrieved
+                                    <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger>
+                                            <Info className="w-4 h-4 text-muted-foreground cursor-help" />
+                                        </TooltipTrigger>
+                                        <TooltipContent className="max-w-[300px]">
+                                            <p><strong>Retrieval Count</strong></p>
+                                            <p className="text-xs text-muted-foreground mt-1">
+                                                Number of chunks to retrieve from the database. Higher means more context but slower processing.
+                                            </p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                    </TooltipProvider>
+                                </Label>
+                            </div>
+                            <div className="w-[80px]">
+                                <Input 
+                                    type="number" 
+                                    min={1} 
+                                    max={50} 
+                                    value={topK} 
+                                    onChange={(e) => setTopK(parseInt(e.target.value) || 5)}
+                                    className="h-8 text-right"
+                                />
+                            </div>
+                        </div>
+                        
+                    </div>
+                </SheetContent>
+            </Sheet>
+
             <Button
-              variant="ghost"
-              size="sm"
+              variant={showPanel ? "default" : "outline"}
+              size="icon"
               onClick={() => setShowPanel(!showPanel)}
-              className="h-8"
+              title="Toggle Graph Panel"
             >
-              {showPanel ? <PanelRightClose className="w-4 h-4" /> : <PanelRight className="w-4 h-4" />}
+              <NetworkIcon className="w-4 h-4" />
             </Button>
           </div>
+        </div>
 
+        {/* Messages */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 scroll-smooth" ref={scrollRef}>
           {/* Expandable Metrics Panel */}
           <Collapsible open={showMetrics} onOpenChange={setShowMetrics}>
             <CollapsibleContent>
@@ -490,21 +641,20 @@ export default function ChatPage() {
                   )}
 
                   <div className="flex flex-col gap-1.5 max-w-[80%]">
-                    <Card
-                      className={`p-4 ${
-                        message.role === "user"
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-card"
-                      }`}
-                    >
-                      <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                    </Card>
-
-                    {/* Compact message metadata */}
-                    {message.role === "assistant" && message.responseTime && (
+                    <div 
+                    className={`p-3 rounded-lg ${
+                      message.role === "user"
+                        ? "bg-primary text-primary-foreground" 
+                        : "bg-secondary/50 border"
+                    }`}
+                  >
+                    <p className="text-sm whitespace-pre-wrap font-sans" dir="auto">{fixEncoding(message.content)}</p>
+                    </div>
+                    {/* Source citations */}
+                    {message.role === "assistant" && message.chunks && message.chunks.length > 0 && (
                       <div className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
                         <Badge variant="outline" className="h-5 text-xs py-0">
-                          {message.retrievalMode}
+                          {message.retrievalMode === 'naive' ? 'Vector' : message.retrievalMode}
                         </Badge>
                         <span>{formatTime(message.responseTime)}</span>
                         {message.compressionStats && (
@@ -540,118 +690,6 @@ export default function ChatPage() {
 
           {/* Input Area - Fixed at bottom */}
           <div className="space-y-2 pt-3 border-t">
-            {/* Config Display - More readable */}
-            <div className="flex flex-wrap items-center gap-2">
-              <Select value={retrievalMode} onValueChange={(v) => setRetrievalMode(v as RetrievalMode)}>
-                <SelectTrigger className="w-36 h-8 text-xs">
-                  <div className="flex items-center gap-1.5">
-                    <div className={`w-2 h-2 rounded-full ${MODE_INFO[retrievalMode].color}`} />
-                    <SelectValue />
-                  </div>
-                </SelectTrigger>
-                <SelectContent>
-                  {(Object.keys(MODE_INFO) as RetrievalMode[]).map((mode) => (
-                    <SelectItem key={mode} value={mode}>
-                      <div className="flex items-center gap-2">
-                        <div className={`w-2 h-2 rounded-full ${MODE_INFO[mode].color}`} />
-                        {MODE_INFO[mode].label}
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              <Select value={topK.toString()} onValueChange={(v) => setTopK(parseInt(v))}>
-                <SelectTrigger className="w-20 h-8 text-xs">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {[3, 5, 10, 15, 20].map((k) => (
-                    <SelectItem key={k} value={k.toString()}>K = {k}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              {/* RefRAG toggle with tooltip */}
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <label className="flex items-center gap-1.5 cursor-pointer px-2 py-1 rounded hover:bg-secondary/50">
-                    <Switch checked={useRefrag} onCheckedChange={setUseRefrag} className="scale-75" />
-                    <span className="text-xs">RefRAG</span>
-                    <HelpCircle className="w-3 h-3 text-muted-foreground" />
-                  </label>
-                </TooltipTrigger>
-                <TooltipContent side="top" className="max-w-xs">
-                  <p className="font-semibold">{CONFIG_EXPLANATIONS.refrag.title}</p>
-                  <p className="text-xs mt-1">{CONFIG_EXPLANATIONS.refrag.description}</p>
-                </TooltipContent>
-              </Tooltip>
-
-              {/* Advanced toggle */}
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-7 text-xs ml-auto"
-                onClick={() => setShowAdvanced(!showAdvanced)}
-              >
-                <Settings2 className="w-3 h-3 mr-1" />
-                Options
-                <ChevronDown className={`w-3 h-3 ml-1 transition-transform ${showAdvanced ? 'rotate-180' : ''}`} />
-              </Button>
-            </div>
-
-            {/* Advanced Options - Collapsible with tooltips */}
-            <Collapsible open={showAdvanced} onOpenChange={setShowAdvanced}>
-              <CollapsibleContent>
-                <div className="flex flex-wrap items-center gap-4 p-2 bg-secondary/30 rounded-lg text-xs">
-                  {/* HyDE */}
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <label className="flex items-center gap-1.5 cursor-pointer">
-                        <Switch checked={useHyde} onCheckedChange={setUseHyde} className="scale-75" />
-                        <span>HyDE</span>
-                        <HelpCircle className="w-3 h-3 text-muted-foreground" />
-                      </label>
-                    </TooltipTrigger>
-                    <TooltipContent side="top" className="max-w-xs">
-                      <p className="font-semibold">{CONFIG_EXPLANATIONS.hyde.title}</p>
-                      <p className="text-xs mt-1">{CONFIG_EXPLANATIONS.hyde.description}</p>
-                    </TooltipContent>
-                  </Tooltip>
-
-                  {/* PPR */}
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <label className="flex items-center gap-1.5 cursor-pointer">
-                        <Switch checked={usePpr} onCheckedChange={setUsePpr} className="scale-75" />
-                        <span>PPR</span>
-                        <HelpCircle className="w-3 h-3 text-muted-foreground" />
-                      </label>
-                    </TooltipTrigger>
-                    <TooltipContent side="top" className="max-w-xs">
-                      <p className="font-semibold">{CONFIG_EXPLANATIONS.ppr.title}</p>
-                      <p className="text-xs mt-1">{CONFIG_EXPLANATIONS.ppr.description}</p>
-                    </TooltipContent>
-                  </Tooltip>
-
-                  {/* Community */}
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <label className="flex items-center gap-1.5 cursor-pointer">
-                        <Switch checked={useCommunitySelection} onCheckedChange={setUseCommunitySelection} className="scale-75" />
-                        <span>Community</span>
-                        <HelpCircle className="w-3 h-3 text-muted-foreground" />
-                      </label>
-                    </TooltipTrigger>
-                    <TooltipContent side="top" className="max-w-xs">
-                      <p className="font-semibold">{CONFIG_EXPLANATIONS.community.title}</p>
-                      <p className="text-xs mt-1">{CONFIG_EXPLANATIONS.community.description}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
-              </CollapsibleContent>
-            </Collapsible>
-
             {/* Input Row */}
             <div className="flex gap-2" dir={isRTL ? "rtl" : "ltr"}>
               <Input
@@ -671,8 +709,10 @@ export default function ChatPage() {
               </Button>
             </div>
           </div>
-        </Card>
+      </div>
+      </div>
 
+    
         {/* Explainability Side Panel - Collapsible */}
         {showPanel && (
           <Card className="w-[420px] flex-shrink-0 p-4 flex flex-col">
@@ -751,7 +791,7 @@ export default function ChatPage() {
 
                                 {/* Text */}
                                 <p className="text-xs text-muted-foreground line-clamp-4">
-                                  {chunk.text}
+                                  {fixEncoding(chunk.text)}
                                 </p>
                               </div>
                             </Card>
@@ -1013,6 +1053,5 @@ export default function ChatPage() {
           </Card>
         )}
       </div>
-    </TooltipProvider>
   );
 }

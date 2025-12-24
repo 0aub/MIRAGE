@@ -1,0 +1,120 @@
+{
+  "name": "MIRAGE Comprehensive Benchmark",
+  "version": "2.0",
+  "description": "Diverse test suite for GraphRAG evaluation across modes and complexities",
+  "created": "2025-12-23",
+  "samples": [
+    {
+      "id": "L1_AR_001",
+      "query": "ما هو تعريف البيانات الشخصية؟",
+      "query_type": "factual",
+      "language": "ar",
+      "ground_truth_answer": "البيانات الشخصية هي أي معلومات تتعلق بشخص طبيعي محدد أو يمكن تحديده بشكل مباشر أو غير مباشر.",
+      "difficulty": "L1"
+    },
+    {
+      "id": "L1_AR_002",
+      "query": "من هي الجهة المسؤولة عن تنظيم البيانات في المملكة؟",
+      "query_type": "entity",
+      "language": "ar",
+      "ground_truth_answer": "مكتب إدارة البيانات الوطنية (NDMO) أو الهيئة السعودية للبيانات والذكاء الاصطناعي (SDAIA).",
+      "difficulty": "L1"
+    },
+    {
+      "id": "L1_EN_001",
+      "query": "What is the main purpose of the Freedom of Information policy?",
+      "query_type": "factual",
+      "language": "en",
+      "ground_truth_answer": "The purpose is to enhance integrity, transparency, and accountability by enabling beneficiaries to access public information.",
+      "difficulty": "L1"
+    },
+    {
+      "id": "L2_AR_001",
+      "query": "ما الفرق بين البيانات الشخصية والبيانات الحساسة؟",
+      "query_type": "comparative",
+      "language": "ar",
+      "ground_truth_answer": "البيانات الشخصية هي أي معلومة عن الفرد، بينما البيانات الحساسة هي نوع خاص يتطلب حماية أعلى مثل البيانات الصحية أو الجينية أو الدينية.",
+      "difficulty": "L2"
+    },
+    {
+      "id": "L2_AR_002",
+      "query": "كيف تختلف حقوق صاحب البيانات في نظام حماية البيانات الشخصية عن سياسة حرية المعلومات؟",
+      "query_type": "comparative",
+      "language": "ar",
+      "ground_truth_answer": "نظام حماية البيانات يركز على خصوصية الفرد وحقه في التحكم ببياناته، بينما سياسة حرية المعلومات تركز على حق الجمهور في الوصول إلى المعلومات العامة لدى الجهات الحكومية.",
+      "difficulty": "L2"
+    },
+    {
+      "id": "L2_EN_001",
+      "query": "Compare the responsibilities of a Data Controller vs a Data Processor.",
+      "query_type": "comparative",
+      "language": "en",
+      "ground_truth_answer": "A Data Controller determines the purpose and means of processing, whereas a Data Processor processes data on behalf of the Controller.",
+      "difficulty": "L2"
+    },
+    {
+      "id": "L3_AR_001",
+      "query": "ما هي المبادئ الرئيسية لحماية الخصوصية في السياسات السعودية؟",
+      "query_type": "thematic",
+      "language": "ar",
+      "ground_truth_answer": "المبادئ تشمل الشفافية، تقليل البيانات، قصر الغرض، الأمن، وحقوق صاحب البيانات.",
+      "difficulty": "L3"
+    },
+    {
+      "id": "L3_AR_002",
+      "query": "كيف تتعامل السياسة مع نقل البيانات خارج المملكة؟",
+      "query_type": "thematic",
+      "language": "ar",
+      "ground_truth_answer": "يسمح بالنقل في حالات محددة بشرط ضمان مستوى مناسب من الحماية أو وجود موافقة صريحة، مع الالتزام بقيود السيادة الوطنية.",
+      "difficulty": "L3"
+    },
+    {
+      "id": "L3_EN_001",
+      "query": "Summarize the key exceptions to the Freedom of Information access rights.",
+      "query_type": "thematic",
+      "language": "en",
+      "ground_truth_answer": "Exceptions typically include national security, personal privacy, intellectual property, and ongoing investigations.",
+      "difficulty": "L3"
+    },
+    {
+      "id": "L4_AR_001",
+      "query": "إذا رفضت جهة حكومية طلبي للوصول إلى المعلومات، ما هي الخطوات التي يمكنني اتخاذها بناءً على السياسة؟",
+      "query_type": "multi-hop",
+      "language": "ar",
+      "ground_truth_answer": "يمكنك تقديم شكوى إلى رئيس الجهة خلال 15 يوماً، وإذا تم الرفض أو عدم الرد، يمكن التصعيد إلى الجهات الرقابية مثل الديوان العام للمحاسبة.",
+      "difficulty": "L4"
+    },
+    {
+      "id": "L4_AR_002",
+      "query": "كيف تؤثر تصنيفات البيانات (عام، سري، سري للغاية) على شروط مشاركتها؟",
+      "query_type": "multi-hop",
+      "language": "ar",
+      "ground_truth_answer": "البيانات 'العامة' يمكن مشاركتها بحرية (حرية المعلومات)، بينما 'سري' و'سري للغاية' تتطلب ضوابط صارمة وتشفير وموافقة أمنية قبل المشاركة.",
+      "difficulty": "L4"
+    },
+    {
+      "id": "L4_EN_001",
+      "query": "Explain the relationship between NDMO and individual government entities regarding data classification compliance.",
+      "query_type": "multi-hop",
+      "language": "en",
+      "ground_truth_answer": "NDMO sets the classification standards and policies, while individual entities are responsible for implementing them and classifying their own data in compliance with NDMO regulations.",
+      "difficulty": "L4"
+    },
+    {
+      "id": "Edge_AR_001",
+      "query": "من هو 'سدايا'؟",
+      "query_type": "entity_acronym",
+      "language": "ar",
+      "ground_truth_answer": "سدايا هي الهيئة السعودية للبيانات والذكاء الاصطناعي (SDAIA).",
+      "difficulty": "L1"
+    },
+    {
+      "id": "Edge_EN_001",
+      "query": "What happens if I calculate AI ethics wrongly?",
+      "query_type": "out_of_domain",
+      "language": "en",
+      "ground_truth_answer": "The documents do not contain specific formulas for calculating AI ethics, but discuss principles like fairness and accountability.",
+      "difficulty": "L3"
+    }
+  ]
+}

@@ -464,30 +464,39 @@ class EntityExtractor:
         relationships = result.get("relationships", [])
 
         # Build mapping: entity_name -> [chunk_ids where it appears]
+        # Initialize all entities first to avoid filtering
         entity_chunk_map = {}
+        for entity in entities:
+            entity_name = entity.get("name") or entity.get("text")
+            if entity_name not in entity_chunk_map:
+                entity_chunk_map[entity_name] = {
+                    "name": entity_name,
+                    "type": entity.get("type", "Unknown"),
+                    "chunks": [],
+                    "confidence_scores": [entity.get("confidence", 1.0)]
+                }
 
+        # Map entities to chunks using improved matching
         for chunk in chunks:
             chunk_id = chunk.get("id") or chunk.get("chunk_id")
-            chunk_text = chunk.get("text", "")
+            chunk_text = chunk.get("text", "").lower()
 
-            # Find which entities appear in this chunk (simple text matching)
-            # Note: LLM extractor extracts per-chunk, so we need to re-map
+            # Find which entities appear in this chunk with better matching
             for entity in entities:
                 entity_name = entity.get("name") or entity.get("text")
+                entity_lower = entity_name.lower()
 
-                # Simple heuristic: if entity text appears in chunk, mark it
-                if entity_name.lower() in chunk_text.lower():
-                    if entity_name not in entity_chunk_map:
-                        entity_chunk_map[entity_name] = {
-                            "name": entity_name,
-                            "type": entity.get("type", "Unknown"),
-                            "chunks": [],
-                            "confidence_scores": []
-                        }
-                    entity_chunk_map[entity_name]["chunks"].append(chunk_id)
-                    entity_chunk_map[entity_name]["confidence_scores"].append(
-                        entity.get("confidence", 1.0)
-                    )
+                # Use word boundary matching to avoid false positives like "Plan" in "Planning"
+                # Check if entity appears as a complete word/phrase
+                import re
+                # Escape special regex characters in entity name
+                escaped_entity = re.escape(entity_lower)
+                # Match with word boundaries (or surrounded by punctuation/whitespace)
+                pattern = r'(?:^|[\s\.,;:!?\(\)\[\]\{\}"\'`])'  + escaped_entity + r'(?:$|[\s\.,;:!?\(\)\[\]\{\}"\'`])'
+
+                if re.search(pattern, chunk_text):
+                    if chunk_id not in entity_chunk_map[entity_name]["chunks"]:
+                        entity_chunk_map[entity_name]["chunks"].append(chunk_id)
 
         # Calculate average confidence per entity and generate embeddings
         entities_with_chunks = []

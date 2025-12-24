@@ -835,28 +835,48 @@ class Neo4jClient:
 
         try:
             with self.driver.session() as session:
-                # Delete relationships first
-                rel_query = """
+                # Step 1: Delete all chunks (DETACH DELETE removes MENTIONS relationships)
+                chunk_delete_query = """
+                MATCH (c:Chunk {document_id: $document_id})
+                DETACH DELETE c
+                """
+                session.run(chunk_delete_query, {"document_id": document_id})
+
+                # Step 2: Count and delete relationships between entities
+                rel_count_query = """
+                MATCH ()-[r]->()
+                WHERE $document_id IN r.source_documents
+                RETURN count(r) as count
+                """
+                rel_count_result = session.run(rel_count_query, {"document_id": document_id})
+                rels_to_delete = rel_count_result.single()["count"] if rel_count_result.peek() else 0
+
+                rel_delete_query = """
                 MATCH ()-[r]->()
                 WHERE $document_id IN r.source_documents
                 DELETE r
-                RETURN count(r) as count
                 """
-                rel_result = session.run(rel_query, {"document_id": document_id})
-                rels_deleted = rel_result.single()["count"] if rel_result.peek() else 0
+                session.run(rel_delete_query, {"document_id": document_id})
 
-                # Delete nodes that only belong to this document
-                node_query = """
+                # Step 3: Count and delete Entity nodes that only belong to this document (use DETACH DELETE)
+                node_count_query = """
                 MATCH (n:Entity)
                 WHERE $document_id IN n.source_documents
                 AND size(n.source_documents) = 1
-                DELETE n
                 RETURN count(n) as count
                 """
-                node_result = session.run(node_query, {"document_id": document_id})
-                nodes_deleted = node_result.single()["count"] if node_result.peek() else 0
+                node_count_result = session.run(node_count_query, {"document_id": document_id})
+                nodes_to_delete = node_count_result.single()["count"] if node_count_result.peek() else 0
 
-                # Update nodes that belong to multiple documents
+                node_delete_query = """
+                MATCH (n:Entity)
+                WHERE $document_id IN n.source_documents
+                AND size(n.source_documents) = 1
+                DETACH DELETE n
+                """
+                session.run(node_delete_query, {"document_id": document_id})
+
+                # Step 4: Update Entity nodes that belong to multiple documents
                 update_query = """
                 MATCH (n:Entity)
                 WHERE $document_id IN n.source_documents
@@ -867,14 +887,16 @@ class Neo4jClient:
                 update_result = session.run(update_query, {"document_id": document_id})
                 nodes_updated = update_result.single()["count"] if update_result.peek() else 0
 
-                # Delete the Document node itself (DETACH DELETE removes all relationships first)
+                # Step 5: Delete the Document node itself (DETACH DELETE removes all remaining relationships)
                 doc_query = """
                 MATCH (d:Document {document_id: $document_id})
                 DETACH DELETE d
-                RETURN count(d) as count
                 """
-                doc_result = session.run(doc_query, {"document_id": document_id})
-                docs_deleted = doc_result.single()["count"] if doc_result.peek() else 0
+                session.run(doc_query, {"document_id": document_id})
+
+                rels_deleted = rels_to_delete
+                nodes_deleted = nodes_to_delete
+                docs_deleted = 1  # We know we're deleting one document
 
                 logger.info(
                     f"Deleted document {document_id} from graph: "

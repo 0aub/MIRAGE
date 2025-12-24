@@ -1,0 +1,62 @@
+{
+  "name": "Naive RAG Breaker Dataset",
+  "version": "1.0",
+  "description": "Adversarial test cases designed to fail Naive Vector Search but pass GraphRAG",
+  "created": "2025-12-23",
+  "samples": [
+    {
+      "id": "BREAK_GLOBAL_01",
+      "query": "Give a comprehensive summary of all data classification levels mentioned across all policy documents.",
+      "query_type": "global_summary",
+      "language": "en",
+      "ground_truth_answer": "Data is classified into 4 levels: Public (available to all), Restricted (limited to specific groups), Confidential (requires serious protection), and Top Secret (severe national security impact).",
+      "difficulty": "L4",
+      "expected_fail_reason": "Naive content window too small to capture all definitions across documents."
+    },
+    {
+      "id": "BREAK_HOP_01",
+      "query": "According to the regulations, what is the specific penalty for a Data Processor who delays reporting a breach to the Controller?",
+      "query_type": "multi_hop",
+      "language": "en",
+      "ground_truth_answer": "The Processor must notify the Controller immediately (no delay allowed). While specific monetary penalties are listed for the Controller in Article X, the Processor is contractually liable to the Controller for damages caused by delay.",
+      "difficulty": "L4",
+      "expected_fail_reason": "Penalty clause is in Document A, Reporting duty is in Document B. Naive unlikely to retrieve both."
+    },
+    {
+      "id": "BREAK_ENTITY_01",
+      "query": "How does 'The Authority' define its audit powers?",
+      "query_type": "entity_disambiguation",
+      "language": "en",
+      "ground_truth_answer": "In the context of Personal Data Law, 'The Authority' (SDAIA) refers to its power to audit controllers. In the Freedom of Information policy, it refers to the oversight of public requests.",
+      "difficulty": "L3",
+      "expected_fail_reason": "Naive search will retrieve mixed chunks for different 'Authority' entities without distinction."
+    },
+    {
+      "id": "BREAK_AR_01",
+      "query": "لخص جميع الالتزامات التي ذكرت في السياسات والمتعلقة بحماية البيانات الصحية تحديداً.",
+      "query_type": "thematic_summary",
+      "language": "ar",
+      "ground_truth_answer": "البيانات الصحية تعتبر بيانات حساسة تتطلب: 1) تشفير عالي، 2) تقييد الوصول، 3) موافقة صريحة للمعالجة، 4) عدم نقلها خارج المملكة إلا بضوابط صارمة.",
+      "difficulty": "L4",
+      "expected_fail_reason": "Health data mentions are scattered; Naive will miss the comprehensive list."
+    },
+    {
+      "id": "BREAK_IMPLICIT_01",
+      "query": "What are the prerequisites for exporting 'Top Secret' data outside the Kingdom?",
+      "query_type": "implicit_constraint",
+      "language": "en",
+      "ground_truth_answer": "Top Secret data cannot be exported outside the Kingdom under any ordinary circumstances due to national security implications.",
+      "difficulty": "L3",
+      "expected_fail_reason": "Naive might retrieve procedures for 'General' data export and halluncinate that they apply to Top Secret."
+    },
+    {
+      "id": "BREAK_REL_01",
+      "query": "Who appoints the person responsible for responding to FOI requests?",
+      "query_type": "relationship",
+      "language": "en",
+      "ground_truth_answer": "The Head of the Public Entity appoints the responsible officer.",
+      "difficulty": "L2",
+      "expected_fail_reason": "Requires identifying the relationship 'HEAD -> APPOINTS -> OFFICER' which might be phrased simply as 'The officer is selected by...'"
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import {
@@ -17,7 +18,9 @@ import {
   Globe,
   Lock,
   Layers,
-  Box
+  Box,
+  Eye,
+  EyeOff
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { dbApi } from "@/lib/api";
@@ -42,6 +45,7 @@ export default function SettingsPage() {
   const [settings, setSettings] = useState<SystemSettings>({});
   const [isLoading, setIsLoading] = useState(true);
   const [configDir, setConfigDir] = useState("");
+  const [showPasswords, setShowPasswords] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -379,9 +383,12 @@ export default function SettingsPage() {
                         return null;
                       }
 
-                      // Mask sensitive data
+                      // Check if this is a password/secret field
+                      const isPasswordField = key.toLowerCase().includes('password') || key.toLowerCase().includes('secret');
+
+                      // Mask sensitive data unless showPasswords is true
                       let displayValue = value;
-                      if (key.toLowerCase().includes('password') || key.toLowerCase().includes('secret')) {
+                      if (isPasswordField && !showPasswords) {
                         displayValue = '••••••••';
                       }
 
@@ -391,17 +398,17 @@ export default function SettingsPage() {
                             {key.replace(/_/g, ' ')}
                           </TableCell>
                           <TableCell>
-                            {typeof displayValue === 'boolean' ? (
-                              renderBooleanValue(displayValue)
-                            ) : typeof displayValue === 'number' ? (
-                              <Badge variant="secondary" className="font-mono">{displayValue}</Badge>
-                            ) : key.toLowerCase().includes('password') || key.toLowerCase().includes('secret') ? (
+                            {typeof value === 'boolean' ? (
+                              renderBooleanValue(value)
+                            ) : typeof value === 'number' ? (
+                              <Badge variant="secondary" className="font-mono">{value}</Badge>
+                            ) : isPasswordField ? (
                               <div className="flex items-center gap-2">
                                 <Lock className="w-3 h-3 text-muted-foreground" />
                                 <span className="font-mono text-sm">{String(displayValue)}</span>
                               </div>
                             ) : (
-                              <span className="font-mono text-sm break-all">{String(displayValue)}</span>
+                              <span className="font-mono text-sm break-all">{String(value)}</span>
                             )}
                           </TableCell>
                         </TableRow>
@@ -593,7 +600,27 @@ export default function SettingsPage() {
           <h1 className="text-3xl font-bold mb-1">Configurations</h1>
           <p className="text-muted-foreground text-sm">System configuration and settings</p>
         </div>
-        <SettingsIcon className="w-8 h-8 text-muted-foreground" />
+        <div className="flex items-center gap-3">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowPasswords(!showPasswords)}
+            className="flex items-center gap-2"
+          >
+            {showPasswords ? (
+              <>
+                <EyeOff className="w-4 h-4" />
+                <span className="hidden md:inline">Hide Passwords</span>
+              </>
+            ) : (
+              <>
+                <Eye className="w-4 h-4" />
+                <span className="hidden md:inline">Show Passwords</span>
+              </>
+            )}
+          </Button>
+          <SettingsIcon className="w-8 h-8 text-muted-foreground" />
+        </div>
       </div>
 
       {configDir && (
