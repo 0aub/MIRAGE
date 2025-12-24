@@ -310,8 +310,9 @@ class EnsembleEntityExtractor:
         relationships = []
         if self.use_llm and self.llm_extractor:
             try:
-                llm_result = self.llm_extractor.extract_entities_and_relationships(
-                    text, language, document_id
+                # Use _extract_from_chunk to avoid re-chunking (chunk already prepared)
+                llm_result = self.llm_extractor._extract_from_chunk(
+                    text, language
                 )
                 llm_entities = llm_result.get("entities", [])
                 relationships = llm_result.get("relationships", [])

@@ -775,8 +775,10 @@ class JobStatusResponse(BaseModel):
     """Response for job status"""
     job_id: str
     status: str
-    progress: int
+    progress: float  # Changed to float (0.0-1.0) to match frontend expectations
     current_phase: Optional[str] = None
+    current_chunk: Optional[int] = None  # Current page/chunk number
+    total_chunks: Optional[int] = None   # Total pages/chunks
     document_id: Optional[str] = None
     title: Optional[str] = None
     content_type: Optional[str] = None
@@ -918,7 +920,11 @@ async def get_job_status(job_id: str):
             detail=f"Job {job_id} not found"
         )
 
-    return JobStatusResponse(**job.to_dict())
+    # Convert job to dict and normalize progress to 0.0-1.0 range
+    job_dict = job.to_dict()
+    job_dict["progress"] = job_dict["progress"] / 100.0  # Convert 0-100 to 0.0-1.0
+
+    return JobStatusResponse(**job_dict)
 
 
 @router.get("/jobs/{job_id}/result")

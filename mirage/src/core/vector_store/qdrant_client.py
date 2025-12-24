@@ -118,7 +118,7 @@ class QdrantVectorStore:
         for i, chunk in enumerate(chunks):
             # Get embedding
             embedding = chunk.get("embedding")
-            if not embedding:
+            if embedding is None or (hasattr(embedding, 'size') and embedding.size == 0):
                 logger.warning(f"Chunk {i} missing embedding, skipping")
                 continue
 

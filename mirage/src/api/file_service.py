@@ -13,6 +13,7 @@ import os
 import shutil
 from datetime import datetime
 import mimetypes
+import charset_normalizer
 
 from ..config import settings
 from ..core.graph_builder import Neo4jClient
@@ -38,6 +39,26 @@ _entity_extractor = None
 _relationship_extractor = None
 _job_manager = None
 _background_worker = None
+
+
+
+def detect_encoding(file_path: str) -> str:
+    """
+    Detect file encoding using charset_normalizer.
+    Reads first 50KB to guess encoding.
+    Defaults to utf-8 if detection fails.
+    """
+    try:
+        with open(file_path, "rb") as f:
+            raw_data = f.read(50000)  # Read first 50KB
+        
+        matches = charset_normalizer.from_bytes(raw_data).best()
+        if matches:
+            return matches.encoding
+    except Exception as e:
+        logger.warning(f"Encoding detection failed for {file_path}: {e}")
+    
+    return "utf-8"
 
 
 def _get_url_service_components():
@@ -453,25 +474,30 @@ def process_file_background(job_id: str, file_path: str, file_id: str, file_type
             content_type = "pdf"
             file_metadata = result["metadata"]
         elif file_type in ["txt", "text"]:
-            with open(file_path, "r", encoding="utf-8") as f:
+            encoding = detect_encoding(file_path)
+            logger.info(f"[Job {job_id}] Detected encoding: {encoding}")
+            with open(file_path, "r", encoding=encoding, errors="replace") as f:
                 full_text = f.read()
             title = Path(file_path).stem
             content_type = "text"
-            file_metadata = {"file_type": "text"}
+            file_metadata = {"file_type": "text", "encoding": encoding}
         elif file_type in ["html", "htm"]:
-            with open(file_path, "r", encoding="utf-8") as f:
+            encoding = detect_encoding(file_path)
+            with open(file_path, "r", encoding=encoding, errors="replace") as f:
                 full_text = f.read()
             # Could add HTML parsing here
             title = Path(file_path).stem
             content_type = "webpage"
-            file_metadata = {"file_type": "html"}
+            file_metadata = {"file_type": "html", "encoding": encoding}
         else:
-            # Try to read as text
-            with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+            # Try to read as text with auto-detection
+            encoding = detect_encoding(file_path)
+            logger.info(f"[Job {job_id}] Detected encoding for {file_type}: {encoding}")
+            with open(file_path, "r", encoding=encoding, errors="replace") as f:
                 full_text = f.read()
             title = Path(file_path).stem
             content_type = "document"
-            file_metadata = {"file_type": file_type}
+            file_metadata = {"file_type": file_type, "encoding": encoding}
 
         if not full_text or len(full_text.strip()) < 50:
             raise Exception(f"Insufficient content extracted from file: {len(full_text)} chars")
@@ -504,8 +530,15 @@ def process_file_background(job_id: str, file_path: str, file_id: str, file_type
 
         logger.info(f"[Job {job_id}] Created {len(chunks)} chunks")
 
+        # Update with chunk count
+        unit = "pages" if content_type == "pdf" else "chunks"
         if job_manager:
-            job_manager.update_job(job_id, total_chunks=len(chunks), progress=25)
+            job_manager.update_job(
+                job_id,
+                total_chunks=len(chunks),
+                progress=25,
+                current_phase=f"Created {len(chunks)} {unit} for processing"
+            )
 
         # Create document in Neo4j
         try:
@@ -555,27 +588,27 @@ def process_file_background(job_id: str, file_path: str, file_id: str, file_type
 
         logger.info(f"[Job {job_id}] Storing {len(chunks)} chunks in vector DB")
 
+        # Create embeddings for all chunks
+        chunks_with_embeddings = []
         for i, chunk in enumerate(chunks):
             try:
-                embedding = jina_embedder.embed_text(chunk.get("text", ""))
-                vector_store.add_chunk(
-                    chunk_id=chunk.get("chunk_id", f"{document_id}_chunk_{i}"),
-                    document_id=document_id,
-                    text=chunk.get("text", ""),
-                    embedding=embedding,
-                    metadata={
-                        "chunk_index": i,
-                        "title": title,
-                        "content_type": content_type,
-                        **chunk.get("metadata", {}),
-                    }
-                )
+                embedding = jina_embedder.embed(chunk.get("text", ""))
+                # Add embedding to chunk
+                chunk["embedding"] = embedding
+                chunks_with_embeddings.append(chunk)
 
                 if job_manager and i % 5 == 0:
                     job_manager.update_job(job_id, current_chunk=i)
 
             except Exception as e:
-                logger.warning(f"[Job {job_id}] Failed to store chunk {i}: {e}")
+                logger.warning(f"[Job {job_id}] Failed to create embedding for chunk {i}: {e}")
+
+        # Store all chunks at once
+        try:
+            vector_store.add_chunks(chunks_with_embeddings, document_id)
+            logger.info(f"[Job {job_id}] Stored {len(chunks_with_embeddings)} chunks in vector DB")
+        except Exception as e:
+            logger.error(f"[Job {job_id}] Failed to store chunks in vector DB: {e}")
 
         # Phase 4: Store in graph DB (using same method as url_service)
         if job_manager:

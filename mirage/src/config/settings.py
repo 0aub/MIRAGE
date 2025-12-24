@@ -24,7 +24,13 @@ class Settings(BaseSettings):
 
     # Local LLM via Text Generation Inference (TGI)
     use_tgi: bool = False
-    tgi_endpoint: str = "http://localhost:8765"
+    tgi_endpoint: str = "http://localhost:8765"  # Main inference endpoint (Allam)
+    entity_extraction_endpoint: str = "http://localhost:8766"  # Entity extraction endpoint (Qwen)
+
+    # Local LLM via Ollama (lightweight alternative to TGI)
+    use_ollama: bool = False
+    ollama_endpoint: str = "http://ollama:11434"  # Ollama API endpoint (use 'ollama' service name in Docker)
+    ollama_model: str = "gemma3:4b"  # Model to use (gemma3:4b, qwen2.5:7b, etc.)
 
     # Database Configuration
     neo4j_uri: str = "bolt://neo4j:7687"

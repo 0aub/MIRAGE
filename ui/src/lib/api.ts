@@ -104,6 +104,18 @@ export const filesApi = {
     return response.json();
   },
 
+  process: (fileId: string, extractEntities: boolean = true) => {
+    return fetchApi<{
+      job_id: string;
+      file_id: string;
+      status: string;
+      message: string;
+    }>(`/files/files/${fileId}/process`, {
+      method: 'POST',
+      body: JSON.stringify({ extract_entities: extractEntities }),
+    });
+  },
+
   delete: (fileId: string) => {
     return fetchApi<{ file_id: string; filename: string; message: string }>(
       `/files/files/${fileId}`,

@@ -56,12 +56,27 @@ class LLMEntityExtractor:
     def _detect_provider(self) -> None:
         """Auto-detect which LLM provider to use based on available API keys"""
 
-        # Check for TGI (local GPU) first - highest priority if enabled
-        if settings.use_tgi and settings.tgi_endpoint:
+        # Check for Ollama (local) first - highest priority if enabled
+        if settings.use_ollama:
+            self.ollama_endpoint = settings.ollama_endpoint
+            self.ollama_model = settings.ollama_model
+            self.provider = "ollama"
+            self.model = settings.ollama_model
+            logger.info(f"Using Ollama at {self.ollama_endpoint} with model {self.ollama_model} for entity extraction")
+            return
+
+        # Check for TGI (local GPU) second - high priority if enabled
+        if settings.use_tgi:
+            # Prefer dedicated extraction endpoint if available
+            if hasattr(settings, "entity_extraction_endpoint") and settings.entity_extraction_endpoint:
+                self.tgi_endpoint = settings.entity_extraction_endpoint
+                logger.info(f"Using dedicated TGI endpoint at {self.tgi_endpoint} for entity extraction (Qwen)")
+            elif settings.tgi_endpoint:
+                self.tgi_endpoint = settings.tgi_endpoint
+                logger.info(f"Using shared TGI endpoint at {self.tgi_endpoint} for entity extraction")
+
             self.provider = "tgi"
             self.model = "tgi"  # TGI doesn't need model specification
-            self.tgi_endpoint = settings.tgi_endpoint
-            logger.info(f"Using local TGI endpoint at {settings.tgi_endpoint} for entity extraction (NO RATE LIMITS!)")
             return
 
         # Check for API keys in order of preference
@@ -88,19 +103,41 @@ class LLMEntityExtractor:
             self.provider = None
 
     def _update_progress(self, document_id: str, current_chunk: int, total_chunks: int):
-        """Update chunk progress in Redis"""
+        """Update chunk progress in Redis and job manager"""
         if not self.redis_client or not document_id:
             return
         try:
-            key = f"processing:{document_id}"
-            data = self.redis_client.get(key)
-            if data:
-                status_data = json.loads(data)
-                status_data["current_chunk"] = current_chunk
-                status_data["total_chunks"] = total_chunks
-                status_data["phase"] = "extraction"  # Entity extraction phase
-                # Update with same TTL
-                self.redis_client.setex(key, 3600, json.dumps(status_data))
+            # Find and update the job associated with this document
+            job_keys = self.redis_client.keys("job:*")
+            for job_key in job_keys:
+                try:
+                    job_data = self.redis_client.get(job_key)
+                    if job_data:
+                        job_dict = json.loads(job_data)
+                        if job_dict.get("document_id") == document_id:
+                            # Found the job! Update it with chunk progress
+                            # Set total_chunks only if not already set (to prevent it from changing)
+                            if "total_chunks" not in job_dict or job_dict["total_chunks"] == 0:
+                                job_dict["total_chunks"] = total_chunks
+
+                            # Use the stored total_chunks for consistent progress calculation
+                            stored_total = job_dict["total_chunks"]
+                            chunk_progress = (current_chunk / stored_total) * 30 + 40  # 40-70%
+
+                            job_dict["current_chunk"] = current_chunk
+                            job_dict["progress"] = int(chunk_progress)
+
+                            # Use "page" for PDFs, "chunk" for other content types
+                            content_type = job_dict.get("content_type", "")
+                            unit = "pages" if content_type == "pdf" else "chunks"
+                            job_dict["current_phase"] = f"Extracting entities ({current_chunk}/{stored_total} {unit})"
+
+                            # Save back to Redis with TTL
+                            self.redis_client.setex(job_key, 3600, json.dumps(job_dict))
+                            logger.debug(f"Updated job progress: {unit} {current_chunk}/{total_chunks} ({int(chunk_progress)}%)")
+                            break
+                except Exception:
+                    continue
         except Exception as e:
             logger.debug(f"Failed to update chunk progress: {e}")
 
@@ -347,8 +384,65 @@ IMPORTANT: Extract relationships between entities! Do not return entities withou
 JSON:"""
 
         try:
-            # Handle TGI separately (uses /v1/chat/completions for automatic chat template)
-            if self.provider == "tgi":
+            # Handle Ollama and TGI separately (both use OpenAI-compatible /v1/chat/completions)
+            if self.provider == "ollama":
+                # Ollama uses OpenAI-compatible API
+                max_retries = 3
+                retry_delay = 2
+
+                for attempt in range(max_retries):
+                    try:
+                        ollama_response = requests.post(
+                            f"{self.ollama_endpoint}/v1/chat/completions",
+                            json={
+                                "model": self.ollama_model,
+                                "messages": [
+                                    {"role": "system", "content": system_prompt},
+                                    {"role": "user", "content": user_prompt}
+                                ],
+                                "temperature": 0.1,  # Very low for consistency and valid JSON
+                                "max_tokens": 4096,  # Increased to prevent truncation
+                                "top_p": 0.9,  # Nucleus sampling for better quality
+                            },
+                            timeout=60  # Ollama can be slower on first request (model loading)
+                        )
+                        ollama_response.raise_for_status()
+                        content = ollama_response.json()["choices"][0]["message"]["content"]
+                        break  # Success!
+
+                    except requests.exceptions.ConnectionError as e:
+                        # Ollama is not running or not reachable - FAIL IMMEDIATELY
+                        logger.error(f"Ollama connection failed - Ollama may not be running: {e}")
+                        raise ConnectionError(
+                            f"Ollama is not available at {self.ollama_endpoint}. "
+                            "Please start Ollama with: docker compose up -d ollama"
+                        )
+                    except requests.exceptions.Timeout as e:
+                        # Ollama is too slow or overloaded - FAIL IMMEDIATELY
+                        logger.error(f"Ollama request timed out after 60 seconds: {e}")
+                        raise TimeoutError(
+                            f"Ollama request timed out. The model may be loading or overloaded. "
+                            "Check Ollama logs: docker logs mirage-ollama"
+                        )
+                    except requests.exceptions.HTTPError as e:
+                        if e.response.status_code == 422 and attempt < max_retries - 1:
+                            # Chunk too large - retry with smaller chunk
+                            logger.warning(f"Chunk too large (422 error), attempt {attempt + 1}/{max_retries}. Chunk has ~{self.count_tokens(chunk)} tokens")
+                            time.sleep(retry_delay * (attempt + 1))  # Exponential backoff
+                        elif e.response.status_code == 422:
+                            # Final 422 attempt - give up on this chunk
+                            logger.error(f"Chunk still too large after {max_retries} attempts - skipping")
+                            return {"entities": [], "relationships": []}
+                        else:
+                            # Other HTTP errors (500, 503, etc.) - FAIL IMMEDIATELY
+                            logger.error(f"Ollama HTTP error {e.response.status_code}: {e}")
+                            raise
+                    except Exception as e:
+                        # Unexpected errors - FAIL IMMEDIATELY
+                        logger.error(f"Unexpected Ollama error: {type(e).__name__}: {e}")
+                        raise
+
+            elif self.provider == "tgi":
                 # Use OpenAI-compatible endpoint which auto-applies correct chat template
                 # FAIL FAST: No retries for connection errors - only retry 422 (chunk too large)
                 max_retries = 3
@@ -813,7 +907,23 @@ Generic entities to reject:
 JSON:"""
 
             try:
-                if self.provider == "tgi":
+                if self.provider == "ollama":
+                    response = requests.post(
+                        f"{self.ollama_endpoint}/v1/chat/completions",
+                        json={
+                            "model": self.ollama_model,
+                            "messages": [
+                                {"role": "system", "content": system_prompt},
+                                {"role": "user", "content": user_prompt}
+                            ],
+                            "temperature": 0.1,
+                            "max_tokens": 1024,
+                        },
+                        timeout=30
+                    )
+                    response.raise_for_status()
+                    content = response.json()["choices"][0]["message"]["content"]
+                elif self.provider == "tgi":
                     response = requests.post(
                         f"{self.tgi_endpoint}/v1/chat/completions",
                         json={
