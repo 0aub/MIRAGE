@@ -383,7 +383,7 @@ export const urlApi = {
 };
 
 // ========== RETRIEVAL TYPES ==========
-export type RetrievalMode = 'naive' | 'local' | 'global' | 'hybrid' | 'semantic' | 'mix' | 'global_search' | 'drift';
+export type RetrievalMode = 'vector' | 'local' | 'global' | 'hybrid' | 'semantic' | 'mix' | 'global_search' | 'drift';
 
 export interface AskRequest {
   message: string;
@@ -394,7 +394,6 @@ export interface AskRequest {
   use_hyde?: boolean;
   use_ppr?: boolean;
   use_community_selection?: boolean;
-  use_refrag?: boolean;  // Enable RefRAG compression
   ppr_damping?: number;
   community_level?: number;
 }
@@ -625,55 +624,6 @@ export const graphragApi = {
   },
 };
 
-// ========== RefRAG APIs ==========
-export const refragApi = {
-  // Compress text
-  compress: (text: string) => {
-    return fetchApi<{
-      original_text: string;
-      compressed_text: string;
-      compression_ratio: number;
-      speedup_factor: number;
-      original_tokens: number;
-      compressed_tokens: number;
-    }>('/refrag/compress', {
-      method: 'POST',
-      body: JSON.stringify({ text }),
-    });
-  },
-
-  // Get compression metrics
-  getMetrics: () => {
-    return fetchApi<{
-      total_compressions: number;
-      average_compression_ratio: number;
-      average_speedup: number;
-      cache_size: number;
-    }>('/refrag/metrics');
-  },
-
-  // Get policy stats
-  getPolicyStats: () => {
-    return fetchApi<{
-      total_policies: number;
-      policies_by_type: Record<string, number>;
-      compression_stats: {
-        average_ratio: number;
-        total_compressed: number;
-      };
-    }>('/refrag/policy/stats');
-  },
-
-  // Get config
-  getConfig: () => {
-    return fetchApi<{
-      compression_rate: number;
-      cache_size: number;
-      enabled: boolean;
-    }>('/refrag/config');
-  },
-};
-
 // ========== BENCHMARK APIs ==========
 export const benchmarkApi = {
   // Test a query across all modes
@@ -736,12 +686,7 @@ export interface RagasModeResult {
   timing_ms: number;
   chunks_used: number;
   entities_found: string[];
-  refrag_scores?: RagasScores;
-  refrag_answer?: string;
-  refrag_timing_ms?: number;
   ground_truth_delta?: number;
-  speed_improvement?: number;
-  token_savings?: number;
 }
 
 export interface RagasTestResult {
@@ -752,15 +697,6 @@ export interface RagasTestResult {
   mode_results: RagasModeResult[];
   best_mode: string;
   best_score: number;
-}
-
-export interface RefragImpactAnalysis {
-  modes_improved: number;
-  modes_hurt: number;
-  modes_unchanged: number;
-  avg_ground_truth_delta: number;
-  avg_speed_improvement: number;
-  avg_token_savings: number;
 }
 
 export interface RagasEvaluationSummary {
@@ -774,7 +710,6 @@ export interface RagasEvaluationSummary {
 export interface RagasEvaluationResponse {
   test_results: RagasTestResult[];
   summary: RagasEvaluationSummary;
-  refrag_impact?: RefragImpactAnalysis;
   timestamp: string;
   duration_ms: number;
 }
@@ -803,15 +738,13 @@ export const ragasApi = {
   runEvaluation: (request: {
     test_case_ids?: string[];
     modes?: string[];
-    compare_refrag?: boolean;
     top_k?: number;
   }) => {
     return fetchApi<RagasEvaluationResponse>('/benchmark/ragas', {
       method: 'POST',
       body: JSON.stringify({
         test_case_ids: request.test_case_ids || [],
-        modes: request.modes || ['naive', 'local', 'global', 'hybrid', 'mix'],
-        compare_refrag: request.compare_refrag ?? true,
+        modes: request.modes || ['vector', 'local', 'global', 'hybrid', 'mix'],
         top_k: request.top_k || 5,
       }),
     });

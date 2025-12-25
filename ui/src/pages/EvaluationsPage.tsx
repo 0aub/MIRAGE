@@ -1,17 +1,15 @@
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
-import { 
-  BarChart3, 
-  Target, 
-  Minimize2, 
+import {
+  BarChart3,
+  Target,
   Database,
   LayoutDashboard
 } from "lucide-react";
 
 import { BenchmarkView } from "@/components/evaluations/BenchmarkView";
 import { RagasView } from "@/components/evaluations/RagasView";
-import { RefragView } from "@/components/evaluations/RefragView";
 import { VectorExplorerView } from "@/components/evaluations/VectorExplorerView";
 
 export default function EvaluationsPage() {
@@ -40,10 +38,6 @@ export default function EvaluationsPage() {
                 <Target className="w-4 h-4 mr-2" />
                 RAGAS Scoring
             </TabsTrigger>
-            <TabsTrigger value="refrag" className="h-full px-6 text-sm font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                <Minimize2 className="w-4 h-4 mr-2" />
-                RefRAG Optimization
-            </TabsTrigger>
             <TabsTrigger value="vectors" className="h-full px-6 text-sm font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                 <Database className="w-4 h-4 mr-2" />
                 Vector Explorer
@@ -57,10 +51,6 @@ export default function EvaluationsPage() {
 
         <TabsContent value="ragas" className="space-y-6 focus-visible:outline-none">
           <RagasView />
-        </TabsContent>
-
-        <TabsContent value="refrag" className="space-y-6 focus-visible:outline-none">
-          <RefragView />
         </TabsContent>
 
         <TabsContent value="vectors" className="space-y-6 focus-visible:outline-none">

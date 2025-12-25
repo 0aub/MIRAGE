@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { dbApi, documentsApi, graphragApi, chatApi, refragApi } from "@/lib/api";
+import { dbApi, documentsApi, graphragApi, chatApi } from "@/lib/api";
 
 interface DashboardStats {
   documents: number;
@@ -44,10 +44,6 @@ interface ModelConfig {
     model: string;
     dimensions: number;
   };
-  refrag: {
-    enabled: boolean;
-    compressionRatio: string;
-  };
 }
 
 export default function Dashboard() {
@@ -65,7 +61,6 @@ export default function Dashboard() {
   const [modelConfig, setModelConfig] = useState<ModelConfig>({
     llm: { provider: 'Unknown', model: 'Unknown', description: 'Loading...' },
     embedding: { model: 'Unknown', dimensions: 0 },
-    refrag: { enabled: false, compressionRatio: '16:1' },
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -79,14 +74,13 @@ export default function Dashboard() {
       setIsLoading(true);
 
       // Load all data in parallel
-      const [dbStats, healthData, docsData, graphragHealth, v5Metrics, settingsData, refragConfig] = await Promise.allSettled([
+      const [dbStats, healthData, docsData, graphragHealth, v5Metrics, settingsData] = await Promise.allSettled([
         dbApi.stats(),
         dbApi.health(),
         documentsApi.list({ limit: 5 }),
         graphragApi.health(),
         chatApi.v5Metrics(),
         dbApi.getSettings(),
-        refragApi.getConfig(),
       ]);
 
       // Process database stats
@@ -175,18 +169,6 @@ export default function Dashboard() {
           embedding: {
             model: embeddingModel,
             dimensions: embeddingDim,
-          },
-        }));
-      }
-
-      // Process RefRAG config
-      if (refragConfig.status === 'fulfilled') {
-        const config = refragConfig.value;
-        setModelConfig(prev => ({
-          ...prev,
-          refrag: {
-            enabled: config.enabled ?? true,
-            compressionRatio: `${Math.round(1 / (config.compression_rate || 0.0625))}:1`,
           },
         }));
       }
@@ -440,18 +422,6 @@ export default function Dashboard() {
           <p className="text-xs text-muted-foreground">
             {modelConfig.embedding.model} ({modelConfig.embedding.dimensions}-dim) for semantic search
           </p>
-        </Card>
-        <Card className="p-4 bg-purple-500/5 border-purple-500/20">
-          <div className="flex items-center gap-2 mb-2">
-            <Zap className="w-4 h-4 text-purple-500" />
-            <p className="font-medium text-sm">RefRAG Compression</p>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            {modelConfig.refrag.compressionRatio} compression ratio with RL-based policy
-          </p>
-          <Badge variant={modelConfig.refrag.enabled ? "default" : "secondary"} className="mt-2 text-xs">
-            {modelConfig.refrag.enabled ? "Enabled" : "Disabled"}
-          </Badge>
         </Card>
       </div>
     </div>

@@ -63,7 +63,6 @@ import { useToast } from "@/hooks/use-toast";
 
 interface SingleRunResult {
   mode: RetrievalMode;
-  useRefrag: boolean;
   query: string;
   queryIndex: number;
   answer: string;
@@ -83,27 +82,18 @@ interface SingleRunResult {
     entities_used: string[];
   };
   entitiesFound?: string[];
-  compressionStats?: {
-    enabled: boolean;
-    compression_ratio: number;
-    chunks_compressed: number;
-    original_length: number;
-    compressed_length: number;
-  };
 }
 
 interface BenchmarkReport {
   timestamp: string;
   config: {
     modes: RetrievalMode[];
-    compareRefrag: boolean;
     topK: number;
     queries: string[];
   };
   results: SingleRunResult[];
   statistics: {
     byMode: Record<RetrievalMode, ModeStats>;
-    byRefrag: { with: AggregateStats; without: AggregateStats };
     overall: AggregateStats;
   };
 }
@@ -115,8 +105,6 @@ interface ModeStats {
   avgGenerationTime: number;
   avgChunks: number;
   successRate: number;
-  withRefrag?: AggregateStats;
-  withoutRefrag?: AggregateStats;
 }
 
 interface AggregateStats {
@@ -132,11 +120,11 @@ interface AggregateStats {
 // ==================== CONSTANTS ====================
 
 const ALL_MODES: RetrievalMode[] = [
-  "naive", "local", "global", "hybrid", "semantic", "mix", "global_search", "drift",
+  "vector", "local", "global", "hybrid", "semantic", "mix", "global_search", "drift",
 ];
 
 const MODE_COLORS: Record<RetrievalMode, string> = {
-  naive: "bg-blue-500",
+  vector: "bg-blue-500",
   local: "bg-green-500",
   global: "bg-purple-500",
   hybrid: "bg-orange-500",
@@ -147,7 +135,7 @@ const MODE_COLORS: Record<RetrievalMode, string> = {
 };
 
 const MODE_HEX_COLORS: Record<RetrievalMode, string> = {
-  naive: "#3b82f6",
+  vector: "#3b82f6",
   local: "#22c55e",
   global: "#a855f7",
   hybrid: "#f97316",
@@ -158,7 +146,7 @@ const MODE_HEX_COLORS: Record<RetrievalMode, string> = {
 };
 
 const MODE_DESCRIPTIONS: Record<RetrievalMode, string> = {
-  naive: "Vector similarity search",
+  vector: "Vector similarity search",
   local: "Entity-based graph traversal",
   global: "Relationship-focused traversal",
   hybrid: "Fusion of multiple modes",
@@ -215,7 +203,6 @@ export function BenchmarkView() {
   const [activeTab, setActiveTab] = useState<"setup" | "results" | "report">("setup");
   const [queries, setQueries] = useState<string[]>([""]);
   const [selectedModes, setSelectedModes] = useState<RetrievalMode[]>(ALL_MODES);
-  const [compareRefrag, setCompareRefrag] = useState(true);
   const [topK, setTopK] = useState(5);
   const [isRunning, setIsRunning] = useState(false);
   const [results, setResults] = useState<SingleRunResult[]>([]);
@@ -232,9 +219,8 @@ export function BenchmarkView() {
   // Computed values
   const totalRuns = useMemo(() => {
     const validQueries = queries.filter(q => q.trim()).length;
-    const refragMultiplier = compareRefrag ? 2 : 1;
-    return validQueries * selectedModes.length * refragMultiplier;
-  }, [queries, selectedModes, compareRefrag]);
+    return validQueries * selectedModes.length;
+  }, [queries, selectedModes]);
 
   const completedResults = useMemo(() =>
     results.filter(r => r.status === "completed"), [results]);
@@ -244,14 +230,10 @@ export function BenchmarkView() {
     if (completedResults.length === 0) return null;
 
     const byMode: Record<RetrievalMode, ModeStats> = {} as any;
-    const withRefrag: SingleRunResult[] = [];
-    const withoutRefrag: SingleRunResult[] = [];
 
     // Group by mode
     for (const mode of selectedModes) {
       const modeResults = completedResults.filter(r => r.mode === mode);
-      const withR = modeResults.filter(r => r.useRefrag);
-      const withoutR = modeResults.filter(r => !r.useRefrag);
 
       if (modeResults.length > 0) {
         byMode[mode] = {
@@ -260,25 +242,16 @@ export function BenchmarkView() {
           avgRetrievalTime: avg(modeResults.map(r => r.retrievalTimeMs)),
           avgGenerationTime: avg(modeResults.map(r => r.generationTimeMs)),
           avgChunks: avg(modeResults.map(r => r.chunksCount)),
-          successRate: modeResults.length / (queries.filter(q => q.trim()).length * (compareRefrag ? 2 : 1)),
-          withRefrag: withR.length > 0 ? calcAggregateStats(withR) : undefined,
-          withoutRefrag: withoutR.length > 0 ? calcAggregateStats(withoutR) : undefined,
+          successRate: modeResults.length / queries.filter(q => q.trim()).length,
         };
       }
-
-      withRefrag.push(...withR);
-      withoutRefrag.push(...withoutR);
     }
 
     return {
       byMode,
-      byRefrag: {
-        with: calcAggregateStats(withRefrag),
-        without: calcAggregateStats(withoutRefrag),
-      },
       overall: calcAggregateStats(completedResults),
     };
-  }, [completedResults, selectedModes, queries, compareRefrag]);
+  }, [completedResults, selectedModes, queries]);
 
   // Helper functions
   function avg(arr: number[]): number {
@@ -317,16 +290,11 @@ export function BenchmarkView() {
     setActiveTab("results");
 
     // Build run queue
-    const runQueue: { query: string; queryIndex: number; mode: RetrievalMode; useRefrag: boolean }[] = [];
+    const runQueue: { query: string; queryIndex: number; mode: RetrievalMode }[] = [];
 
     for (let qi = 0; qi < validQueries.length; qi++) {
       for (const mode of selectedModes) {
-        if (compareRefrag) {
-          runQueue.push({ query: validQueries[qi], queryIndex: qi, mode, useRefrag: false });
-          runQueue.push({ query: validQueries[qi], queryIndex: qi, mode, useRefrag: true });
-        } else {
-          runQueue.push({ query: validQueries[qi], queryIndex: qi, mode, useRefrag: false });
-        }
+        runQueue.push({ query: validQueries[qi], queryIndex: qi, mode });
       }
     }
 
@@ -347,12 +315,12 @@ export function BenchmarkView() {
     // Run sequentially
     for (let i = 0; i < runQueue.length; i++) {
       const run = runQueue[i];
-      const resultKey = `${run.queryIndex}-${run.mode}-${run.useRefrag}`;
+      const resultKey = `${run.queryIndex}-${run.mode}`;
 
       setProgress({
         current: i + 1,
         total: runQueue.length,
-        label: `${run.mode} ${run.useRefrag ? '+RefRAG' : ''} Q${run.queryIndex + 1}`,
+        label: `${run.mode} Q${run.queryIndex + 1}`,
       });
 
       // Update status to running
@@ -365,7 +333,6 @@ export function BenchmarkView() {
           message: run.query,
           retrieval_mode: run.mode,
           top_k: topK,
-          use_refrag: run.useRefrag,
         });
 
         setResults(prev => prev.map((r, idx) =>
@@ -400,7 +367,6 @@ export function BenchmarkView() {
       timestamp: new Date().toISOString(),
       config: {
         modes: selectedModes,
-        compareRefrag,
         topK,
         queries: queries.filter(q => q.trim()),
       },
@@ -425,7 +391,6 @@ export function BenchmarkView() {
       timestamp: new Date().toISOString(),
       config: {
         modes: selectedModes,
-        compareRefrag,
         topK,
         queries: queries.filter(q => q.trim()),
       },
@@ -456,7 +421,7 @@ export function BenchmarkView() {
           <div>
             <h1 className="text-3xl font-bold mb-2">Advanced Benchmark</h1>
             <p className="text-muted-foreground">
-              Multi-query, multi-mode comparison with RefRAG analysis
+              Multi-query, multi-mode comparison across retrieval strategies
             </p>
           </div>
           <BarChart3 className="w-8 h-8 text-muted-foreground" />
@@ -592,43 +557,27 @@ export function BenchmarkView() {
                 Options
               </h3>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* RefRAG Comparison */}
-                <div className="flex items-center justify-between p-4 bg-secondary/30 rounded-lg">
-                  <div>
-                    <div className="font-medium flex items-center gap-2">
-                      <Minimize2 className="w-4 h-4" />
-                      Compare RefRAG
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                      Run each mode with and without context compression
-                    </p>
+              {/* Top-K */}
+              <div className="flex items-center justify-between p-4 bg-secondary/30 rounded-lg">
+                <div>
+                  <div className="font-medium flex items-center gap-2">
+                    <Layers className="w-4 h-4" />
+                    Top-K Chunks
                   </div>
-                  <Switch checked={compareRefrag} onCheckedChange={setCompareRefrag} />
+                  <p className="text-sm text-muted-foreground">
+                    Number of chunks to retrieve per query
+                  </p>
                 </div>
-
-                {/* Top-K */}
-                <div className="flex items-center justify-between p-4 bg-secondary/30 rounded-lg">
-                  <div>
-                    <div className="font-medium flex items-center gap-2">
-                      <Layers className="w-4 h-4" />
-                      Top-K Chunks
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                      Number of chunks to retrieve per query
-                    </p>
-                  </div>
-                  <Select value={topK.toString()} onValueChange={(v) => setTopK(parseInt(v))}>
-                    <SelectTrigger className="w-24">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {[3, 5, 10, 15, 20].map((k) => (
-                        <SelectItem key={k} value={k.toString()}>K = {k}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                <Select value={topK.toString()} onValueChange={(v) => setTopK(parseInt(v))}>
+                  <SelectTrigger className="w-24">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {[3, 5, 10, 15, 20].map((k) => (
+                      <SelectItem key={k} value={k.toString()}>K = {k}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               {/* Summary */}
@@ -637,7 +586,7 @@ export function BenchmarkView() {
                   <div>
                     <div className="font-medium">Total Runs</div>
                     <p className="text-sm text-muted-foreground">
-                      {queries.filter(q => q.trim()).length} queries × {selectedModes.length} modes × {compareRefrag ? '2 (with/without RefRAG)' : '1'}
+                      {queries.filter(q => q.trim()).length} queries × {selectedModes.length} modes
                     </p>
                   </div>
                   <div className="text-3xl font-bold text-primary">{totalRuns}</div>
@@ -736,13 +685,6 @@ export function BenchmarkView() {
                         {result.mode}
                       </Badge>
 
-                      {/* RefRAG Badge */}
-                      {compareRefrag && (
-                        <Badge variant={result.useRefrag ? "default" : "outline"} className="min-w-16 justify-center">
-                          {result.useRefrag ? "+RefRAG" : "Normal"}
-                        </Badge>
-                      )}
-
                       {/* Query */}
                       <span className="flex-1 text-sm truncate text-muted-foreground">
                         Q{result.queryIndex + 1}: {result.query.substring(0, 40)}...
@@ -838,55 +780,6 @@ export function BenchmarkView() {
                   </div>
                 </Card>
 
-                {/* RefRAG Comparison */}
-                {compareRefrag && (
-                  <Card className="p-6">
-                    <h3 className="font-semibold mb-4 flex items-center gap-2">
-                      <Minimize2 className="w-4 h-4" />
-                      RefRAG Impact
-                    </h3>
-
-                    <div className="grid grid-cols-2 gap-6">
-                      <div className="p-4 bg-secondary/30 rounded-lg">
-                        <div className="text-sm text-muted-foreground mb-2">Without RefRAG</div>
-                        <div className="text-2xl font-bold">
-                          {(statistics.byRefrag.without.avgTotalTime / 1000).toFixed(2)}s
-                        </div>
-                        <div className="text-sm text-muted-foreground">
-                          {statistics.byRefrag.without.avgChunks.toFixed(1)} chunks avg
-                        </div>
-                      </div>
-                      <div className="p-4 bg-green-500/10 rounded-lg border border-green-500/30">
-                        <div className="text-sm text-green-600 mb-2">With RefRAG</div>
-                        <div className="text-2xl font-bold text-green-600">
-                          {(statistics.byRefrag.with.avgTotalTime / 1000).toFixed(2)}s
-                        </div>
-                        <div className="text-sm text-muted-foreground">
-                          {statistics.byRefrag.with.avgChunks.toFixed(1)} chunks avg
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Speedup calculation */}
-                    {statistics.byRefrag.without.avgTotalTime > 0 && (
-                      <div className="mt-4 p-4 bg-primary/5 rounded-lg text-center">
-                        <div className="text-sm text-muted-foreground">Generation Time Difference</div>
-                        <div className="text-3xl font-bold text-primary">
-                          {statistics.byRefrag.with.avgGenerationTime < statistics.byRefrag.without.avgGenerationTime ? (
-                            <>
-                              {((1 - statistics.byRefrag.with.avgGenerationTime / statistics.byRefrag.without.avgGenerationTime) * 100).toFixed(0)}% faster
-                            </>
-                          ) : (
-                            <>
-                              {((statistics.byRefrag.with.avgGenerationTime / statistics.byRefrag.without.avgGenerationTime - 1) * 100).toFixed(0)}% slower
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </Card>
-                )}
-
                 {/* Detailed Stats Table */}
                 <Card className="p-6">
                   <h3 className="font-semibold mb-4 flex items-center gap-2">
@@ -903,12 +796,6 @@ export function BenchmarkView() {
                           <th className="text-right p-2">Avg Retrieval</th>
                           <th className="text-right p-2">Avg Generation</th>
                           <th className="text-right p-2">Avg Chunks</th>
-                          {compareRefrag && (
-                            <>
-                              <th className="text-right p-2">RefRAG Time</th>
-                              <th className="text-right p-2">Normal Time</th>
-                            </>
-                          )}
                         </tr>
                       </thead>
                       <tbody>
@@ -935,16 +822,6 @@ export function BenchmarkView() {
                               <td className="text-right p-2 font-mono">
                                 {stats.avgChunks.toFixed(1)}
                               </td>
-                              {compareRefrag && (
-                                <>
-                                  <td className="text-right p-2 font-mono text-green-600">
-                                    {stats.withRefrag ? (stats.withRefrag.avgTotalTime / 1000).toFixed(2) + 's' : '-'}
-                                  </td>
-                                  <td className="text-right p-2 font-mono">
-                                    {stats.withoutRefrag ? (stats.withoutRefrag.avgTotalTime / 1000).toFixed(2) + 's' : '-'}
-                                  </td>
-                                </>
-                              )}
                             </tr>
                           );
                         })}
@@ -996,9 +873,6 @@ export function BenchmarkView() {
                     <Badge className={`${MODE_COLORS[chunksModal.result.mode]} text-white`}>
                       {chunksModal.result.mode}
                     </Badge>
-                    {chunksModal.result.useRefrag && (
-                      <Badge variant="secondary">+RefRAG</Badge>
-                    )}
                     <span className="text-sm font-normal text-muted-foreground">
                       Q{chunksModal.result.queryIndex + 1}
                     </span>

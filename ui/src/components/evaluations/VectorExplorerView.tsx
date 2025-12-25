@@ -29,10 +29,10 @@ export function VectorExplorerView() {
 
     try {
       if (query.trim()) {
-        // Semantic Search using Chat API with Naive mode
+        // Semantic Search using Chat API with Vector mode
         const response = await chatApi.retrieve({
           message: query,
-          retrieval_mode: 'naive',
+          retrieval_mode: 'vector',
           top_k: 20
         });
         

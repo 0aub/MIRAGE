@@ -49,14 +49,14 @@ interface Message {
 
 // Mode descriptions
 const MODE_INFO: Record<RetrievalMode, { label: string; description: string; color: string }> = {
-  naive: { label: "Vector", description: "Vector similarity search with keyword fallback", color: "bg-blue-500" },
-  local: { label: "Local", description: "Entity-focused graph traversal (1-2 hops)", color: "bg-green-500" },
-  global: { label: "Global", description: "Relationship-focused graph traversal", color: "bg-purple-500" },
-  hybrid: { label: "Hybrid", description: "Fusion of naive + local + global modes", color: "bg-orange-500" },
+  vector: { label: "Vector", description: "Vector similarity search with keyword fallback", color: "bg-blue-500" },
+  local: { label: "Local", description: "Entity-focused graph traversal with semantic entity matching", color: "bg-green-500" },
+  global: { label: "Global", description: "Map-reduce over community summaries (GraphRAG)", color: "bg-purple-500" },
+  hybrid: { label: "Hybrid", description: "Fusion of vector + local + global modes", color: "bg-orange-500" },
   semantic: { label: "Semantic", description: "Cross-encoder re-ranking for precision", color: "bg-pink-500" },
   mix: { label: "Mix", description: "All modes combined with RRF fusion", color: "bg-red-500" },
-  global_search: { label: "Global Search", description: "Map-reduce over community summaries", color: "bg-teal-500" },
-  drift: { label: "Drift", description: "Dynamic global-to-local with claims", color: "bg-cyan-500" },
+  global_search: { label: "Global Search", description: "Community-based thematic search", color: "bg-teal-500" },
+  drift: { label: "DRIFT", description: "Dynamic reasoning with iterative follow-up questions", color: "bg-cyan-500" },
 };
 
 // Config option explanations
@@ -72,10 +72,6 @@ const CONFIG_EXPLANATIONS = {
   community: {
     title: "Community Selection",
     description: "First identifies relevant community clusters in the graph, then retrieves chunks from those communities. Useful for focused retrieval when you know which topic areas are relevant."
-  },
-  refrag: {
-    title: "RefRAG (Context Compression)",
-    description: "Compresses the retrieved context before sending to the LLM. Reduces tokens and speeds up generation while preserving key information. Shows compression ratio when enabled."
   }
 };
 
@@ -107,7 +103,6 @@ export default function ChatPage() {
   const [useHyde, setUseHyde] = useState(false);
   const [usePpr, setUsePpr] = useState(false);
   const [useCommunitySelection, setUseCommunitySelection] = useState(false);
-  const [useRefrag, setUseRefrag] = useState(false);
 
   // UI State
   const [showPanel, setShowPanel] = useState(true);
@@ -211,7 +206,6 @@ export default function ChatPage() {
         use_hyde: useHyde,
         use_ppr: usePpr,
         use_community_selection: useCommunitySelection,
-        use_refrag: useRefrag,
       });
 
       // Store chunks for detailed view
@@ -398,9 +392,9 @@ export default function ChatPage() {
           <div className="flex items-center gap-4">
             <h1 className="text-xl font-bold">Chat</h1>
             <div className="flex gap-2">
-                <Badge variant={retrievalMode === 'naive' ? 'default' : 'outline'}
+                <Badge variant={retrievalMode === 'vector' ? 'default' : 'outline'}
                        className="cursor-pointer hover:bg-primary/90"
-                       onClick={() => handleModeSelect('naive')}>
+                       onClick={() => handleModeSelect('vector')}>
                     Vector
                 </Badge>
                 <Badge variant={retrievalMode === 'local' ? 'default' : 'outline'} 
@@ -505,29 +499,6 @@ export default function ChatPage() {
                                 </Label>
                             </div>
                             <Switch checked={useCommunitySelection} onCheckedChange={setUseCommunitySelection} />
-                        </div>
-
-                         {/* RefRAG Toggle */}
-                         <div className="flex items-center justify-between">
-                            <div className="space-y-0.5">
-                                <Label className="text-base flex items-center gap-2">
-                                    RefRAG Optimization
-                                    <TooltipProvider>
-                                    <Tooltip>
-                                        <TooltipTrigger>
-                                            <Info className="w-4 h-4 text-muted-foreground cursor-help" />
-                                        </TooltipTrigger>
-                                        <TooltipContent className="max-w-[300px]">
-                                            <p><strong>Context Compression</strong></p>
-                                            <p className="text-xs text-muted-foreground mt-1">
-                                                Re-ranks and compresses retrieved chunks to optimize context window usage and reduce latency.
-                                            </p>
-                                        </TooltipContent>
-                                    </Tooltip>
-                                    </TooltipProvider>
-                                </Label>
-                            </div>
-                            <Switch checked={useRefrag} onCheckedChange={setUseRefrag} />
                         </div>
 
                         {/* Top K */}
@@ -654,7 +625,7 @@ export default function ChatPage() {
                     {message.role === "assistant" && message.chunks && message.chunks.length > 0 && (
                       <div className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
                         <Badge variant="outline" className="h-5 text-xs py-0">
-                          {message.retrievalMode === 'naive' ? 'Vector' : message.retrievalMode}
+                          {message.retrievalMode}
                         </Badge>
                         <span>{formatTime(message.responseTime)}</span>
                         {message.compressionStats && (
@@ -969,7 +940,7 @@ export default function ChatPage() {
                           {lastResponseMeta?.compressionStats?.enabled && (
                             <div className="bg-green-500/10 rounded-lg p-2.5">
                               <div className="text-xs font-medium mb-2 text-green-700 dark:text-green-400">
-                                RefRAG Compression
+                                Context Compression
                               </div>
                               <div className="text-xs space-y-1">
                                 <div className="flex justify-between">

@@ -47,7 +47,7 @@ import {
 } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 
-const ALL_MODES = ["naive", "local", "global", "hybrid", "mix"];
+const ALL_MODES = ["vector", "local", "global", "hybrid", "mix"];
 
 const DIFFICULTY_COLORS: Record<string, string> = {
   easy: "bg-green-500/20 text-green-700 dark:text-green-400",
@@ -80,7 +80,6 @@ export function RagasView() {
   const [testCases, setTestCases] = useState<RagasTestCase[]>([]);
   const [selectedTestCases, setSelectedTestCases] = useState<string[]>([]);
   const [selectedModes, setSelectedModes] = useState<string[]>(ALL_MODES);
-  const [compareRefrag, setCompareRefrag] = useState(true);
   const [topK, setTopK] = useState(5);
   const [isRunning, setIsRunning] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -132,7 +131,6 @@ export function RagasView() {
       const response = await ragasApi.runEvaluation({
         test_case_ids: selectedTestCases.length > 0 ? selectedTestCases : undefined,
         modes: selectedModes,
-        compare_refrag: compareRefrag,
         top_k: topK,
       });
 
@@ -197,20 +195,7 @@ export function RagasView() {
           </div>
 
           {/* Options Row */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* REFRAG Toggle */}
-            <div className="flex items-center space-x-3">
-              <Switch
-                id="compare-refrag"
-                checked={compareRefrag}
-                onCheckedChange={setCompareRefrag}
-                disabled={isRunning}
-              />
-              <Label htmlFor="compare-refrag" className="cursor-pointer">
-                Compare with REFRAG
-              </Label>
-            </div>
-
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Top-K Slider */}
             <div className="space-y-2">
               <Label className="text-sm">Top-K: {topK}</Label>
@@ -367,73 +352,6 @@ export function RagasView() {
             </div>
           </Card>
 
-          {/* REFRAG Impact Analysis */}
-          {results.refrag_impact && (
-            <Card className="p-6 bg-gradient-to-r from-purple-500/5 to-blue-500/5">
-              <h3 className="font-semibold mb-4 flex items-center gap-2">
-                <Sparkles className="w-4 h-4" />
-                REFRAG Compression Impact Analysis
-              </h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                <div className="text-center p-3 bg-background rounded-lg">
-                  <div className="flex items-center justify-center gap-1 text-green-600">
-                    <TrendingUp className="w-4 h-4" />
-                    <span className="text-2xl font-bold">{results.refrag_impact.modes_improved}</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1">Quality Improved</p>
-                </div>
-                <div className="text-center p-3 bg-background rounded-lg">
-                  <div className="flex items-center justify-center gap-1 text-red-600">
-                    <TrendingDown className="w-4 h-4" />
-                    <span className="text-2xl font-bold">{results.refrag_impact.modes_hurt}</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1">Quality Hurt</p>
-                </div>
-                <div className="text-center p-3 bg-background rounded-lg">
-                  <div className="flex items-center justify-center gap-1 text-gray-500">
-                    <Minus className="w-4 h-4" />
-                    <span className="text-2xl font-bold">{results.refrag_impact.modes_unchanged}</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1">No Change</p>
-                </div>
-                <div className="text-center p-3 bg-background rounded-lg">
-                  <div className={`text-2xl font-bold ${results.refrag_impact.avg_ground_truth_delta >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                    {results.refrag_impact.avg_ground_truth_delta >= 0 ? '+' : ''}{(results.refrag_impact.avg_ground_truth_delta * 100).toFixed(1)}%
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1">Avg Quality Delta</p>
-                </div>
-                <div className="text-center p-3 bg-background rounded-lg">
-                  <div className="flex items-center justify-center gap-1 text-blue-600">
-                    <Zap className="w-4 h-4" />
-                    <span className="text-2xl font-bold">{results.refrag_impact.avg_speed_improvement.toFixed(2)}x</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1">Speed Improvement</p>
-                </div>
-                <div className="text-center p-3 bg-background rounded-lg">
-                  <div className="flex items-center justify-center gap-1 text-purple-600">
-                    <Percent className="w-4 h-4" />
-                    <span className="text-2xl font-bold">{results.refrag_impact.avg_token_savings.toFixed(1)}%</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1">Token Savings</p>
-                </div>
-              </div>
-
-              {/* Insight */}
-              <div className="mt-4 p-3 bg-blue-500/10 rounded-lg text-sm">
-                <span className="font-medium text-blue-700 dark:text-blue-400">Insight: </span>
-                {results.refrag_impact.avg_ground_truth_delta >= 0 ? (
-                  <span className="text-muted-foreground">
-                    REFRAG compression maintains or improves answer quality while providing {results.refrag_impact.avg_speed_improvement.toFixed(1)}x speedup and {results.refrag_impact.avg_token_savings.toFixed(0)}% token savings.
-                  </span>
-                ) : (
-                  <span className="text-muted-foreground">
-                    REFRAG compression reduces answer quality by {Math.abs(results.refrag_impact.avg_ground_truth_delta * 100).toFixed(1)}%. Consider using lower compression for these query types.
-                  </span>
-                )}
-              </div>
-            </Card>
-          )}
-
           {/* Detailed Test Results */}
           <Card className="p-6">
             <h3 className="font-semibold mb-4 flex items-center gap-2">
@@ -524,10 +442,6 @@ export function RagasView() {
               <CheckCircle2 className="w-4 h-4 text-green-500" />
               <span>Semantic Similarity</span>
             </div>
-            <div className="flex items-center gap-2 bg-purple-500/10 rounded-lg px-3 py-2">
-              <Sparkles className="w-4 h-4 text-purple-500" />
-              <span>REFRAG Impact Analysis</span>
-            </div>
           </div>
         </Card>
       )}
@@ -599,61 +513,6 @@ function ModeResultCard({
         <p className="line-clamp-3">{result.answer}</p>
       </div>
 
-      {/* REFRAG Comparison */}
-      {result.refrag_scores && (
-        <div className="mt-3 p-3 bg-purple-500/10 rounded-lg">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-purple-700 dark:text-purple-400">
-              <Sparkles className="w-3 h-3 inline mr-1" />
-              With REFRAG
-            </span>
-            <div className="flex items-center gap-3 text-sm">
-              {result.ground_truth_delta !== undefined && (
-                <span className={result.ground_truth_delta >= 0 ? 'text-green-600' : 'text-red-600'}>
-                  {result.ground_truth_delta >= 0 ? '+' : ''}{(result.ground_truth_delta * 100).toFixed(1)}% quality
-                </span>
-              )}
-              {result.speed_improvement && (
-                <span className="text-blue-600">
-                  <Zap className="w-3 h-3 inline" /> {result.speed_improvement.toFixed(1)}x faster
-                </span>
-              )}
-              {result.token_savings !== undefined && (
-                <span className="text-purple-600">
-                  {result.token_savings.toFixed(0)}% tokens saved
-                </span>
-              )}
-            </div>
-          </div>
-          <div className="grid grid-cols-5 gap-2 text-xs">
-            <div className="text-center">
-              <span className={getScoreColor(result.refrag_scores.ground_truth_similarity)}>
-                {(result.refrag_scores.ground_truth_similarity * 100).toFixed(0)}%
-              </span>
-            </div>
-            <div className="text-center">
-              <span className={getScoreColor(result.refrag_scores.answer_keywords)}>
-                {(result.refrag_scores.answer_keywords * 100).toFixed(0)}%
-              </span>
-            </div>
-            <div className="text-center">
-              <span className={getScoreColor(result.refrag_scores.chunk_content)}>
-                {(result.refrag_scores.chunk_content * 100).toFixed(0)}%
-              </span>
-            </div>
-            <div className="text-center">
-              <span className={getScoreColor(result.refrag_scores.entity_match)}>
-                {(result.refrag_scores.entity_match * 100).toFixed(0)}%
-              </span>
-            </div>
-            <div className="text-center">
-              <span className={getScoreColor(result.refrag_scores.weighted_score)}>
-                {(result.refrag_scores.weighted_score * 100).toFixed(0)}%
-              </span>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

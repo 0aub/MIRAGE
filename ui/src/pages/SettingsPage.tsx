@@ -294,7 +294,7 @@ export default function SettingsPage() {
       const name = sectionName.toLowerCase();
       if (name.includes('extraction')) return <Box className="w-4 h-4 text-blue-500" />;
       if (name.includes('rewriting')) return <FileText className="w-4 h-4 text-green-500" />;
-      if (name.includes('compression') || name.includes('refrag')) return <Layers className="w-4 h-4 text-purple-500" />;
+      if (name.includes('compression')) return <Layers className="w-4 h-4 text-purple-500" />;
       return <Box className="w-4 h-4 text-orange-500" />;
     };
 
