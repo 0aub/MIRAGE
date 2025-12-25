@@ -25,6 +25,8 @@ from typing import Optional, List, Tuple
 from dataclasses import dataclass
 from loguru import logger
 
+from ..config.constants import TGI_ENDPOINT_DEFAULT
+
 
 @dataclass
 class EnhancedQuery:
@@ -59,7 +61,7 @@ class HyDEQueryEnhancer:
     def __init__(
         self,
         embedder,
-        llm_endpoint: str = "http://tgi:80",
+        llm_endpoint: str = TGI_ENDPOINT_DEFAULT,
         alpha: float = 0.5,
         max_tokens: int = 200,
         temperature: float = 0.7,

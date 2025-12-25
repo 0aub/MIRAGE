@@ -25,7 +25,7 @@ Usage:
     response = engine.retrieve("What is MIRAGE?")
 
 Retrieval Modes (V2):
-    - NAIVE: Simple vector search
+    - VECTOR: Simple vector search
     - LOCAL: Entity-focused (entity → chunks)
     - GLOBAL: Relationship-focused (relationship → entity → chunks)
     - GLOBAL_SEARCH: Map-reduce over community summaries (GraphRAG)

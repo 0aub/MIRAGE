@@ -13,15 +13,18 @@ import numpy as np
 
 class RetrievalMode(Enum):
     """Available retrieval modes"""
-    NAIVE = "naive"          # Basic vector search only
-    LOCAL = "local"          # Entity-focused (entity → chunks)
+    VECTOR = "vector"        # Vector similarity search (baseline RAG)
+    LOCAL = "local"          # Entity-focused (entity → chunks) - GraphRAG local search
     GLOBAL = "global"        # Relationship-focused (relationships → entities → chunks)
     GLOBAL_SEARCH = "global_search"  # Map-reduce over community summaries (GraphRAG)
     HYBRID = "hybrid"        # Combines local + global
     MIX = "mix"             # All modes combined with RRF
-    SEMANTIC = "semantic"    # Deep semantic matching
-    DRIFT = "drift"          # GraphRAG drift search (dynamic global→local)
+    SEMANTIC = "semantic"    # Deep semantic matching with cross-encoder
+    DRIFT = "drift"          # GraphRAG DRIFT search (dynamic global+local with follow-ups)
     BYPASS = "bypass"        # No retrieval (for testing generation)
+
+    # Backward compatibility alias
+    NAIVE = "vector"         # DEPRECATED: Use VECTOR instead
 
 
 @dataclass

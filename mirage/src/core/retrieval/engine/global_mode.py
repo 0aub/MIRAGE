@@ -23,10 +23,10 @@ class GlobalModeMixin:
     ) -> RetrievalResponse:
         """Relationship-focused retrieval: query → relationships → entities → chunks (via Neo4j)"""
         if query_embedding is None or self.index_manager is None:
-            return self._naive_retrieve(query, query_embedding, top_k, **kwargs)
+            return self._vector_retrieve(query, query_embedding, top_k, **kwargs)
 
-        # 1. Get naive results as base
-        naive_response = self._naive_retrieve(query, query_embedding, top_k * 2, **kwargs)
+        # 1. Get vector search results as base
+        vector_response = self._vector_retrieve(query, query_embedding, top_k * 2, **kwargs)
 
         # 2. Try to find relationships in Neo4j related to the query
         relationship_chunks = []
@@ -88,7 +88,7 @@ class GlobalModeMixin:
                     hop_distance=2
                 ))
 
-        for r in naive_response.results:
+        for r in vector_response.results:
             if r.chunk_id not in seen_chunks and len(results) < top_k:
                 seen_chunks.add(r.chunk_id)
                 r.retrieval_mode = "global"
@@ -98,7 +98,7 @@ class GlobalModeMixin:
             results=results[:top_k],
             query=query,
             mode=RetrievalMode.GLOBAL,
-            total_candidates=len(relationship_chunks) + len(naive_response.results),
+            total_candidates=len(relationship_chunks) + len(vector_response.results),
             metadata={"relationships_found": len(relationship_chunks)}
         )
 
@@ -120,7 +120,7 @@ class GlobalModeMixin:
 
             global_engine = GlobalSearchEngine(
                 neo4j_client=self.graph_client,
-                llm_endpoint="http://tgi:80",
+                # llm_endpoint uses TGI_ENDPOINT_DEFAULT from constants
                 max_communities=kwargs.get('max_communities', 30),
                 min_relevance=kwargs.get('min_relevance', 0.3),
                 community_level=kwargs.get('community_level', 0)

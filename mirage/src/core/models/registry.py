@@ -12,7 +12,6 @@ Features:
 
 import os
 import json
-import hashlib
 from pathlib import Path
 from typing import Dict, Any, Optional, List, Tuple
 from dataclasses import dataclass, field, asdict
@@ -20,7 +19,7 @@ from datetime import datetime
 from loguru import logger
 
 # Required imports - no fallback (enforced in Docker)
-from huggingface_hub import snapshot_download, hf_hub_download, HfApi
+from huggingface_hub import snapshot_download
 import torch
 
 

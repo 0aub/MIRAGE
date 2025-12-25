@@ -21,19 +21,19 @@ class HybridModeMixin:
         top_k: int,
         **kwargs
     ) -> RetrievalResponse:
-        """Combines naive + local + global with RRF"""
-        naive_response = self._naive_retrieve(query, query_embedding, top_k, **kwargs)
+        """Combines vector + local + global with RRF"""
+        vector_response = self._vector_retrieve(query, query_embedding, top_k, **kwargs)
         local_response = self._local_retrieve(query, query_embedding, top_k, **kwargs)
         global_response = self._global_retrieve(query, query_embedding, top_k, **kwargs)
 
         weights = [
-            self.config.mode_weights.get("naive", 0.6),
+            self.config.mode_weights.get("vector", 0.6),
             self.config.mode_weights.get("local", 0.8),
             self.config.mode_weights.get("global", 0.9)
         ]
 
         fused = self.fusion.fuse_responses(
-            [naive_response, local_response, global_response],
+            [vector_response, local_response, global_response],
             method=self.config.fusion_method,
             weights=weights
         )
@@ -55,11 +55,11 @@ class HybridModeMixin:
         Deep semantic matching with cross-encoder re-ranking.
 
         Strategy:
-        1. Retrieve top_k * 3 candidates via naive vector search
+        1. Retrieve top_k * 3 candidates via vector search
         2. Re-rank using cross-encoder for improved precision
         3. Return top_k highest scoring results
         """
-        naive_response = self._naive_retrieve(
+        vector_response = self._vector_retrieve(
             query, query_embedding, top_k * 3, **kwargs
         )
 
@@ -76,7 +76,7 @@ class HybridModeMixin:
                     "score": r.score,
                     "metadata": r.metadata
                 }
-                for r in naive_response.results
+                for r in vector_response.results
             ]
 
             reranked = reranker.rerank(query, candidates, top_k=top_k)
@@ -104,7 +104,7 @@ class HybridModeMixin:
                 results=results,
                 query=query,
                 mode=RetrievalMode.SEMANTIC,
-                total_candidates=len(naive_response.results),
+                total_candidates=len(vector_response.results),
                 metadata={
                     "reranked": True,
                     "reranker_model": reranker.model_id
@@ -112,11 +112,11 @@ class HybridModeMixin:
             )
 
         except Exception as e:
-            logger.warning(f"Reranking failed, falling back to naive: {e}")
-            naive_response.mode = RetrievalMode.SEMANTIC
-            naive_response.results = naive_response.results[:top_k]
-            naive_response.metadata = {"reranked": False, "fallback_reason": str(e)}
-            return naive_response
+            logger.warning(f"Reranking failed, falling back to vector: {e}")
+            vector_response.mode = RetrievalMode.SEMANTIC
+            vector_response.results = vector_response.results[:top_k]
+            vector_response.metadata = {"reranked": False, "fallback_reason": str(e)}
+            return vector_response
 
     def _retrieve_mix(
         self,
@@ -130,7 +130,7 @@ class HybridModeMixin:
         Strategy:
         1. Run HYBRID (combines local+global, most robust)
         2. Add high-quality LOCAL chunks for entity coverage
-        3. Skip standalone NAIVE/GLOBAL to avoid their failures
+        3. Skip standalone VECTOR/GLOBAL to avoid their failures
         """
         query_embedding = None
         if self.embedder:
@@ -165,12 +165,12 @@ class HybridModeMixin:
         except Exception as e:
             logger.warning(f"LOCAL mode failed in mix: {e}")
 
-        # Fallback to NAIVE
+        # Fallback to VECTOR
         if not results:
             try:
-                naive_response = self._naive_retrieve(query, query_embedding, top_k, **kwargs)
-                naive_response.mode = RetrievalMode.MIX
-                return naive_response
+                vector_response = self._vector_retrieve(query, query_embedding, top_k, **kwargs)
+                vector_response.mode = RetrievalMode.MIX
+                return vector_response
             except Exception as e:
                 return RetrievalResponse(
                     results=[],

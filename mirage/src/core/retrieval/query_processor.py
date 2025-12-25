@@ -18,6 +18,8 @@ from dataclasses import dataclass, field
 from enum import Enum
 from loguru import logger
 
+from ..utils.arabic import normalize_arabic as _normalize_arabic_text
+
 
 class QueryIntent(Enum):
     """Types of query intent."""
@@ -79,15 +81,7 @@ class QueryProcessor:
         print(processed.sub_queries)  # []
     """
 
-    # Arabic diacritics (tashkeel) to remove
-    ARABIC_DIACRITICS = re.compile(r'[\u064B-\u065F\u0670]')
-
-    # Arabic letter normalizations
-    ARABIC_NORMALIZATIONS = {
-        'أ': 'ا', 'إ': 'ا', 'آ': 'ا',  # Alef variants
-        'ة': 'ه',  # Taa marbuta
-        'ى': 'ي',  # Alef maksura
-    }
+    # NOTE: Arabic normalization now uses shared utils.arabic module
 
     # Intent detection patterns (Arabic)
     INTENT_PATTERNS = {
@@ -229,12 +223,8 @@ class QueryProcessor:
         # Remove extra whitespace
         query = ' '.join(query.split())
 
-        # Remove Arabic diacritics
-        query = self.ARABIC_DIACRITICS.sub('', query)
-
-        # Normalize Arabic letters
-        for old, new in self.ARABIC_NORMALIZATIONS.items():
-            query = query.replace(old, new)
+        # Normalize Arabic text (diacritics, letter variants)
+        query = _normalize_arabic_text(query)
 
         # Remove punctuation at edges
         query = query.strip('?!.,،؟')

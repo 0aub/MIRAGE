@@ -460,6 +460,259 @@ class SearchOperationsMixin:
             logger.error(f"Error searching entities semantically: {e}")
             return []
 
+    def search_entities_by_embedding(
+        self,
+        query_embedding: "np.ndarray",
+        entity_types: Optional[List[str]] = None,
+        limit: int = 20,
+        threshold: float = 0.3
+    ) -> List[Dict[str, Any]]:
+        """
+        GraphRAG Local Search: Search entities using embedding similarity.
+
+        Per Microsoft GraphRAG spec, this finds semantically similar entities
+        by computing cosine similarity between query embedding and entity
+        description embeddings stored in Neo4j.
+
+        Args:
+            query_embedding: Query vector (numpy array)
+            entity_types: Optional filter for entity types
+            limit: Maximum results
+            threshold: Minimum similarity threshold
+
+        Returns:
+            List of entities with similarity scores, sorted by relevance
+        """
+        import numpy as np
+
+        if not self._connected:
+            self.connect()
+
+        if query_embedding is None or len(query_embedding) == 0:
+            return []
+
+        try:
+            with self.driver.session() as session:
+                # Fetch entities with embeddings
+                if entity_types:
+                    cypher_query = """
+                    MATCH (e:Entity)
+                    WHERE e.embedding IS NOT NULL AND size(e.embedding) > 0
+                    AND e.type IN $entity_types
+                    RETURN e.name as name, e.type as type, e.description as description,
+                           e.embedding as embedding, e.confidence as confidence
+                    """
+                    params = {"entity_types": entity_types}
+                else:
+                    cypher_query = """
+                    MATCH (e:Entity)
+                    WHERE e.embedding IS NOT NULL AND size(e.embedding) > 0
+                    RETURN e.name as name, e.type as type, e.description as description,
+                           e.embedding as embedding, e.confidence as confidence
+                    """
+                    params = {}
+
+                result = session.run(cypher_query, params)
+
+                # Compute cosine similarity in application
+                query_vec = np.array(query_embedding)
+                query_norm = np.linalg.norm(query_vec)
+
+                if query_norm == 0:
+                    return []
+
+                entities_with_scores = []
+                for record in result:
+                    entity_embedding = record["embedding"]
+                    if not entity_embedding:
+                        continue
+
+                    entity_vec = np.array(entity_embedding)
+                    entity_norm = np.linalg.norm(entity_vec)
+
+                    if entity_norm == 0:
+                        continue
+
+                    # Cosine similarity
+                    similarity = float(np.dot(query_vec, entity_vec) / (query_norm * entity_norm))
+
+                    if similarity >= threshold:
+                        entities_with_scores.append({
+                            "name": record["name"],
+                            "type": record["type"],
+                            "description": record["description"] or "",
+                            "confidence": record["confidence"] or 0.5,
+                            "similarity": similarity
+                        })
+
+                # Sort by similarity descending
+                entities_with_scores.sort(key=lambda x: x["similarity"], reverse=True)
+                return entities_with_scores[:limit]
+
+        except Exception as e:
+            logger.error(f"Error searching entities by embedding: {e}")
+            return []
+
+    def get_entity_with_context(
+        self,
+        entity_name: str
+    ) -> Dict[str, Any]:
+        """
+        GraphRAG Local Search: Get entity with full context including
+        description, relationships, and community membership.
+
+        Per Microsoft GraphRAG spec, this builds comprehensive entity context.
+
+        Args:
+            entity_name: Entity name to look up
+
+        Returns:
+            Dict with entity info, relationships, and community context
+        """
+        if not self._connected:
+            self.connect()
+
+        try:
+            with self.driver.session() as session:
+                # Get entity with relationships and community
+                query = """
+                MATCH (e:Entity {name: $name})
+                OPTIONAL MATCH (e)-[r]->(target:Entity)
+                OPTIONAL MATCH (e)<-[r2]-(source:Entity)
+                OPTIONAL MATCH (e)-[:IN_COMMUNITY]->(c:Community)
+                WITH e,
+                     collect(DISTINCT {
+                         type: type(r),
+                         target: target.name,
+                         target_type: target.type,
+                         description: r.description
+                     }) as outgoing,
+                     collect(DISTINCT {
+                         type: type(r2),
+                         source: source.name,
+                         source_type: source.type,
+                         description: r2.description
+                     }) as incoming,
+                     collect(DISTINCT {
+                         id: c.id,
+                         title: c.title,
+                         summary: c.summary,
+                         level: c.level
+                     }) as communities
+                RETURN e.name as name, e.type as type, e.description as description,
+                       e.confidence as confidence, outgoing, incoming, communities
+                """
+
+                result = session.run(query, {"name": entity_name})
+                record = result.single()
+
+                if not record:
+                    return {}
+
+                # Filter out null relationships
+                outgoing = [r for r in record["outgoing"] if r.get("target")]
+                incoming = [r for r in record["incoming"] if r.get("source")]
+                communities = [c for c in record["communities"] if c.get("id")]
+
+                return {
+                    "name": record["name"],
+                    "type": record["type"],
+                    "description": record["description"] or "",
+                    "confidence": record["confidence"] or 0.5,
+                    "outgoing_relationships": outgoing,
+                    "incoming_relationships": incoming,
+                    "communities": communities
+                }
+
+        except Exception as e:
+            logger.error(f"Error getting entity context: {e}")
+            return {}
+
+    def get_entities_with_context_batch(
+        self,
+        entity_names: List[str],
+        max_relationships_per_entity: int = 5
+    ) -> Dict[str, Dict[str, Any]]:
+        """
+        GraphRAG Local Search: Batch fetch entity contexts.
+
+        Fixes N+1 query issue by fetching all entity contexts in a single query.
+
+        Args:
+            entity_names: List of entity names to look up
+            max_relationships_per_entity: Max relationships per entity
+
+        Returns:
+            Dict mapping entity name to context dict
+        """
+        if not self._connected:
+            self.connect()
+
+        if not entity_names:
+            return {}
+
+        try:
+            with self.driver.session() as session:
+                # Batch query for all entities at once
+                query = """
+                UNWIND $names as entity_name
+                MATCH (e:Entity {name: entity_name})
+                OPTIONAL MATCH (e)-[r]->(target:Entity)
+                OPTIONAL MATCH (e)<-[r2]-(source:Entity)
+                OPTIONAL MATCH (e)-[:IN_COMMUNITY]->(c:Community)
+                WITH e,
+                     collect(DISTINCT {
+                         type: type(r),
+                         target: target.name,
+                         target_type: target.type,
+                         description: r.description
+                     })[0..$max_rels] as outgoing,
+                     collect(DISTINCT {
+                         type: type(r2),
+                         source: source.name,
+                         source_type: source.type,
+                         description: r2.description
+                     })[0..$max_rels] as incoming,
+                     collect(DISTINCT {
+                         id: c.id,
+                         title: c.title,
+                         summary: c.summary,
+                         level: c.level
+                     })[0..3] as communities
+                RETURN e.name as name, e.type as type, e.description as description,
+                       e.confidence as confidence, outgoing, incoming, communities
+                """
+
+                result = session.run(query, {
+                    "names": entity_names,
+                    "max_rels": max_relationships_per_entity
+                })
+
+                contexts = {}
+                for record in result:
+                    name = record["name"]
+                    if name:
+                        # Filter out null relationships
+                        outgoing = [r for r in record["outgoing"] if r.get("target")]
+                        incoming = [r for r in record["incoming"] if r.get("source")]
+                        communities = [c for c in record["communities"] if c.get("id")]
+
+                        contexts[name] = {
+                            "name": name,
+                            "type": record["type"],
+                            "description": record["description"] or "",
+                            "confidence": record["confidence"] or 0.5,
+                            "outgoing_relationships": outgoing,
+                            "incoming_relationships": incoming,
+                            "communities": communities
+                        }
+
+                return contexts
+
+        except Exception as e:
+            logger.error(f"Error batch fetching entity contexts: {e}")
+            return {}
+
     def get_relationships_between(
         self,
         entity_names: List[str],

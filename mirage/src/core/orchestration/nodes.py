@@ -12,7 +12,6 @@ from ..graph_builder import Neo4jClient
 from ..graph_builder.enhanced_neo4j_client import EnhancedNeo4jClient
 from ..graph_builder import GraphTraversal, HybridSearchEngine
 from ..embeddings import JinaEmbedder
-from ..refrag import REFRAGCompressor
 from .claude_client import ClaudeClient
 from .workflow_state import WorkflowState
 from ...config.settings import settings
@@ -24,7 +23,6 @@ class WorkflowNodes:
     def __init__(
         self,
         neo4j_client: Neo4jClient,
-        refrag_compressor: REFRAGCompressor,
         claude_client: ClaudeClient,
     ):
         """
@@ -32,11 +30,9 @@ class WorkflowNodes:
 
         Args:
             neo4j_client: Neo4j client for graph retrieval
-            refrag_compressor: REFRAG compressor
             claude_client: Claude API client
         """
         self.neo4j = neo4j_client
-        self.compressor = refrag_compressor
         self.claude = claude_client
 
         # Initialize enhanced Neo4j client with bilingual search and vector embeddings
@@ -374,52 +370,14 @@ Keywords:"""
     
     def compression_node(self, state: WorkflowState) -> WorkflowState:
         """
-        Apply REFRAG compression to retrieved chunks
-        
-        Args:
-            state: Current workflow state
-            
-        Returns:
-            Updated state with compressed chunks
+        Passthrough node (compression removed).
+        Kept for backward compatibility with existing workflow definitions.
         """
-        start_time = time.time()
-        
+        # Simply pass through without compression
         chunks = state.get("retrieved_chunks", [])
-        query = state.get("query", "")
-        
-        if not chunks:
-            logger.warning("No chunks to compress")
-            state["compressed_chunks"] = []
-            state["compression_stats"] = {}
-            return state
-        
-        logger.info(f"Compressing {len(chunks)} chunks")
-        
-        # Apply REFRAG compression with query context
-        compression_result = self.compressor.compress(
-            chunks,
-            query_context=query,
-        )
-        
-        latency = (time.time() - start_time) * 1000
-        
-        state["compressed_chunks"] = compression_result["compressed_chunks"]
-        state["compression_stats"] = {
-            "original_length": compression_result["original_length"],
-            "compressed_length": compression_result["compressed_length"],
-            "compression_ratio": compression_result["compression_ratio"],
-            "speedup_factor": compression_result["original_length"] / 
-                            max(1, compression_result["compressed_length"]),
-        }
+        state["compressed_chunks"] = chunks
+        state["compression_stats"] = {}
         state["workflow_step"] = "compression"
-        state["latency_ms"]["compression"] = latency
-        
-        logger.info(
-            f"Compressed {len(chunks)} chunks: "
-            f"ratio={compression_result['compression_ratio']:.2f} "
-            f"(latency={latency:.1f}ms)"
-        )
-        
         return state
     
     def generation_node(self, state: WorkflowState) -> WorkflowState:

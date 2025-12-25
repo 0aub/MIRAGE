@@ -133,7 +133,7 @@ def run_evaluation(api_base: str, dataset_path: str) -> Dict:
         print("No test cases found.")
         return {}
     
-    modes = ["naive", "local", "global", "hybrid"]
+    modes = ["vector", "local", "global", "hybrid"]
     
     results = {
         "timestamp": datetime.now().isoformat(),

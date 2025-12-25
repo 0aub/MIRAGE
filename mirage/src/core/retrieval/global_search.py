@@ -6,10 +6,11 @@ This is THE killer feature of GraphRAG that enables answering:
 - "Summarize the key topics in this knowledge base"
 - "What patterns emerge from this data?"
 
-Algorithm:
+Algorithm (per Microsoft GraphRAG specification):
 1. MAP: Query each community summary in parallel
    - Each community generates a partial answer
-   - Scored by relevance to query
+   - Uses JSON mode for structured output (score, answer, explanation)
+   - Scored by relevance to query (0-100)
 
 2. FILTER: Keep top-k most relevant partial answers
    - Based on relevance score threshold
@@ -17,6 +18,12 @@ Algorithm:
 3. REDUCE: Combine partial answers into final answer
    - Synthesize coherent response
    - Preserve key insights from each community
+
+GraphRAG Enhancements:
+- JSON mode in map phase for structured scoring
+- Entity descriptions for richer context
+- Automatic community level selection
+- Multi-level search capability
 
 Optimized for Arabic + English bilingual support.
 """
@@ -29,6 +36,8 @@ from dataclasses import dataclass, field
 from concurrent.futures import ThreadPoolExecutor
 import requests
 from loguru import logger
+
+from ..config.constants import TGI_ENDPOINT_DEFAULT
 
 
 @dataclass
@@ -93,16 +102,19 @@ class GlobalSearchEngine:
     def __init__(
         self,
         neo4j_client,
-        llm_endpoint: str = "http://tgi:80",
+        llm_endpoint: str = TGI_ENDPOINT_DEFAULT,
         max_communities: int = 30,
         min_relevance: float = 0.3,
         parallel_workers: int = 5,
         community_level: int = 0,
         max_tokens: int = 400,
-        temperature: float = 0.3
+        temperature: float = 0.3,
+        use_json_mode: bool = True
     ):
         """
         Initialize global search engine.
+
+        GraphRAG Enhancement: Now supports JSON mode for structured map phase output.
 
         Args:
             neo4j_client: Neo4j client for community data
@@ -113,6 +125,7 @@ class GlobalSearchEngine:
             community_level: Which hierarchy level to search (0=fine, 1+=coarse)
             max_tokens: Max tokens per LLM response
             temperature: LLM temperature
+            use_json_mode: If True, use JSON output format in map phase (GraphRAG spec)
         """
         self.neo4j_client = neo4j_client
         self.llm_endpoint = llm_endpoint
@@ -122,12 +135,14 @@ class GlobalSearchEngine:
         self.community_level = community_level
         self.max_tokens = max_tokens
         self.temperature = temperature
+        self.use_json_mode = use_json_mode
 
         self._executor = ThreadPoolExecutor(max_workers=parallel_workers)
 
         logger.info(
             f"GlobalSearchEngine initialized: level={community_level}, "
-            f"max_communities={max_communities}, workers={parallel_workers}"
+            f"max_communities={max_communities}, workers={parallel_workers}, "
+            f"json_mode={use_json_mode}"
         )
 
     def search(self, query: str) -> GlobalSearchResult:
@@ -332,7 +347,11 @@ class GlobalSearchEngine:
             return None
 
         # Build prompt with entity details (GraphRAG enhancement)
-        prompt = self._build_map_prompt(query, summary, key_entities, entity_details)
+        # Use JSON mode for structured output per Microsoft GraphRAG spec
+        prompt = self._build_map_prompt(
+            query, summary, key_entities, entity_details,
+            use_json_mode=self.use_json_mode
+        )
 
         # Call LLM
         try:
@@ -382,12 +401,22 @@ class GlobalSearchEngine:
         query: str,
         summary: str,
         key_entities: List[str],
-        entity_details: List[Dict] = None
+        entity_details: List[Dict] = None,
+        use_json_mode: bool = True
     ) -> str:
         """
         Build prompt for generating partial answer from community summary.
 
-        GraphRAG Enhancement: Now includes entity descriptions for richer context.
+        GraphRAG Enhancement:
+        - Includes entity descriptions for richer context
+        - Uses JSON mode for structured output (per Microsoft GraphRAG spec)
+
+        Args:
+            query: User question
+            summary: Community summary
+            key_entities: List of key entity names
+            entity_details: Detailed entity info with descriptions
+            use_json_mode: If True, request JSON output (GraphRAG spec)
         """
         entities_text = ", ".join(key_entities[:10]) if key_entities else "غير محدد"
 
@@ -405,7 +434,27 @@ class GlobalSearchEngine:
             if entity_lines:
                 entity_context = f"\n\nتفاصيل الكيانات:\n" + "\n".join(entity_lines)
 
-        prompt = f"""أنت محلل بيانات. استخدم المعلومات التالية للإجابة على السؤال.
+        if use_json_mode:
+            # GraphRAG JSON Mode: Structured output for better parsing
+            prompt = f"""أنت محلل بيانات. استخدم المعلومات التالية للإجابة على السؤال.
+
+ملخص المجموعة:
+{summary}
+
+الكيانات الرئيسية: {entities_text}{entity_context}
+
+السؤال: {query}
+
+أجب بتنسيق JSON فقط:
+{{"score": <رقم من 0 إلى 100 يمثل صلة المعلومات بالسؤال>, "answer": "<إجابتك هنا في 2-3 جمل>", "points": ["<نقطة 1>", "<نقطة 2>"], "explanation": "<سبب اختيارك لهذه الدرجة>"}}
+
+إذا لم تكن هناك معلومات ذات صلة:
+{{"score": 0, "answer": "لا توجد معلومات ذات صلة", "points": [], "explanation": "المعلومات لا تتعلق بالسؤال"}}
+
+JSON فقط:"""
+        else:
+            # Fallback: Text format
+            prompt = f"""أنت محلل بيانات. استخدم المعلومات التالية للإجابة على السؤال.
 
 ملخص المجموعة:
 {summary}
@@ -435,12 +484,62 @@ class GlobalSearchEngine:
         self,
         response: str
     ) -> Tuple[str, float, List[str]]:
-        """Parse LLM response from map phase."""
+        """
+        Parse LLM response from map phase.
 
+        GraphRAG Enhancement: First tries JSON parsing (per spec), then falls back to text.
+        """
         answer = ""
         relevance = 0.0
         key_points = []
 
+        # =====================================================================
+        # GraphRAG JSON Mode: Try JSON parsing first
+        # =====================================================================
+        try:
+            # Find JSON in response - handle nested structures like arrays
+            # Look for balanced braces to extract complete JSON object
+            json_str = self._extract_json_from_text(response)
+            if json_str:
+                data = json.loads(json_str)
+
+                # Parse score (0-100 in JSON, normalize to 0-1)
+                score = data.get('score', 0)
+                if isinstance(score, (int, float)):
+                    relevance = min(1.0, max(0.0, score / 100.0))
+                elif isinstance(score, str):
+                    # Handle string scores like "75" or "0.75"
+                    try:
+                        score_val = float(score)
+                        if score_val > 1:
+                            relevance = min(1.0, max(0.0, score_val / 100.0))
+                        else:
+                            relevance = min(1.0, max(0.0, score_val))
+                    except ValueError:
+                        pass
+
+                # Parse answer
+                answer = data.get('answer', '').strip()
+
+                # Parse key points - handle various formats
+                points = data.get('points', [])
+                if isinstance(points, list):
+                    key_points = [str(p).strip() for p in points if p][:3]
+                elif isinstance(points, str):
+                    # Handle comma-separated string
+                    key_points = [p.strip() for p in points.split(',') if p.strip()][:3]
+
+                # Log successful JSON parse
+                if answer and relevance > 0:
+                    logger.debug(f"GraphRAG JSON parse successful: score={score}, answer_len={len(answer)}")
+                    return answer, relevance, key_points
+
+        except (json.JSONDecodeError, ValueError, TypeError) as e:
+            logger.debug(f"JSON parse failed, falling back to text: {e}")
+
+        # =====================================================================
+        # Fallback: Text-based parsing
+        # =====================================================================
         lines = response.strip().split('\n')
 
         for line in lines:
@@ -486,6 +585,65 @@ class GlobalSearchEngine:
                 relevance = 0.5  # Default moderate relevance
 
         return answer, relevance, key_points[:3]
+
+    def _extract_json_from_text(self, text: str) -> Optional[str]:
+        """
+        Extract JSON object from text, handling nested structures.
+
+        Uses balanced brace matching to find complete JSON objects,
+        even when they contain nested arrays or objects.
+
+        Args:
+            text: Text that may contain JSON
+
+        Returns:
+            Extracted JSON string or None if not found
+        """
+        if not text:
+            return None
+
+        # Find the first opening brace
+        start_idx = text.find('{')
+        if start_idx == -1:
+            return None
+
+        # Count braces to find matching closing brace
+        brace_count = 0
+        in_string = False
+        escape_next = False
+
+        for i, char in enumerate(text[start_idx:], start=start_idx):
+            if escape_next:
+                escape_next = False
+                continue
+
+            if char == '\\':
+                escape_next = True
+                continue
+
+            if char == '"' and not escape_next:
+                in_string = not in_string
+                continue
+
+            if in_string:
+                continue
+
+            if char == '{':
+                brace_count += 1
+            elif char == '}':
+                brace_count -= 1
+                if brace_count == 0:
+                    # Found complete JSON object
+                    json_str = text[start_idx:i + 1]
+                    # Validate it's valid JSON
+                    try:
+                        json.loads(json_str)
+                        return json_str
+                    except json.JSONDecodeError:
+                        # Try to continue finding another JSON
+                        continue
+
+        return None
 
     def _filter_phase(
         self,

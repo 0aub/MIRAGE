@@ -12,6 +12,8 @@ import re
 from typing import List, Dict, Tuple, Optional, Set
 import logging
 
+from ..utils.arabic import normalize_arabic, is_arabic_text
+
 logger = logging.getLogger(__name__)
 
 
@@ -217,29 +219,19 @@ class EntityNormalizer:
 
     def _contains_arabic(self, text: str) -> bool:
         """Check if text contains Arabic characters."""
-        arabic_pattern = re.compile('[\u0600-\u06FF]+')
-        return bool(arabic_pattern.search(text))
+        return is_arabic_text(text, threshold=0.0)  # Any Arabic = True
 
     def _normalize_arabic_chars(self, text: str) -> str:
         """
         Normalize Arabic character variations.
 
-        Handles:
+        Uses shared utils.arabic.normalize_arabic for:
         - Alef variations (أ, إ, آ -> ا)
         - Yaa variations (ى -> ي)
-        - Removes diacritics (تشكيل)
+        - Diacritics removal (تشكيل)
+        - Tatweel removal
         """
-        # Apply character normalizations
-        for old_char, new_char in self.arabic_normalizations.items():
-            text = text.replace(old_char, new_char)
-
-        # Remove diacritics (tashkeel)
-        text = re.sub('[\u064B-\u065F]', '', text)
-
-        # Remove tatweel (stretching character)
-        text = text.replace('\u0640', '')
-
-        return text
+        return normalize_arabic(text, remove_tatweel=True)
 
     def _final_cleanup(self, text: str) -> str:
         """Final cleanup and capitalization."""

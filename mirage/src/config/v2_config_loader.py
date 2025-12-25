@@ -410,7 +410,7 @@ class V2ConfigLoader:
 
         # Check retrieval mode validity
         default_mode = self.get("retrieval.default_mode")
-        valid_modes = ["naive", "local", "global", "hybrid", "mix", "semantic", "bypass"]
+        valid_modes = ["vector", "local", "global", "hybrid", "mix", "semantic", "bypass"]
         if default_mode and default_mode not in valid_modes:
             errors.append(f"Invalid retrieval mode: {default_mode}. Valid: {valid_modes}")
 

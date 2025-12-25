@@ -15,7 +15,6 @@ from src.core.models.embedding_manager import get_embedding_manager
 from src.api import (
     document_service,
     graph_service,
-    refrag_service,
     file_service,
     db_service,
     graphrag_service,
@@ -66,7 +65,6 @@ async def root():
             "chat": "/chat",
             "graph": "/graph",
             "graphrag": "/graphrag",
-            "refrag": "/refrag",
             "files": "/files",
             "database": "/db",
             "url": "/url",
@@ -109,12 +107,6 @@ app.include_router(
     graph_service.router,
     prefix="/graph",
     tags=["Knowledge Graph"],
-)
-
-app.include_router(
-    refrag_service.router,
-    prefix="/refrag",
-    tags=["REFRAG Compression"],
 )
 
 app.include_router(

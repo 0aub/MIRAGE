@@ -7,6 +7,8 @@ import re
 from typing import List
 from loguru import logger
 
+from ...core.utils.arabic import normalize_arabic
+
 
 def clean_llm_response(answer: str) -> str:
     """
@@ -118,13 +120,7 @@ def extract_key_terms(question: str) -> list:
     return key_terms
 
 
-def normalize_arabic(text: str) -> str:
-    """Normalize Arabic text for matching."""
-    if not text:
-        return ""
-    text = text.replace('ة', 'ه')
-    text = re.sub(r'[أإآ]', 'ا', text)
-    return text
+# normalize_arabic is imported from core.utils.arabic
 
 
 def create_fallback_answer(question: str, chunks: list) -> str:

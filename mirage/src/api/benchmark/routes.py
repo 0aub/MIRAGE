@@ -207,7 +207,7 @@ async def benchmark_detailed(request: DetailedBenchmarkRequest):
     """Comprehensive benchmark with TTFT, streaming metrics, RefRAG comparison"""
     logger.info(f"Detailed benchmark: {request.query[:50]}...")
 
-    modes_to_test = request.retrieval_modes or ["naive", "local", "hybrid"]
+    modes_to_test = request.retrieval_modes or ["vector", "local", "hybrid"]
     results = []
 
     for mode_str in modes_to_test:

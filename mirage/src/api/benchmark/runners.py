@@ -10,7 +10,6 @@ from typing import List, Dict, Any, Optional
 from loguru import logger
 
 from ...core.retrieval import get_retrieval_engine, RetrievalMode
-from ...core.refrag.compressor import REFRAGCompressor
 from ...core.generation import get_prompt_manager
 
 from .models import (
@@ -23,35 +22,32 @@ from .models import (
 # Lazy-initialized components
 _retrieval_engine = None
 _prompt_manager = None
-_refrag_compressor = None
 
 
 def get_components():
     """Get or initialize benchmark components"""
-    global _retrieval_engine, _prompt_manager, _refrag_compressor
+    global _retrieval_engine, _prompt_manager
 
     if _retrieval_engine is None:
         _retrieval_engine = get_retrieval_engine()
     if _prompt_manager is None:
         _prompt_manager = get_prompt_manager()
-    if _refrag_compressor is None:
-        _refrag_compressor = REFRAGCompressor(strategy="hybrid")
 
-    return _retrieval_engine, _prompt_manager, _refrag_compressor
+    return _retrieval_engine, _prompt_manager
 
 
 async def run_detailed_benchmark(
     query: str,
     mode_str: str,
-    use_refrag: bool,
+    use_refrag: bool,  # Kept for API compatibility, but ignored
     measure_ttft: bool,
     top_k: int
 ) -> DetailedBenchmarkResult:
     """Run a single detailed benchmark"""
-    retrieval_engine, prompt_manager, refrag_compressor = get_components()
+    retrieval_engine, prompt_manager = get_components()
 
     start_time = time.time()
-    config_name = f"{mode_str.upper()}" + (" + RefRAG" if use_refrag else "")
+    config_name = f"{mode_str.upper()}"
 
     try:
         # Parse mode
@@ -60,7 +56,7 @@ async def run_detailed_benchmark(
             try:
                 mode = RetrievalMode(mode_str)
             except ValueError:
-                mode = RetrievalMode.NAIVE
+                mode = RetrievalMode.VECTOR
 
         # 1. Retrieval
         retrieval_start = time.time()
@@ -94,30 +90,14 @@ async def run_detailed_benchmark(
             entities_used=list(entities_used)[:10]
         )
 
-        # 3. Optional RefRAG compression
-        compression_time = 0
-        if use_refrag and response.results:
-            compression_start = time.time()
-            compression_input = [{"text": r.text, "chunk_id": r.chunk_id} for r in response.results]
-            compression_result = refrag_compressor.compress(compression_input, query_context=query)
-            compression_time = (time.time() - compression_start) * 1000
-
-            compression = CompressionMetrics(
-                enabled=True,
-                original_length=compression_result["original_length"],
-                compressed_length=compression_result["compressed_length"],
-                compression_ratio=round(compression_result["compression_ratio"], 3),
-                chunks_compressed=compression_result["chunks_compressed"],
-                strategy=compression_result.get("strategy", "hybrid")
-            )
-        else:
-            total_len = sum(len(r.text) for r in response.results) if response.results else 0
-            compression = CompressionMetrics(
-                enabled=False,
-                original_length=total_len,
-                compressed_length=total_len,
-                compression_ratio=1.0
-            )
+        # 3. Compression stats (no compression)
+        total_len = sum(len(r.text) for r in response.results) if response.results else 0
+        compression = CompressionMetrics(
+            enabled=False,
+            original_length=total_len,
+            compressed_length=total_len,
+            compression_ratio=1.0
+        )
 
         # 4. Build context and prompt
         context = [
@@ -187,11 +167,11 @@ async def run_detailed_benchmark(
         return DetailedBenchmarkResult(
             config_name=config_name,
             retrieval_mode=mode_str,
-            use_refrag=use_refrag,
+            use_refrag=False,
             timing=TimingMetrics(
                 total_ms=round(total_time, 1),
                 retrieval_ms=round(retrieval_time, 1),
-                compression_ms=round(compression_time, 1) if use_refrag else None,
+                compression_ms=None,
                 generation_ms=round(generation_time, 1),
                 ttft_ms=round(ttft_ms, 1) if ttft_ms else None
             ),
@@ -206,7 +186,7 @@ async def run_detailed_benchmark(
         return DetailedBenchmarkResult(
             config_name=config_name,
             retrieval_mode=mode_str,
-            use_refrag=use_refrag,
+            use_refrag=False,
             timing=TimingMetrics(
                 total_ms=(time.time() - start_time) * 1000,
                 retrieval_ms=0,

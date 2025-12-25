@@ -113,27 +113,11 @@ VALIDATION_MAX_CORRECTIONS = 2
 RRF_K = 60
 
 # Mode weights for hybrid fusion
-MODE_WEIGHT_NAIVE = 0.6
+MODE_WEIGHT_VECTOR = 0.6
 MODE_WEIGHT_LOCAL = 0.8
 MODE_WEIGHT_GLOBAL = 0.9
 MODE_WEIGHT_HYBRID = 1.0
 MODE_WEIGHT_SEMANTIC = 0.85
-
-# =============================================================================
-# REFRAG COMPRESSION
-# =============================================================================
-
-# Tokens per chunk for REFRAG embedding (Meta REFRAG default)
-REFRAG_CHUNK_SIZE_TOKENS = 16
-
-# Base compression ratio (50% = keep half)
-REFRAG_COMPRESSION_RATIO_BASE = 0.5
-
-# Importance threshold for minimal compression
-REFRAG_IMPORTANCE_THRESHOLD = 0.7
-
-# Aggressive compression ratio for low-importance content
-REFRAG_AGGRESSIVE_RATIO = 0.3
 
 # =============================================================================
 # CONTEXT LIMITS (Allam 2K optimization)

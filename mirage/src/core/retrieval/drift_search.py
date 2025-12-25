@@ -1,18 +1,30 @@
 """
-Drift Search Engine for GraphRAG
-Microsoft GraphRAG's dynamic search strategy that "drifts" between
-global and local search based on query context and intermediate results.
+DRIFT Search Engine for GraphRAG
 
-Drift Search Flow:
-1. Start with global search over community summaries (broad context)
-2. Identify relevant communities/entities from global results
-3. Drift to local search in relevant communities (detailed context)
-4. Combine results with progressive refinement
-5. Optionally iterate for complex queries
+Microsoft GraphRAG's DRIFT (Dynamic Reasoning and Inference with Flexible Traversal)
+search strategy that uses iterative refinement with follow-up questions.
+
+DRIFT Search Algorithm (per Microsoft spec):
+1. PRIMER PHASE:
+   - Compare query against top-K community reports
+   - Generate initial broad answer
+   - Generate 0-N follow-up questions for deeper exploration
+
+2. FOLLOW-UP PHASE (Iterative):
+   - For each follow-up question:
+     - Search community reports for relevant info
+     - Use local search for detailed context
+     - Generate intermediate answer
+     - Potentially generate more follow-ups
+   - Continue until confidence is high or max iterations
+
+3. OUTPUT PHASE:
+   - Hierarchically organize intermediate answers
+   - Synthesize final comprehensive answer
 
 Key Innovation:
-- Unlike static hybrid search, drift search adapts dynamically
-- Uses global results to guide local search scope
+- Uses LLM to dynamically generate follow-up questions
+- Iteratively refines answers through multi-hop reasoning
 - Provides both breadth (global themes) and depth (local facts)
 """
 
@@ -21,87 +33,101 @@ from dataclasses import dataclass, field
 from enum import Enum
 from loguru import logger
 import time
+import json
+import re
 
 from ..graph_builder import Neo4jClient
+from ..config.constants import TGI_ENDPOINT_DEFAULT
 
 
 class DriftPhase(Enum):
-    """Phases of drift search"""
-    GLOBAL = "global"  # Broad search over community summaries
-    LOCAL = "local"    # Targeted search in relevant communities
-    CLAIM = "claim"    # Factual claim search
-    MERGED = "merged"  # Final merged results
+    """Phases of DRIFT search"""
+    PRIMER = "primer"       # Initial broad search + follow-up generation
+    FOLLOW_UP = "follow_up" # Iterative refinement with generated questions
+    LOCAL = "local"         # Targeted local search
+    OUTPUT = "output"       # Final synthesis
+
+
+@dataclass
+class FollowUpQuestion:
+    """A generated follow-up question"""
+    question: str
+    priority: int  # 1-5, higher = more important
+    context_needed: str  # What type of context this question needs
+    answered: bool = False
+    answer: str = ""
+
+
+@dataclass
+class DriftIteration:
+    """Result from one iteration of DRIFT"""
+    question: str
+    answer: str
+    confidence: float
+    sources: List[str]
+    new_follow_ups: List[FollowUpQuestion]
 
 
 @dataclass
 class DriftSearchResult:
-    """Result from drift search"""
+    """Result from DRIFT search"""
     query: str
     answer: str
+    primer_answer: str  # Initial broad answer
+    follow_up_questions: List[FollowUpQuestion]
+    iterations: List[DriftIteration]
     global_context: List[str]  # Community summaries used
     local_context: List[Dict[str, Any]]  # Chunks retrieved
-    claims_used: List[Dict[str, Any]]  # Claims matched
-    entities_traversed: List[str]  # Entities visited during drift
-    communities_visited: List[str]  # Communities visited
-    confidence: float  # Overall confidence
-    phases_executed: List[DriftPhase]  # Which phases ran
+    entities_traversed: List[str]
+    communities_visited: List[str]
+    confidence: float
+    phases_executed: List[DriftPhase]
     total_time_ms: float
-    drift_path: List[str]  # Trace of drift decisions
+    drift_path: List[str]
 
 
 @dataclass
 class DriftConfig:
-    """Configuration for drift search"""
-    # Global search settings
-    max_communities_global: int = 10  # Max communities to search globally
-    global_confidence_threshold: float = 0.5  # Min confidence to proceed
+    """Configuration for DRIFT search"""
+    # Primer phase
+    max_communities_primer: int = 10
+    primer_min_confidence: float = 0.5
+    max_initial_follow_ups: int = 3
 
-    # Local search settings
-    max_entities_per_community: int = 5  # Max entities to explore per community
-    max_chunks_local: int = 10  # Max chunks from local search
-    local_hop_depth: int = 2  # How many hops in graph traversal
+    # Follow-up phase
+    max_iterations: int = 3
+    max_follow_ups_per_iteration: int = 2
+    confidence_threshold: float = 0.7  # Stop if confidence exceeds this
 
-    # Drift settings
-    drift_threshold: float = 0.6  # Confidence below which we drift more
-    max_drift_iterations: int = 3  # Max number of drift iterations
-
-    # Claim settings
-    include_claims: bool = True  # Whether to search claims
-    max_claims: int = 5  # Max claims to include
+    # Local search
+    max_chunks_local: int = 10
+    max_entities_per_search: int = 5
 
     # Output
-    merge_strategy: str = "weighted"  # "weighted", "sequential", "interleave"
+    max_answer_tokens: int = 500
 
 
 class DriftSearchEngine:
     """
-    Drift Search implementation for GraphRAG.
+    DRIFT Search implementation following Microsoft GraphRAG specification.
 
-    Drift search dynamically moves between global (broad themes) and
-    local (specific facts) search based on query needs and intermediate
-    results.
-
-    Strategy:
-    1. GLOBAL: Query community summaries for thematic understanding
-    2. IDENTIFY: Extract relevant communities and entities
-    3. LOCAL: Dive into identified areas for detailed context
-    4. CLAIM: (optional) Add factual claims for precision
-    5. MERGE: Combine all context for final answer
+    DRIFT dynamically generates follow-up questions and iteratively refines
+    answers through multi-hop reasoning over the knowledge graph.
     """
 
     def __init__(
         self,
         neo4j_client: Optional[Neo4jClient] = None,
         config: Optional[DriftConfig] = None,
-        llm_endpoint: str = "http://tgi:80"
+        llm_endpoint: str = TGI_ENDPOINT_DEFAULT
     ):
-        """Initialize drift search engine"""
+        """Initialize DRIFT search engine"""
         self.neo4j_client = neo4j_client or Neo4jClient()
         self.config = config or DriftConfig()
         self.llm_endpoint = llm_endpoint
 
         self._ensure_connected()
-        logger.info("DriftSearchEngine initialized")
+        logger.info("DriftSearchEngine initialized with iterative refinement")
 
     def _ensure_connected(self):
         """Ensure Neo4j connection"""
@@ -110,91 +136,140 @@ class DriftSearchEngine:
 
     def search(self, query: str) -> DriftSearchResult:
         """
-        Execute drift search for query.
+        Execute DRIFT search with iterative refinement.
 
         Args:
             query: User question
 
         Returns:
-            DriftSearchResult with combined context
+            DriftSearchResult with comprehensive answer
         """
         start_time = time.time()
         drift_path = []
         phases_executed = []
+        all_global_context = []
+        all_local_context = []
+        all_entities = set()
+        all_communities = set()
 
-        logger.info(f"DriftSearch starting for: {query[:80]}...")
+        logger.info(f"DRIFT Search starting for: {query[:80]}...")
 
-        # Phase 1: Global Search (Community Summaries)
-        drift_path.append("GLOBAL: Starting broad search")
-        phases_executed.append(DriftPhase.GLOBAL)
+        # =========================================================================
+        # PHASE 1: PRIMER - Broad search + follow-up question generation
+        # =========================================================================
+        drift_path.append("PRIMER: Starting broad community search")
+        phases_executed.append(DriftPhase.PRIMER)
 
-        global_results = self._global_search(query)
-        global_context = [r['summary'] for r in global_results if r.get('summary')]
-        communities_visited = [r['community_id'] for r in global_results]
+        # Get community summaries
+        community_results = self._search_communities(query)
+        primer_context = [r['summary'] for r in community_results if r.get('summary')]
+        all_global_context.extend(primer_context)
+        all_communities.update(r.get('community_id', '') for r in community_results)
 
-        logger.info(f"  Global: {len(global_results)} communities found")
+        logger.info(f"  Primer: Found {len(community_results)} community summaries")
 
-        # Extract entities mentioned in global summaries
-        global_entities = self._extract_entities_from_summaries(global_results)
-        drift_path.append(f"IDENTIFY: Found {len(global_entities)} key entities")
-
-        # Phase 2: Determine if we need to drift to local
-        global_confidence = self._calculate_global_confidence(global_results, query)
-
-        if global_confidence < self.config.drift_threshold or len(global_entities) > 0:
-            # Drift to local search
-            drift_path.append(f"DRIFT: Confidence {global_confidence:.2f} < {self.config.drift_threshold}, going local")
-            phases_executed.append(DriftPhase.LOCAL)
-
-            local_results = self._local_search(query, global_entities, communities_visited)
-            local_context = local_results
-            entities_traversed = [e['entity_name'] for e in local_results if e.get('entity_name')]
-
-            logger.info(f"  Local: {len(local_results)} chunks retrieved")
-        else:
-            drift_path.append(f"STAY: Confidence {global_confidence:.2f} sufficient")
-            local_context = []
-            entities_traversed = global_entities
-
-        # Phase 3: Claim Search (if enabled)
-        claims_used = []
-        if self.config.include_claims:
-            phases_executed.append(DriftPhase.CLAIM)
-            claims_used = self._claim_search(query, entities_traversed)
-            drift_path.append(f"CLAIMS: Found {len(claims_used)} relevant claims")
-            logger.info(f"  Claims: {len(claims_used)} claims matched")
-
-        # Phase 4: Merge and Generate Answer
-        phases_executed.append(DriftPhase.MERGED)
-
-        answer, confidence = self._merge_and_answer(
-            query,
-            global_context,
-            local_context,
-            claims_used
+        # Generate primer answer and follow-up questions
+        primer_answer, initial_confidence, follow_ups = self._primer_phase(
+            query, primer_context
         )
+        drift_path.append(f"PRIMER: Generated {len(follow_ups)} follow-up questions")
 
-        drift_path.append(f"MERGED: Final confidence {confidence:.2f}")
+        logger.info(f"  Primer answer confidence: {initial_confidence:.2f}")
+        logger.info(f"  Generated {len(follow_ups)} follow-up questions")
+
+        # =========================================================================
+        # PHASE 2: FOLLOW-UP - Iterative refinement
+        # =========================================================================
+        iterations = []
+        current_confidence = initial_confidence
+
+        if follow_ups and current_confidence < self.config.confidence_threshold:
+            phases_executed.append(DriftPhase.FOLLOW_UP)
+            drift_path.append("FOLLOW_UP: Beginning iterative refinement")
+
+            for iteration_num in range(self.config.max_iterations):
+                if current_confidence >= self.config.confidence_threshold:
+                    drift_path.append(f"FOLLOW_UP: Confidence {current_confidence:.2f} sufficient, stopping")
+                    break
+
+                # Get unanswered follow-ups, sorted by priority
+                unanswered = [f for f in follow_ups if not f.answered]
+                if not unanswered:
+                    break
+
+                unanswered.sort(key=lambda x: x.priority, reverse=True)
+                question_to_answer = unanswered[0]
+
+                drift_path.append(f"ITERATION {iteration_num + 1}: Answering '{question_to_answer.question[:50]}...'")
+
+                # Execute local search for this follow-up
+                phases_executed.append(DriftPhase.LOCAL)
+                local_results = self._local_search_for_question(question_to_answer.question)
+                all_local_context.extend(local_results)
+                all_entities.update(r.get('entity_name', '') for r in local_results)
+
+                # Get additional community context if needed
+                additional_communities = self._search_communities(question_to_answer.question, limit=3)
+                additional_context = [r['summary'] for r in additional_communities if r.get('summary')]
+                all_global_context.extend(additional_context)
+
+                # Generate answer for this follow-up
+                iteration_result = self._answer_follow_up(
+                    question_to_answer,
+                    local_results,
+                    additional_context,
+                    primer_answer
+                )
+
+                question_to_answer.answered = True
+                question_to_answer.answer = iteration_result.answer
+                iterations.append(iteration_result)
+
+                # Add new follow-ups if any
+                follow_ups.extend(iteration_result.new_follow_ups)
+
+                # Update confidence
+                current_confidence = max(current_confidence, iteration_result.confidence)
+                drift_path.append(f"ITERATION {iteration_num + 1}: Confidence now {current_confidence:.2f}")
+
+                logger.info(f"  Iteration {iteration_num + 1}: answered, confidence {iteration_result.confidence:.2f}")
+
+        # =========================================================================
+        # PHASE 3: OUTPUT - Synthesize final answer
+        # =========================================================================
+        phases_executed.append(DriftPhase.OUTPUT)
+        drift_path.append("OUTPUT: Synthesizing final answer")
+
+        final_answer = self._synthesize_final_answer(
+            query,
+            primer_answer,
+            iterations,
+            all_global_context,
+            all_local_context
+        )
 
         total_time = (time.time() - start_time) * 1000
 
         return DriftSearchResult(
             query=query,
-            answer=answer,
-            global_context=global_context,
-            local_context=local_context,
-            claims_used=claims_used,
-            entities_traversed=entities_traversed,
-            communities_visited=communities_visited,
-            confidence=confidence,
+            answer=final_answer,
+            primer_answer=primer_answer,
+            follow_up_questions=follow_ups,
+            iterations=iterations,
+            global_context=list(set(all_global_context)),
+            local_context=all_local_context,
+            entities_traversed=list(all_entities),
+            communities_visited=list(all_communities),
+            confidence=current_confidence,
             phases_executed=phases_executed,
             total_time_ms=total_time,
             drift_path=drift_path
         )
 
-    def _global_search(self, query: str) -> List[Dict[str, Any]]:
-        """Search community summaries globally"""
-        # Find communities with summaries that might relate to query
+    def _search_communities(self, query: str, limit: int = None) -> List[Dict[str, Any]]:
+        """Search community summaries"""
+        limit = limit or self.config.max_communities_primer
+
         search_query = """
         MATCH (c:Community)
         WHERE c.summary IS NOT NULL AND c.summary <> ''
@@ -204,84 +279,123 @@ class DriftSearchEngine:
                c.level as level,
                c.summary as summary,
                c.themes as themes,
-               c.key_entities as key_entities,
-               entities[0..5] as sample_entities,
+               c.title as title,
+               entities[0..5] as key_entities,
                size(entities) as entity_count
         ORDER BY c.level DESC, entity_count DESC
         LIMIT $limit
         """
 
         try:
-            results = self.neo4j_client.execute_query(
-                search_query,
-                {'limit': self.config.max_communities_global}
-            )
-            return results
+            return self.neo4j_client.execute_query(search_query, {'limit': limit})
         except Exception as e:
-            logger.error(f"Global search error: {e}")
+            logger.error(f"Community search error: {e}")
             return []
 
-    def _extract_entities_from_summaries(
-        self,
-        global_results: List[Dict[str, Any]]
-    ) -> List[str]:
-        """Extract key entities from community summaries"""
-        entities = set()
-
-        for result in global_results:
-            # From key_entities field
-            key_entities = result.get('key_entities') or []
-            for e in key_entities:
-                if isinstance(e, str):
-                    entities.add(e)
-
-            # From sample_entities field
-            sample = result.get('sample_entities') or []
-            for e in sample:
-                if isinstance(e, str):
-                    entities.add(e)
-
-        return list(entities)[:20]  # Limit to top 20
-
-    def _calculate_global_confidence(
-        self,
-        global_results: List[Dict[str, Any]],
-        query: str
-    ) -> float:
-        """Calculate confidence in global results"""
-        if not global_results:
-            return 0.0
-
-        # Simple heuristic based on:
-        # - Number of communities found
-        # - Whether summaries exist
-        # - Entity coverage
-
-        summaries_found = sum(1 for r in global_results if r.get('summary'))
-        total_entities = sum(r.get('entity_count', 0) for r in global_results)
-
-        # Score components
-        community_score = min(1.0, summaries_found / 5)  # 5+ communities = max
-        entity_score = min(1.0, total_entities / 50)  # 50+ entities = max
-
-        return 0.5 * community_score + 0.5 * entity_score
-
-    def _local_search(
+    def _primer_phase(
         self,
         query: str,
-        entities: List[str],
-        communities: List[str]
-    ) -> List[Dict[str, Any]]:
-        """Execute local search in identified communities/entities"""
+        community_summaries: List[str]
+    ) -> Tuple[str, float, List[FollowUpQuestion]]:
+        """
+        Execute PRIMER phase: generate initial answer and follow-up questions.
+
+        Returns:
+            Tuple of (primer_answer, confidence, follow_up_questions)
+        """
+        import requests
+
+        # Build context from community summaries
+        context = "\n".join(f"- {s[:500]}" for s in community_summaries[:5])
+
+        # Detect language
+        is_arabic = self._is_arabic_query(query)
+
+        # Prompt to generate answer AND follow-up questions
+        if is_arabic:
+            prompt = f"""أنت مساعد بحث ذكي. بناءً على السياق التالي، أجب على السؤال ثم اقترح أسئلة متابعة للحصول على معلومات أعمق.
+
+السياق:
+{context}
+
+السؤال: {query}
+
+أجب بصيغة JSON التالية:
+{{
+    "answer": "إجابتك الأولية هنا",
+    "confidence": 0.0 إلى 1.0,
+    "follow_up_questions": [
+        {{"question": "سؤال المتابعة", "priority": 1-5, "context_needed": "نوع السياق المطلوب"}}
+    ]
+}}
+
+أجب بصيغة JSON فقط:"""
+        else:
+            prompt = f"""You are an intelligent research assistant. Based on the context below, answer the question and suggest follow-up questions for deeper exploration.
+
+Context:
+{context}
+
+Question: {query}
+
+Respond in this JSON format:
+{{
+    "answer": "Your initial answer here",
+    "confidence": 0.0 to 1.0,
+    "follow_up_questions": [
+        {{"question": "Follow-up question", "priority": 1-5, "context_needed": "Type of context needed"}}
+    ]
+}}
+
+Respond with JSON only:"""
+
+        try:
+            response = requests.post(
+                f"{self.llm_endpoint}/v1/chat/completions",
+                json={
+                    "model": "tgi",
+                    "messages": [{"role": "user", "content": prompt}],
+                    "temperature": 0.3,
+                    "max_tokens": 800
+                },
+                timeout=30
+            )
+            response.raise_for_status()
+            content = response.json()["choices"][0]["message"]["content"].strip()
+
+            # Parse JSON response
+            result = self._parse_json_response(content)
+
+            answer = result.get("answer", "Unable to generate initial answer.")
+            confidence = float(result.get("confidence", 0.5))
+
+            follow_ups = []
+            for fq in result.get("follow_up_questions", [])[:self.config.max_initial_follow_ups]:
+                follow_ups.append(FollowUpQuestion(
+                    question=fq.get("question", ""),
+                    priority=int(fq.get("priority", 3)),
+                    context_needed=fq.get("context_needed", "general")
+                ))
+
+            return answer, confidence, follow_ups
+
+        except Exception as e:
+            logger.error(f"Primer phase error: {e}")
+            return "Unable to generate initial answer.", 0.3, []
+
+    def _local_search_for_question(self, question: str) -> List[Dict[str, Any]]:
+        """Execute local search to answer a follow-up question"""
+        # Extract potential entities from the question
+        entities = self._extract_entities_from_text(question)
+
         results = []
 
-        # Search chunks related to identified entities
         if entities:
             entity_query = """
             UNWIND $entities as entity_name
             MATCH (e:Entity)
-            WHERE toLower(e.name) = toLower(entity_name)
-               OR toLower(e.name) CONTAINS toLower(entity_name)
+            WHERE toLower(e.name) CONTAINS toLower(entity_name)
+               OR toLower(e.description) CONTAINS toLower(entity_name)
             MATCH (c:Chunk)-[:MENTIONS]->(e)
             RETURN DISTINCT c.id as chunk_id,
                    c.text as text,
@@ -292,141 +406,97 @@ class DriftSearchEngine:
             """
 
             try:
-                entity_results = self.neo4j_client.execute_query(
+                results = self.neo4j_client.execute_query(
                     entity_query,
-                    {'entities': entities[:10], 'limit': self.config.max_chunks_local}
+                    {'entities': entities[:5], 'limit': self.config.max_chunks_local}
                 )
-                results.extend(entity_results)
             except Exception as e:
-                logger.error(f"Local entity search error: {e}")
+                logger.error(f"Local search error: {e}")
 
-        # Search chunks in identified communities
-        if communities and len(results) < self.config.max_chunks_local:
-            community_query = """
-            UNWIND $communities as comm_id
-            MATCH (comm:Community {id: comm_id})<-[:BELONGS_TO]-(e:Entity)
-            MATCH (c:Chunk)-[:MENTIONS]->(e)
-            RETURN DISTINCT c.id as chunk_id,
+        # Fallback: keyword search in chunks
+        if not results:
+            keywords = question.split()[:5]
+            fallback_query = """
+            MATCH (c:Chunk)
+            WHERE any(kw IN $keywords WHERE toLower(c.text) CONTAINS toLower(kw))
+            RETURN c.id as chunk_id,
                    c.text as text,
-                   c.document_id as document_id,
-                   e.name as entity_name,
-                   comm.id as community_id
+                   c.document_id as document_id
             LIMIT $limit
             """
 
             try:
-                comm_results = self.neo4j_client.execute_query(
-                    community_query,
-                    {
-                        'communities': communities[:5],
-                        'limit': self.config.max_chunks_local - len(results)
-                    }
+                results = self.neo4j_client.execute_query(
+                    fallback_query,
+                    {'keywords': keywords, 'limit': self.config.max_chunks_local}
                 )
-                results.extend(comm_results)
             except Exception as e:
-                logger.error(f"Local community search error: {e}")
+                logger.error(f"Fallback search error: {e}")
 
-        return results[:self.config.max_chunks_local]
+        return results
 
-    def _claim_search(
+    def _answer_follow_up(
         self,
-        query: str,
-        entities: List[str]
-    ) -> List[Dict[str, Any]]:
-        """Search for relevant claims"""
-        claims = []
-
-        if not entities:
-            return claims
-
-        # Find claims involving identified entities
-        claim_query = """
-        UNWIND $entities as entity_name
-        MATCH (c:Claim)
-        WHERE toLower(c.subject) CONTAINS toLower(entity_name)
-           OR toLower(c.object) CONTAINS toLower(entity_name)
-        RETURN c.claim_id as claim_id,
-               c.subject as subject,
-               c.predicate as predicate,
-               c.object as object,
-               c.description as description,
-               c.confidence as confidence
-        ORDER BY c.confidence DESC
-        LIMIT $limit
-        """
-
-        try:
-            claims = self.neo4j_client.execute_query(
-                claim_query,
-                {'entities': entities[:10], 'limit': self.config.max_claims}
-            )
-        except Exception as e:
-            logger.error(f"Claim search error: {e}")
-
-        return claims
-
-    def _merge_and_answer(
-        self,
-        query: str,
-        global_context: List[str],
+        follow_up: FollowUpQuestion,
         local_context: List[Dict[str, Any]],
-        claims: List[Dict[str, Any]]
-    ) -> Tuple[str, float]:
-        """Merge all context and generate answer"""
+        additional_community_context: List[str],
+        primer_answer: str
+    ) -> DriftIteration:
+        """Answer a follow-up question and potentially generate more follow-ups"""
         import requests
 
-        # Build merged context
-        context_parts = []
+        # Build context
+        local_text = "\n".join(
+            f"- {c.get('text', '')[:300]}" for c in local_context[:5]
+        )
+        community_text = "\n".join(
+            f"- {s[:300]}" for s in additional_community_context[:3]
+        )
 
-        # Add global context (community summaries)
-        if global_context:
-            context_parts.append("## Thematic Overview:")
-            for i, summary in enumerate(global_context[:5], 1):
-                context_parts.append(f"{i}. {summary[:500]}")
-
-        # Add local context (specific chunks)
-        if local_context:
-            context_parts.append("\n## Detailed Context:")
-            for chunk in local_context[:7]:
-                text = chunk.get('text', '')[:400]
-                entity = chunk.get('entity_name', 'Unknown')
-                context_parts.append(f"- [{entity}]: {text}")
-
-        # Add claims
-        if claims:
-            context_parts.append("\n## Key Facts:")
-            for claim in claims[:5]:
-                fact = f"{claim.get('subject', '')} {claim.get('predicate', '')} {claim.get('object', '')}"
-                context_parts.append(f"- {fact}")
-
-        merged_context = '\n'.join(context_parts)
-
-        # Detect query language and generate answer using LLM
-        import re
-        arabic_chars = len(re.findall(r'[\u0600-\u06FF]', query))
-        english_chars = len(re.findall(r'[a-zA-Z]', query))
-        is_arabic = arabic_chars > english_chars
+        is_arabic = self._is_arabic_query(follow_up.question)
 
         if is_arabic:
-            prompt = f"""أنت مساعد ذكي متخصص في الإجابة على الأسئلة بناءً على السياق المقدم.
-يجب أن تجيب باللغة العربية فقط. لا تستخدم أي لغة أخرى.
+            prompt = f"""بناءً على السياق التالي والإجابة الأولية، أجب على سؤال المتابعة.
 
-السياق:
-{merged_context}
+الإجابة الأولية: {primer_answer[:300]}
 
-السؤال: {query}
+سياق محلي جديد:
+{local_text}
 
-الإجابة (باللغة العربية فقط):"""
+سياق مجتمعي إضافي:
+{community_text}
+
+سؤال المتابعة: {follow_up.question}
+
+أجب بصيغة JSON:
+{{
+    "answer": "إجابتك هنا",
+    "confidence": 0.0 إلى 1.0,
+    "new_follow_ups": []
+}}
+
+JSON فقط:"""
         else:
-            prompt = f"""You are an intelligent assistant specialized in answering questions based on provided context.
-Answer in English only. Be concise and accurate.
+            prompt = f"""Based on the context below and the initial answer, answer the follow-up question.
 
-Context:
-{merged_context}
+Initial Answer: {primer_answer[:300]}
 
-Question: {query}
+New Local Context:
+{local_text}
 
-Answer (in English only):"""
+Additional Community Context:
+{community_text}
+
+Follow-up Question: {follow_up.question}
+
+Respond in JSON format:
+{{
+    "answer": "Your answer here",
+    "confidence": 0.0 to 1.0,
+    "new_follow_ups": []
+}}
+
+JSON only:"""
 
         try:
             response = requests.post(
@@ -440,55 +510,177 @@ Answer (in English only):"""
                 timeout=30
             )
             response.raise_for_status()
-            answer = response.json()["choices"][0]["message"]["content"].strip()
+            content = response.json()["choices"][0]["message"]["content"].strip()
 
-            # Calculate confidence based on context coverage
-            confidence = self._calculate_answer_confidence(
-                global_context, local_context, claims, answer
+            result = self._parse_json_response(content)
+
+            answer = result.get("answer", "Unable to answer follow-up.")
+            confidence = float(result.get("confidence", 0.5))
+
+            new_follow_ups = []
+            for fq in result.get("new_follow_ups", [])[:self.config.max_follow_ups_per_iteration]:
+                new_follow_ups.append(FollowUpQuestion(
+                    question=fq.get("question", ""),
+                    priority=int(fq.get("priority", 2)),
+                    context_needed=fq.get("context_needed", "general")
+                ))
+
+            sources = [c.get('chunk_id', '') for c in local_context]
+
+            return DriftIteration(
+                question=follow_up.question,
+                answer=answer,
+                confidence=confidence,
+                sources=sources,
+                new_follow_ups=new_follow_ups
             )
 
-            return answer, confidence
-
         except Exception as e:
-            logger.error(f"Answer generation error: {e}")
-            return "Unable to generate answer due to an error.", 0.0
+            logger.error(f"Follow-up answer error: {e}")
+            return DriftIteration(
+                question=follow_up.question,
+                answer="Unable to answer.",
+                confidence=0.3,
+                sources=[],
+                new_follow_ups=[]
+            )
 
-    def _calculate_answer_confidence(
+    def _synthesize_final_answer(
         self,
+        query: str,
+        primer_answer: str,
+        iterations: List[DriftIteration],
         global_context: List[str],
-        local_context: List[Dict[str, Any]],
-        claims: List[Dict[str, Any]],
-        answer: str
-    ) -> float:
-        """Calculate confidence in the generated answer"""
-        # Heuristic based on context coverage
-        global_score = min(1.0, len(global_context) / 3)  # 3+ summaries = max
-        local_score = min(1.0, len(local_context) / 5)    # 5+ chunks = max
-        claim_score = min(1.0, len(claims) / 3)           # 3+ claims = max
+        local_context: List[Dict[str, Any]]
+    ) -> str:
+        """Synthesize final comprehensive answer from all gathered information"""
+        import requests
 
-        # Answer quality heuristics
-        answer_length_score = min(1.0, len(answer) / 200)  # ~200 chars = good answer
-
-        # Check for uncertainty phrases
-        uncertainty_phrases = ["don't know", "not sure", "unable to", "no information", "لا أعرف", "غير متأكد"]
-        has_uncertainty = any(phrase in answer.lower() for phrase in uncertainty_phrases)
-        uncertainty_penalty = 0.3 if has_uncertainty else 0.0
-
-        # Weighted combination
-        confidence = (
-            0.25 * global_score +
-            0.35 * local_score +
-            0.20 * claim_score +
-            0.20 * answer_length_score -
-            uncertainty_penalty
+        # Build comprehensive context from all phases
+        iteration_insights = "\n".join(
+            f"- Q: {it.question[:100]}\n  A: {it.answer[:200]}"
+            for it in iterations
         )
 
-        return max(0.0, min(1.0, confidence))
+        is_arabic = self._is_arabic_query(query)
+
+        if is_arabic:
+            prompt = f"""بناءً على جميع المعلومات المجمعة، قدم إجابة شاملة ونهائية.
+
+السؤال الأصلي: {query}
+
+الإجابة الأولية: {primer_answer[:400]}
+
+رؤى من الأسئلة المتابعة:
+{iteration_insights}
+
+قدم إجابة نهائية شاملة ومنظمة (باللغة العربية):"""
+        else:
+            prompt = f"""Based on all gathered information, provide a comprehensive final answer.
+
+Original Question: {query}
+
+Initial Answer: {primer_answer[:400]}
+
+Insights from Follow-up Questions:
+{iteration_insights}
+
+Provide a comprehensive, well-organized final answer (in English):"""
+
+        try:
+            response = requests.post(
+                f"{self.llm_endpoint}/v1/chat/completions",
+                json={
+                    "model": "tgi",
+                    "messages": [{"role": "user", "content": prompt}],
+                    "temperature": 0.3,
+                    "max_tokens": self.config.max_answer_tokens
+                },
+                timeout=30
+            )
+            response.raise_for_status()
+            return response.json()["choices"][0]["message"]["content"].strip()
+
+        except Exception as e:
+            logger.error(f"Final synthesis error: {e}")
+            # Fallback: return primer answer with iteration summaries
+            if iterations:
+                additional = " ".join(it.answer[:100] for it in iterations[:2])
+                return f"{primer_answer} {additional}"
+            return primer_answer
+
+    def _extract_entities_from_text(self, text: str) -> List[str]:
+        """Extract potential entity names from text"""
+        entities = []
+
+        # Arabic entity patterns
+        arabic_prefixes = ["شركة", "هيئة", "وزارة", "جامعة", "مركز", "جائزة"]
+        for prefix in arabic_prefixes:
+            pattern = rf"{prefix}\s+([^\s،,]+(?:\s+[^\s،,]+)?)"
+            matches = re.findall(pattern, text)
+            entities.extend(matches)
+
+        # English capitalized words (potential entities)
+        english_pattern = r'\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\b'
+        entities.extend(re.findall(english_pattern, text))
+
+        # Acronyms
+        acronym_pattern = r'\b([A-Z]{2,6})\b'
+        entities.extend(re.findall(acronym_pattern, text))
+
+        return list(set(entities))[:10]
+
+    def _is_arabic_query(self, query: str) -> bool:
+        """Detect if query is primarily Arabic"""
+        arabic_chars = len(re.findall(r'[\u0600-\u06FF]', query))
+        english_chars = len(re.findall(r'[a-zA-Z]', query))
+        return arabic_chars > english_chars
+
+    def _parse_json_response(self, content: str) -> Dict[str, Any]:
+        """Parse JSON from LLM response, handling common issues"""
+        # Try to extract JSON from response
+        try:
+            # First, try direct parse
+            return json.loads(content)
+        except json.JSONDecodeError:
+            pass
+
+        # Try to find JSON in markdown code blocks
+        json_match = re.search(r'```(?:json)?\s*([\s\S]*?)\s*```', content)
+        if json_match:
+            try:
+                return json.loads(json_match.group(1))
+            except json.JSONDecodeError:
+                pass
+
+        # Try to find JSON object in text
+        json_match = re.search(r'\{[\s\S]*\}', content)
+        if json_match:
+            try:
+                return json.loads(json_match.group(0))
+            except json.JSONDecodeError:
+                pass
+
+        # Fallback: return empty dict
+        logger.warning(f"Could not parse JSON from: {content[:100]}...")
+        return {}
+
+
+# =============================================================================
+# FACTORY FUNCTION
+# =============================================================================
+
+_drift_engine: Optional[DriftSearchEngine] = None
 
 
 def get_drift_search_engine(
     neo4j_client: Optional[Neo4jClient] = None,
     config: Optional[DriftConfig] = None
 ) -> DriftSearchEngine:
-    """Factory function to get drift search engine"""
-    return DriftSearchEngine(neo4j_client=neo4j_client, config=config)
+    """Get or create global DRIFT search engine"""
+    global _drift_engine
+
+    if _drift_engine is None:
+        _drift_engine = DriftSearchEngine(neo4j_client=neo4j_client, config=config)
+
+    return _drift_engine

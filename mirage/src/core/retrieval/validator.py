@@ -410,7 +410,7 @@ class RetrievalValidator:
 
         # Define mode alternatives
         mode_alternatives = {
-            RetrievalMode.NAIVE: [RetrievalMode.LOCAL, RetrievalMode.SEMANTIC],
+            RetrievalMode.VECTOR: [RetrievalMode.LOCAL, RetrievalMode.SEMANTIC],
             RetrievalMode.LOCAL: [RetrievalMode.HYBRID, RetrievalMode.GLOBAL],
             RetrievalMode.GLOBAL: [RetrievalMode.HYBRID, RetrievalMode.LOCAL],
             RetrievalMode.HYBRID: [RetrievalMode.SEMANTIC, RetrievalMode.MIX],

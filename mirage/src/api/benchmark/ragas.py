@@ -10,7 +10,6 @@ from typing import List, Dict, Any
 from loguru import logger
 
 from ...core.retrieval import get_retrieval_engine, RetrievalMode
-from ...core.refrag.compressor import REFRAGCompressor
 from ...core.generation import get_prompt_manager
 
 from .models import RagasScores
@@ -28,21 +27,18 @@ except ImportError:
 # Lazy-initialized components
 _retrieval_engine = None
 _prompt_manager = None
-_refrag_compressor = None
 
 
 def get_components():
     """Get or initialize benchmark components"""
-    global _retrieval_engine, _prompt_manager, _refrag_compressor
+    global _retrieval_engine, _prompt_manager
 
     if _retrieval_engine is None:
         _retrieval_engine = get_retrieval_engine()
     if _prompt_manager is None:
         _prompt_manager = get_prompt_manager()
-    if _refrag_compressor is None:
-        _refrag_compressor = REFRAGCompressor(strategy="hybrid")
 
-    return _retrieval_engine, _prompt_manager, _refrag_compressor
+    return _retrieval_engine, _prompt_manager
 
 
 def is_available() -> bool:
@@ -58,14 +54,14 @@ def get_test_cases():
 async def run_ragas_single(
     test_case: "TestCase",
     mode_str: str,
-    use_refrag: bool,
+    use_refrag: bool,  # Kept for API compatibility, but ignored
     top_k: int
 ) -> Dict[str, Any]:
     """
     Run a single RAGAS evaluation for a test case and mode.
     Returns dict with answer, scores, timing, etc.
     """
-    retrieval_engine, prompt_manager, refrag_compressor = get_components()
+    retrieval_engine, prompt_manager = get_components()
 
     start_time = time.time()
 
@@ -76,7 +72,7 @@ async def run_ragas_single(
             try:
                 mode = RetrievalMode(mode_str)
             except ValueError:
-                mode = RetrievalMode.NAIVE
+                mode = RetrievalMode.VECTOR
 
         # 1. Retrieval
         response = retrieval_engine.retrieve(test_case.query, mode=mode, top_k=top_k)
@@ -88,24 +84,14 @@ async def run_ragas_single(
             if hasattr(r, 'via_entity') and r.via_entity:
                 entities_found.add(r.via_entity)
 
-        # 2. Optional REFRAG compression
-        token_savings = 0
-        if use_refrag and chunks:
-            compression_input = [{"text": r.text, "chunk_id": r.chunk_id} for r in chunks]
-            compression_result = refrag_compressor.compress(compression_input, query_context=test_case.query)
-            original_len = compression_result["original_length"]
-            compressed_len = compression_result["compressed_length"]
-            if original_len > 0:
-                token_savings = round((1 - compressed_len / original_len) * 100, 1)
-
-        # 3. Build context and prompt
+        # 2. Build context and prompt
         context = [
             {"text": r.text, "document_id": r.document_id, "chunk_id": r.chunk_id}
             for r in chunks
         ]
         prompt = prompt_manager.create_qa_prompt(question=test_case.query, context=context)
 
-        # 4. LLM generation
+        # 3. LLM generation
         answer = ""
         try:
             timeout_config = httpx.Timeout(timeout=60.0, connect=10.0)
@@ -131,7 +117,7 @@ async def run_ragas_single(
 
         total_time = (time.time() - start_time) * 1000
 
-        # 5. Calculate RAGAS scores
+        # 4. Calculate RAGAS scores
         scores = calculate_ragas_scores(test_case, chunks, answer, list(entities_found))
 
         return {
@@ -140,7 +126,7 @@ async def run_ragas_single(
             "timing_ms": round(total_time, 1),
             "chunks_used": len(chunks),
             "entities_found": list(entities_found)[:10],
-            "token_savings": token_savings
+            "token_savings": 0  # No compression
         }
 
     except Exception as e:

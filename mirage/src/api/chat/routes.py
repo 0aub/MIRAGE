@@ -18,7 +18,6 @@ from ...core.retrieval import get_v5_engine, get_observability
 from ...core.retrieval import get_drift_search_engine
 from ...core.retrieval import get_query_decomposer
 from ...core.generation import get_prompt_manager, get_response_generator
-from ...core.refrag.compressor import REFRAGCompressor
 
 from .models import (
     ChatRequest,
@@ -36,7 +35,6 @@ from .helpers import (
 router = APIRouter()
 
 # Initialize components
-refrag_compressor = REFRAGCompressor(strategy="hybrid")
 rag_workflow = RAGWorkflow()
 retrieval_engine = get_retrieval_engine()
 prompt_manager = get_prompt_manager()
@@ -270,7 +268,7 @@ async def list_retrieval_modes():
     return {
         "modes": [
             {"name": "auto", "description": "Automatic mode selection"},
-            {"name": "naive", "description": "Simple vector similarity search"},
+            {"name": "vector", "description": "Simple vector similarity search"},
             {"name": "local", "description": "Entity-focused retrieval"},
             {"name": "global", "description": "Relationship-focused retrieval"},
             {"name": "global_search", "description": "GraphRAG map-reduce"},
@@ -456,18 +454,6 @@ async def ask_v2(request: ChatRequest):
                 "via_entity": r.via_entity if hasattr(r, 'via_entity') else None,
             })
 
-        # Compression
-        compression_stats = {"enabled": False, "compression_ratio": 1.0}
-        if request.use_refrag and chunks:
-            comp_start = time.time()
-            comp_input = [{"text": c["text"], "chunk_id": c["chunk_id"]} for c in chunks]
-            comp_result = refrag_compressor.compress(comp_input, query_context=request.message)
-            compression_stats = {
-                "enabled": True,
-                "compression_ratio": round(comp_result["compression_ratio"], 3),
-                "compression_time_ms": round((time.time() - comp_start) * 1000, 1),
-            }
-
         result = {
             "query": request.message,
             "answer": answer,
@@ -482,7 +468,6 @@ async def ask_v2(request: ChatRequest):
                 "graph_1hop_chunks": graph_1hop,
                 "graph_2hop_chunks": graph_2hop,
             },
-            "compression_stats": compression_stats,
         }
 
         if entity_names:

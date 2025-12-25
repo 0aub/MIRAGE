@@ -139,7 +139,7 @@ class DetailedComparisonReport(BaseModel):
 class RagasEvaluationRequest(BaseModel):
     """Request for RAGAS evaluation"""
     test_case_ids: List[str] = []
-    modes: List[str] = ["naive", "local", "global", "hybrid", "mix"]
+    modes: List[str] = ["vector", "local", "global", "hybrid", "mix"]
     compare_refrag: bool = True
     top_k: int = 5
 

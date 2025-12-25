@@ -254,7 +254,7 @@ retrieval:
   default_mode: "mix"
 
   modes:
-    naive:
+    vector:
       enabled: true
       description: "Vector search on chunks only (traditional RAG)"
       top_k: 10
@@ -285,7 +285,7 @@ retrieval:
     mix:
       enabled: true
       description: "All modes combined (most comprehensive)"
-      naive_weight: 0.2
+      vector_weight: 0.2
       local_weight: 0.4
       global_weight: 0.4
       fusion_method: "rrf"

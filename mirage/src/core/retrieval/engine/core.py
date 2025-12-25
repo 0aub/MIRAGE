@@ -16,14 +16,14 @@ from ...evaluation import get_metrics_tracker
 from ...graph_builder import get_entity_disambiguator
 
 from .config import RetrievalEngineConfig
-from .naive_mode import NaiveModeMixin
+from .vector_mode import VectorModeMixin
 from .local_mode import LocalModeMixin
 from .global_mode import GlobalModeMixin
 from .hybrid_mode import HybridModeMixin
 
 
 class RetrievalEngine(
-    NaiveModeMixin,
+    VectorModeMixin,
     LocalModeMixin,
     GlobalModeMixin,
     HybridModeMixin
@@ -32,14 +32,15 @@ class RetrievalEngine(
     Unified retrieval engine supporting 8 modes.
 
     Modes:
-    1. NAIVE - Simple vector search
-    2. LOCAL - Entity-focused retrieval
+    1. VECTOR - Vector similarity search (baseline RAG)
+    2. LOCAL - Entity-focused retrieval (GraphRAG local search)
     3. GLOBAL - Relationship-focused retrieval
-    4. GLOBAL_SEARCH - Map-reduce over community summaries (TRUE GraphRAG)
+    4. GLOBAL_SEARCH - Map-reduce over community summaries (GraphRAG global search)
     5. HYBRID - Combines local + global
     6. MIX - All modes with RRF fusion
-    7. SEMANTIC - Deep semantic matching
+    7. SEMANTIC - Deep semantic matching with cross-encoder
     8. BYPASS - No retrieval (returns empty)
+    9. DRIFT - GraphRAG DRIFT search (dynamic global+local)
 
     Features:
     - Automatic query routing
@@ -238,8 +239,8 @@ class RetrievalEngine(
         if self.embedder:
             query_embedding = self.embedder.embed(query)
 
-        if mode == RetrievalMode.NAIVE:
-            return self._naive_retrieve(query, query_embedding, top_k, **kwargs)
+        if mode == RetrievalMode.VECTOR or mode == RetrievalMode.NAIVE:
+            return self._vector_retrieve(query, query_embedding, top_k, **kwargs)
         elif mode == RetrievalMode.LOCAL:
             return self._local_retrieve(query, query_embedding, top_k, **kwargs)
         elif mode == RetrievalMode.GLOBAL:

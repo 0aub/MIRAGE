@@ -16,36 +16,13 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from loguru import logger
 
+from ..utils.arabic import normalize_arabic
 
+
+# Backward compatibility alias
 def normalize_arabic_for_search(text: str) -> str:
-    """
-    Normalize Arabic text for consistent search matching.
-
-    Handles common Arabic text variations:
-    - ة ↔ ه (ta marbuta / ha) - critical for entity names
-    - أ/إ/آ → ا (alef variants)
-    - ى → ي (alef maqsura / ya)
-    - Remove diacritics (tashkeel)
-    """
-    if not text:
-        return text
-
-    # Remove diacritics (tashkeel)
-    diacritics = re.compile(r'[\u064B-\u065F\u0670]')
-    text = diacritics.sub('', text)
-
-    # Normalize ta marbuta ة → ه
-    text = text.replace('ة', 'ه')
-
-    # Normalize alef variants → ا
-    text = text.replace('أ', 'ا')
-    text = text.replace('إ', 'ا')
-    text = text.replace('آ', 'ا')
-
-    # Normalize alef maqsura → ي
-    text = text.replace('ى', 'ي')
-
-    return text
+    """Normalize Arabic text for search. Uses shared utils.arabic module."""
+    return normalize_arabic(text)
 
 try:
     from qdrant_client import QdrantClient
@@ -454,6 +431,101 @@ class IndexManager:
         except Exception as e:
             logger.warning(f"Keyword search error: {e}")
             return []
+
+    def batch_keyword_search(
+        self,
+        keywords: List[str],
+        limit_per_keyword: int = 3,
+        total_limit: int = 50
+    ) -> Dict[str, List[Dict[str, Any]]]:
+        """
+        Batch keyword search - search for multiple keywords in a single pass.
+
+        This is more efficient than calling keyword_search multiple times
+        as it only scrolls through the collection once.
+
+        Args:
+            keywords: List of text phrases to search for
+            limit_per_keyword: Maximum results per keyword
+            total_limit: Maximum total results across all keywords
+
+        Returns:
+            Dict mapping keyword to list of matching chunks
+        """
+        if not keywords:
+            return {}
+
+        client = self._get_client()
+
+        # Normalize all keywords upfront
+        keyword_pairs = []
+        for kw in keywords:
+            if kw and len(kw) >= 2:
+                normalized = normalize_arabic_for_search(kw)
+                keyword_pairs.append((kw, normalized))
+
+        if not keyword_pairs:
+            return {}
+
+        # Initialize results dict
+        results: Dict[str, List[Dict[str, Any]]] = {kw: [] for kw, _ in keyword_pairs}
+        total_found = 0
+
+        try:
+            offset = None
+
+            while total_found < total_limit:
+                scroll_result = client.scroll(
+                    collection_name=self.chunks_collection,
+                    limit=100,
+                    offset=offset,
+                    with_payload=True,
+                    with_vectors=False
+                )
+
+                points, next_offset = scroll_result
+
+                if not points:
+                    break
+
+                for point in points:
+                    if total_found >= total_limit:
+                        break
+
+                    text = point.payload.get("text", "")
+                    text_normalized = normalize_arabic_for_search(text)
+
+                    # Check against all keywords
+                    for keyword, keyword_normalized in keyword_pairs:
+                        if len(results[keyword]) >= limit_per_keyword:
+                            continue
+
+                        if keyword in text or keyword_normalized in text_normalized:
+                            chunk_data = {
+                                "chunk_id": point.payload.get("chunk_id", str(point.id)),
+                                "document_id": point.payload.get("document_id", ""),
+                                "text": text,
+                                "matched_keyword": keyword
+                            }
+                            results[keyword].append(chunk_data)
+                            total_found += 1
+
+                            if total_found >= total_limit:
+                                break
+
+                offset = next_offset
+                if offset is None:
+                    break
+
+                # Early exit if all keywords have enough results
+                if all(len(v) >= limit_per_keyword for v in results.values()):
+                    break
+
+            return results
+
+        except Exception as e:
+            logger.warning(f"Batch keyword search error: {e}")
+            return results
 
     # =========================================================================
     # ENTITY OPERATIONS

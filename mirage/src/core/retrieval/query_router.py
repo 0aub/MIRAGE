@@ -47,7 +47,7 @@ class QueryRouter:
     - Exploratory/theme questions → GLOBAL
     - General questions → HYBRID
     - Comparative → MIX
-    - Short/simple → NAIVE
+    - Short/simple → VECTOR
     """
 
     # Query patterns for classification (improved Arabic support)
@@ -273,7 +273,7 @@ class QueryRouter:
 
         if word_count <= 2 and not is_multi_hop:
             return (
-                RetrievalMode.NAIVE,
+                RetrievalMode.VECTOR,
                 0.8,
                 f"Very short query ({word_count} words) - using simple vector search"
             )
@@ -373,12 +373,12 @@ class QueryRouter:
 
         # Mode-specific alternatives
         if primary_mode == RetrievalMode.LOCAL:
-            alternatives.append((RetrievalMode.NAIVE, 0.5))
+            alternatives.append((RetrievalMode.VECTOR, 0.5))
         elif primary_mode == RetrievalMode.GLOBAL:
             alternatives.append((RetrievalMode.LOCAL, 0.5))
         elif primary_mode == RetrievalMode.GLOBAL_SEARCH:
             alternatives.append((RetrievalMode.GLOBAL, 0.6))  # Fallback to relationship-based
-        elif primary_mode == RetrievalMode.NAIVE:
+        elif primary_mode == RetrievalMode.VECTOR:
             alternatives.append((RetrievalMode.LOCAL, 0.6))
 
         return alternatives
@@ -414,7 +414,7 @@ class QueryRouter:
             return decision.alternative_modes[0][0]
 
         # Ultimate fallback
-        return RetrievalMode.NAIVE
+        return RetrievalMode.VECTOR
 
 
 # =============================================================================

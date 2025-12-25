@@ -19,9 +19,8 @@ class ChatRequest(BaseModel):
     message: str
     conversation_id: Optional[str] = None
     use_graph: bool = True
-    use_refrag: bool = True
     language: Optional[str] = None
-    retrieval_mode: Optional[str] = None  # auto, naive, local, global, hybrid, mix, semantic
+    retrieval_mode: Optional[str] = None  # auto, vector, local, global, hybrid, mix, semantic
     top_k: Optional[int] = 10
     use_hyde: bool = False
     enable_tracing: bool = False

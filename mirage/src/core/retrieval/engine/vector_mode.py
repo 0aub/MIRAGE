@@ -1,7 +1,8 @@
 """
-Naive Retrieval Mode
+Vector Retrieval Mode
 
-Vector search with keyword fallback for Arabic entities.
+Vector similarity search with keyword fallback for Arabic entities.
+This is the baseline RAG approach (previously called "naive").
 """
 
 from typing import List, Dict, Any, Optional
@@ -12,10 +13,10 @@ from ..base_retriever import RetrievalMode, RetrievalResult, RetrievalResponse
 from .arabic_utils import get_arabic_variants
 
 
-class NaiveModeMixin:
-    """Mixin providing naive retrieval mode"""
+class VectorModeMixin:
+    """Mixin providing vector retrieval mode (baseline RAG)"""
 
-    def _naive_retrieve(
+    def _vector_retrieve(
         self,
         query: str,
         query_embedding: Optional[np.ndarray],
@@ -34,7 +35,7 @@ class NaiveModeMixin:
             return RetrievalResponse(
                 results=[],
                 query=query,
-                mode=RetrievalMode.NAIVE,
+                mode=RetrievalMode.VECTOR,
                 metadata={"error": "No embedding available"}
             )
 
@@ -42,7 +43,7 @@ class NaiveModeMixin:
             return RetrievalResponse(
                 results=[],
                 query=query,
-                mode=RetrievalMode.NAIVE,
+                mode=RetrievalMode.VECTOR,
                 metadata={"error": "Index manager not available"}
             )
 
@@ -60,7 +61,7 @@ class NaiveModeMixin:
                 document_id=r.payload.get("document_id", ""),
                 text=r.payload.get("text", ""),
                 score=r.score,
-                retrieval_mode="naive",
+                retrieval_mode="vector",
                 metadata=r.payload
             )
             for r in search_results
@@ -73,27 +74,39 @@ class NaiveModeMixin:
 
         if entity_phrases and self.index_manager:
             try:
-                seen_chunks = {r.chunk_id for r in results}
-                for phrase in entity_phrases[:5]:
+                # Batch search: collect all variants and search in single pass
+                all_variants = []
+                phrase_to_original = {}  # Map variant back to original phrase
+                for phrase in entity_phrases[:self.config.max_entity_phrases]:
                     if len(phrase) >= 3:
-                        # Get Arabic variants (handles ة↔ه, أ/إ/آ→ا)
                         variants = get_arabic_variants(phrase)
                         for variant in variants:
-                            keyword_results = self.index_manager.keyword_search(
-                                variant, limit=3
-                            )
-                            for kr in keyword_results:
-                                chunk_id = kr.get("chunk_id", kr.get("id", ""))
-                                if chunk_id and chunk_id not in seen_chunks:
-                                    seen_chunks.add(chunk_id)
-                                    keyword_chunks.append(RetrievalResult(
-                                        chunk_id=chunk_id,
-                                        document_id=kr.get("document_id", ""),
-                                        text=kr.get("text", ""),
-                                        score=0.88,  # High score for keyword match
-                                        retrieval_mode="naive",
-                                        metadata={"keyword_match": phrase, "matched_variant": variant}
-                                    ))
+                            all_variants.append(variant)
+                            phrase_to_original[variant] = phrase
+
+                if all_variants:
+                    # Single batch search instead of N individual searches
+                    batch_results = self.index_manager.batch_keyword_search(
+                        keywords=all_variants,
+                        limit_per_keyword=self.config.keyword_limit_per_variant,
+                        total_limit=self.config.keyword_batch_total_limit
+                    )
+
+                    seen_chunks = {r.chunk_id for r in results}
+                    for variant, matches in batch_results.items():
+                        original_phrase = phrase_to_original.get(variant, variant)
+                        for kr in matches:
+                            chunk_id = kr.get("chunk_id", kr.get("id", ""))
+                            if chunk_id and chunk_id not in seen_chunks:
+                                seen_chunks.add(chunk_id)
+                                keyword_chunks.append(RetrievalResult(
+                                    chunk_id=chunk_id,
+                                    document_id=kr.get("document_id", ""),
+                                    text=kr.get("text", ""),
+                                    score=self.config.keyword_match_score_vector,
+                                    retrieval_mode="vector",
+                                    metadata={"keyword_match": original_phrase, "matched_variant": variant}
+                                ))
             except Exception as e:
                 logger.debug(f"Keyword search fallback failed: {e}")
 
@@ -101,18 +114,19 @@ class NaiveModeMixin:
         if keyword_chunks:
             # Add keyword matches at the beginning (higher priority)
             results = keyword_chunks + results
-            logger.debug(f"NAIVE keyword fallback: added {len(keyword_chunks)} chunks")
+            logger.debug(f"VECTOR keyword fallback: added {len(keyword_chunks)} chunks")
 
         # 4. Boost results that contain query terms (improves relevance for English queries)
         query_terms = [t.lower() for t in entity_phrases if len(t) >= 3]
         if query_terms:
+            max_boost_terms = int(self.config.term_boost_max / self.config.term_boost_factor)
             for result in results:
                 text_lower = (result.text or "").lower()
                 matching_terms = sum(1 for t in query_terms if t in text_lower)
                 if matching_terms > 0:
                     # Boost score based on term overlap
-                    boost = 0.05 * min(matching_terms, 3)  # Max +0.15 boost
-                    result.score = min(0.98, result.score + boost)
+                    boost = self.config.term_boost_factor * min(matching_terms, max_boost_terms)
+                    result.score = min(self.config.max_boosted_score, result.score + boost)
                     result.metadata = result.metadata or {}
                     result.metadata["term_boost"] = matching_terms
 
@@ -122,7 +136,12 @@ class NaiveModeMixin:
         return RetrievalResponse(
             results=results[:top_k],
             query=query,
-            mode=RetrievalMode.NAIVE,
+            mode=RetrievalMode.VECTOR,
             total_candidates=len(search_results) + len(keyword_chunks),
             metadata={"keyword_fallback": len(keyword_chunks) > 0, "term_boosted": len(query_terms) > 0}
         )
+
+    # Backward compatibility alias
+    def _naive_retrieve(self, *args, **kwargs):
+        """DEPRECATED: Use _vector_retrieve instead."""
+        return self._vector_retrieve(*args, **kwargs)
