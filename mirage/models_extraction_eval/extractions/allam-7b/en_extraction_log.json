@@ -1,0 +1,19 @@
+{
+  "model": "allam-7b",
+  "model_full_name": "iKhalid/ALLaM:7b",
+  "provider": "ollama",
+  "vision_mode": false,
+  "document": "PoliciesEn.pdf",
+  "language": "en",
+  "start_time": "2025-12-27T10:18:49.276906",
+  "end_time": "2025-12-27T10:22:22.999048",
+  "elapsed_seconds": 213.72,
+  "total_pages": 57,
+  "total_tokens": 22168,
+  "tokens_per_second": 103.72,
+  "pages_per_minute": 16.0,
+  "total_entities": 396,
+  "total_relationships": 383,
+  "errors_count": 0,
+  "errors": []
+}

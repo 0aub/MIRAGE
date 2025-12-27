@@ -1,0 +1,98 @@
+{
+  "model": "qwen3-4b-thinking",
+  "model_full_name": "qwen3:4b",
+  "timestamp": "2025-12-27T05:34:55.120366",
+  "documents": {
+    "PoliciesAr.pdf": {
+      "model": "qwen3-4b-thinking",
+      "model_full_name": "qwen3:4b",
+      "provider": "ollama",
+      "vision_mode": false,
+      "document": "PoliciesAr.pdf",
+      "language": "ar",
+      "start_time": "2025-12-26T20:20:49.133564",
+      "end_time": "2025-12-27T05:08:16.319895",
+      "elapsed_seconds": 31647.19,
+      "total_pages": 125,
+      "total_tokens": 290503,
+      "tokens_per_second": 9.18,
+      "pages_per_minute": 0.24,
+      "total_entities": 42,
+      "total_relationships": 27,
+      "errors_count": 13,
+      "errors": [
+        {
+          "page": 45,
+          "error": "HTTPConnectionPool(host='ollama', port=11434): Read timed out. (read timeout=120)"
+        },
+        {
+          "page": 58,
+          "error": "HTTPConnectionPool(host='ollama', port=11434): Read timed out. (read timeout=120)"
+        },
+        {
+          "page": 65,
+          "error": "HTTPConnectionPool(host='ollama', port=11434): Read timed out. (read timeout=120)"
+        },
+        {
+          "page": 69,
+          "error": "HTTPConnectionPool(host='ollama', port=11434): Read timed out. (read timeout=120)"
+        },
+        {
+          "page": 70,
+          "error": "HTTPConnectionPool(host='ollama', port=11434): Read timed out. (read timeout=120)"
+        },
+        {
+          "page": 82,
+          "error": "HTTPConnectionPool(host='ollama', port=11434): Read timed out. (read timeout=120)"
+        },
+        {
+          "page": 84,
+          "error": "HTTPConnectionPool(host='ollama', port=11434): Read timed out. (read timeout=120)"
+        },
+        {
+          "page": 90,
+          "error": "HTTPConnectionPool(host='ollama', port=11434): Read timed out. (read timeout=120)"
+        },
+        {
+          "page": 96,
+          "error": "HTTPConnectionPool(host='ollama', port=11434): Read timed out. (read timeout=120)"
+        },
+        {
+          "page": 98,
+          "error": "HTTPConnectionPool(host='ollama', port=11434): Read timed out. (read timeout=120)"
+        },
+        {
+          "page": 99,
+          "error": "HTTPConnectionPool(host='ollama', port=11434): Read timed out. (read timeout=120)"
+        },
+        {
+          "page": 101,
+          "error": "HTTPConnectionPool(host='ollama', port=11434): Read timed out. (read timeout=120)"
+        },
+        {
+          "page": 104,
+          "error": "HTTPConnectionPool(host='ollama', port=11434): Read timed out. (read timeout=120)"
+        }
+      ]
+    },
+    "PoliciesEn.pdf": {
+      "model": "qwen3-4b-thinking",
+      "model_full_name": "qwen3:4b",
+      "provider": "ollama",
+      "vision_mode": false,
+      "document": "PoliciesEn.pdf",
+      "language": "en",
+      "start_time": "2025-12-27T05:08:16.328034",
+      "end_time": "2025-12-27T05:34:55.118284",
+      "elapsed_seconds": 1598.79,
+      "total_pages": 57,
+      "total_tokens": 22168,
+      "tokens_per_second": 13.87,
+      "pages_per_minute": 2.14,
+      "total_entities": 13,
+      "total_relationships": 8,
+      "errors_count": 0,
+      "errors": []
+    }
+  }
+}

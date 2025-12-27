@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/home/aub/boo/MIRAGE/mirage/models_extraction_eval/scripts/run_extraction.py", line 22, in <module>
+    import requests
+ModuleNotFoundError: No module named 'requests'

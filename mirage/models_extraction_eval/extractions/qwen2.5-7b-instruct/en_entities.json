@@ -1,0 +1,4545 @@
+[
+  {
+    "text": "املبادئ ألاساسية و",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 1
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 1
+  },
+  {
+    "text": "Version 1",
+    "type": "Product",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 1
+  },
+  {
+    "text": "June 1st, 2020",
+    "type": "Event",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 1
+  },
+  {
+    "text": "للبيانات الوطنية",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 1
+  },
+  {
+    "text": "مسودة",
+    "type": "Document",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 1
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 2
+  },
+  {
+    "text": "Data Classification Interim Regulations",
+    "type": "Document",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 2
+  },
+  {
+    "text": "Personal Data Protection Interim Regulations",
+    "type": "Document",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 2
+  },
+  {
+    "text": "Introduction",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 2
+  },
+  {
+    "text": "Definitions",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 2
+  },
+  {
+    "text": "Objectives",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 2
+  },
+  {
+    "text": "Scope",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 2
+  },
+  {
+    "text": "Key Principles",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 2
+  },
+  {
+    "text": "Data Classification Levels",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 2
+  },
+  {
+    "text": "Data Classification Controls",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 2
+  },
+  {
+    "text": "Protective Marking",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 2
+  },
+  {
+    "text": "Access",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 2
+  },
+  {
+    "text": "Usage",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 2
+  },
+  {
+    "text": "Storage",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 2
+  },
+  {
+    "text": "Data Sharing",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 2
+  },
+  {
+    "text": "Retention",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 2
+  },
+  {
+    "text": "Disposal",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 2
+  },
+  {
+    "text": "Data Classification Process",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 2
+  },
+  {
+    "text": "Roles and Responsibilities Within the Entity",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 2
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 3
+  },
+  {
+    "text": "Data Quality Principle",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 3
+  },
+  {
+    "text": "Monitoring and Compliance Principle",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 3
+  },
+  {
+    "text": "Data Subject Rights",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 3
+  },
+  {
+    "text": "Data Controller Obligations",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 3
+  },
+  {
+    "text": "General Dispositions",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 3
+  },
+  {
+    "text": "Data Sharing Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 3
+  },
+  {
+    "text": "Scope of Data Sharing",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 3
+  },
+  {
+    "text": "Key Principles of Data Sharing",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 3
+  },
+  {
+    "text": "Data Security Principle",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 3
+  },
+  {
+    "text": "Ethical Data Use Principle",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 3
+  },
+  {
+    "text": "Data Sharing Process",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 3
+  },
+  {
+    "text": "Data Sharing Timeline",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 3
+  },
+  {
+    "text": "Data Sharing Controls",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 3
+  },
+  {
+    "text": "Freedom of Information Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 3
+  },
+  {
+    "text": "Scope of Freedom of Information",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 3
+  },
+  {
+    "text": "Key Principles of Freedom of Information",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 3
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 4
+  },
+  {
+    "text": "Public Entities",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 4
+  },
+  {
+    "text": "Open data Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 4
+  },
+  {
+    "text": "Scope",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 4
+  },
+  {
+    "text": "Key Principles",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 4
+  },
+  {
+    "text": "Principle 1: Open by Default",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 4
+  },
+  {
+    "text": "Principle 2: Open Format and Machine-Readable",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 4
+  },
+  {
+    "text": "Principle 3: Up to Date",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 4
+  },
+  {
+    "text": "Principle 4: Comprehensive",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 4
+  },
+  {
+    "text": "Principle 5: Non-discriminatory",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 4
+  },
+  {
+    "text": "Principle 6: Free of Charge",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 4
+  },
+  {
+    "text": "Principle 7: KSA Open data License",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 4
+  },
+  {
+    "text": "Principle 8: For Improved Governance and Citizen Engagement",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 4
+  },
+  {
+    "text": "Principle 9: For Inclusive Development and Innovation",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 4
+  },
+  {
+    "text": "Assessing Data Value for Defining Open datasets",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 4
+  },
+  {
+    "text": "Open data planning",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 4
+  },
+  {
+    "text": "Open data Identification",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 4
+  },
+  {
+    "text": "Open data Publishing",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 4
+  },
+  {
+    "text": "Open data Maintenance",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 4
+  },
+  {
+    "text": "Open data Performance Tracking",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 4
+  },
+  {
+    "text": "Roles and Responsibilities",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 4
+  },
+  {
+    "text": "National Level",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 4
+  },
+  {
+    "text": "Entity Level",
+    "type": "Organization",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 4
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 5
+  },
+  {
+    "text": "Government data",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 5
+  },
+  {
+    "text": "National asset",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 5
+  },
+  {
+    "text": "Data management practices",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 5
+  },
+  {
+    "text": "Data accountability and transparency",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 5
+  },
+  {
+    "text": "Data insights",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 5
+  },
+  {
+    "text": "Strategic decision making",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 5
+  },
+  {
+    "text": "Kingdom of Saudi Arabia",
+    "type": "Location",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 5
+  },
+  {
+    "text": "Data sharing",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 5
+  },
+  {
+    "text": "Data classification",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 5
+  },
+  {
+    "text": "Confidentiality levels",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 5
+  },
+  {
+    "text": "Public entities",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 5
+  },
+  {
+    "text": "Freedom of Information",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 5
+  },
+  {
+    "text": "Personal data protection",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 5
+  },
+  {
+    "text": "National Vision 2030",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 5
+  },
+  {
+    "text": "National Data Management Office (NDMO)",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 5
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 6
+  },
+  {
+    "text": "Figure1 – Relationship and Interdependencies of Data-specific Policies and Regulations",
+    "type": "Document",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 6
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 7
+  },
+  {
+    "text": "Data",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 7
+  },
+  {
+    "text": "National Data",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 7
+  },
+  {
+    "text": "Personal Data",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 7
+  },
+  {
+    "text": "Data Access",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 7
+  },
+  {
+    "text": "Access Level",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 7
+  },
+  {
+    "text": "Authentication",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 7
+  },
+  {
+    "text": "Authorization",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 7
+  },
+  {
+    "text": "Data Availability",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 7
+  },
+  {
+    "text": "Data Confidentiality",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 7
+  },
+  {
+    "text": "Data Integrity",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 7
+  },
+  {
+    "text": "Restricted / Protected Data",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 7
+  },
+  {
+    "text": "Public Information",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 7
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 8
+  },
+  {
+    "text": "Open data",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 8
+  },
+  {
+    "text": "Datasets",
+    "type": "Product",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 8
+  },
+  {
+    "text": "Public Data",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 8
+  },
+  {
+    "text": "Sensitive Data",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 8
+  },
+  {
+    "text": "Requestor of Public Information / Applicant",
+    "type": "Role",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 8
+  },
+  {
+    "text": "Data Subject",
+    "type": "Role",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 8
+  },
+  {
+    "text": "Personal Data Processing",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 8
+  },
+  {
+    "text": "Data Controller",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 8
+  },
+  {
+    "text": "Data Processor",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 8
+  },
+  {
+    "text": "Privacy Notice",
+    "type": "Document",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 8
+  },
+  {
+    "text": "Personal Data Destruction",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 8
+  },
+  {
+    "text": "Data Classification",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 8
+  },
+  {
+    "text": "Data Classification Levels",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 8
+  },
+  {
+    "text": "Data Classification Marker",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 8
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 9
+  },
+  {
+    "text": "Disclosure of Personal Data",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 9
+  },
+  {
+    "text": "Data Controller",
+    "type": "Role",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 9
+  },
+  {
+    "text": "Data Processor",
+    "type": "Role",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 9
+  },
+  {
+    "text": "Data Subject",
+    "type": "Role",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 9
+  },
+  {
+    "text": "Personal Data Breach",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 9
+  },
+  {
+    "text": "Consent",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 9
+  },
+  {
+    "text": "Implied Consent",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 9
+  },
+  {
+    "text": "Third Party",
+    "type": "Role",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 9
+  },
+  {
+    "text": "Business Data Executive",
+    "type": "Role",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 9
+  },
+  {
+    "text": "Business Data Steward",
+    "type": "Role",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 9
+  },
+  {
+    "text": "Open data and Information Access Officer",
+    "type": "Role",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 9
+  },
+  {
+    "text": "Data User",
+    "type": "Role",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 9
+  },
+  {
+    "text": "Metadata",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 9
+  },
+  {
+    "text": "Machine-readable",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 9
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 10
+  },
+  {
+    "text": "National Open Data Portal",
+    "type": "Product",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 10
+  },
+  {
+    "text": "Open data License",
+    "type": "Document",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 10
+  },
+  {
+    "text": "Open Format",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 10
+  },
+  {
+    "text": "Data Requestor",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 10
+  },
+  {
+    "text": "Data Sharing Request",
+    "type": "Document",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 10
+  },
+  {
+    "text": "Data Sharing Agreement",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 10
+  },
+  {
+    "text": "Delivery Model for Data Sharing",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 10
+  },
+  {
+    "text": "Security Controls",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 10
+  },
+  {
+    "text": "Public Entity",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 10
+  },
+  {
+    "text": "Regulatory Authority",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 10
+  },
+  {
+    "text": "Entity’s Office",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 10
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 11
+  },
+  {
+    "text": "Chief Data and Privacy Officer (CDPO)",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 11
+  },
+  {
+    "text": "National Data Management Office (NDMO)",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 11
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 12
+  },
+  {
+    "text": "Council of Ministers",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 12
+  },
+  {
+    "text": "NDMO (National Data Management Office)",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 12
+  },
+  {
+    "text": "Kingdom",
+    "type": "Location",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 12
+  },
+  {
+    "text": "Artificial Intelligence",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 12
+  },
+  {
+    "text": "Data and Information Assets",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 12
+  },
+  {
+    "text": "Government Entities",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 12
+  },
+  {
+    "text": "Personal Data Privacy",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 12
+  },
+  {
+    "text": "Public Information",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 12
+  },
+  {
+    "text": "GDP (Gross Domestic Product)",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 12
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 13
+  },
+  {
+    "text": "Provide equal opportunity for requestors of public information",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 13
+  },
+  {
+    "text": "citizen equality and the collective awareness and participation in national matters",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 13
+  },
+  {
+    "text": "Data Classification Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 13
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 14
+  },
+  {
+    "text": "14",
+    "type": "Event",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 14
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 15
+  },
+  {
+    "text": "Data Classification Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 15
+  },
+  {
+    "text": "public entities",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 15
+  },
+  {
+    "text": "paper records",
+    "type": "Product",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 15
+  },
+  {
+    "text": "emails",
+    "type": "Product",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 15
+  },
+  {
+    "text": "information stored on computers",
+    "type": "Product",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 15
+  },
+  {
+    "text": "audio or video cassettes",
+    "type": "Product",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 15
+  },
+  {
+    "text": "microfiche",
+    "type": "Product",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 15
+  },
+  {
+    "text": "maps",
+    "type": "Product",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 15
+  },
+  {
+    "text": "photographs",
+    "type": "Product",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 15
+  },
+  {
+    "text": "handwritten notes",
+    "type": "Product",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 15
+  },
+  {
+    "text": "in development sectors",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 15
+  },
+  {
+    "text": "political and security sectors",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 15
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 16
+  },
+  {
+    "text": "KSA public entities",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 16
+  },
+  {
+    "text": "Military operations details and plans",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 16
+  },
+  {
+    "text": "Official political information on the international relations and conventions and treaties",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 16
+  },
+  {
+    "text": "Security and intelligence bodies",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 16
+  },
+  {
+    "text": "National interest",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 16
+  },
+  {
+    "text": "Encryption keys and mechanisms used for national infrastructure",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 16
+  },
+  {
+    "text": "Terrorism crimes and aggressive plans",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 16
+  },
+  {
+    "text": "Weapons and ammunitions",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 16
+  },
+  {
+    "text": "Conventions and treaties",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 16
+  },
+  {
+    "text": "KSA organizations",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 16
+  },
+  {
+    "text": "Individuals' health and safety at massive scale",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 16
+  },
+  {
+    "text": "Protected Individual personnel",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 16
+  },
+  {
+    "text": "Catastrophic damage to the environment or natural resources",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 16
+  },
+  {
+    "text": "TOP SECRET",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 16
+  },
+  {
+    "text": "TS",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 16
+  },
+  {
+    "text": "Kingdom of Saudi Arabia (KSA)",
+    "type": "Location",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 16
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 17
+  },
+  {
+    "text": "Secret",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 17
+  },
+  {
+    "text": "logistics storage or economic storages",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 17
+  },
+  {
+    "text": "vital installations",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 17
+  },
+  {
+    "text": "Memorandums of Understanding",
+    "type": "Document",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 17
+  },
+  {
+    "text": "national interest",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 17
+  },
+  {
+    "text": "reputation of the country",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 17
+  },
+  {
+    "text": "diplomatic relations",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 17
+  },
+  {
+    "text": "international companies",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 17
+  },
+  {
+    "text": "Kingdom",
+    "type": "Location",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 17
+  },
+  {
+    "text": "bilateral agreements",
+    "type": "Document",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 17
+  },
+  {
+    "text": "military forces",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 17
+  },
+  {
+    "text": "national economy",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 17
+  },
+  {
+    "text": "national infrastructure",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 17
+  },
+  {
+    "text": "Government functions",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 17
+  },
+  {
+    "text": "terrorism funding",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 17
+  },
+  {
+    "text": "KSA organizations",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 17
+  },
+  {
+    "text": "bankruptcy",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 17
+  },
+  {
+    "text": "financial loss",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 17
+  },
+  {
+    "text": "environment or natural resources",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 17
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 18
+  },
+  {
+    "text": "Public development and economic studies",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 18
+  },
+  {
+    "text": "Government acts and policies",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 18
+  },
+  {
+    "text": "Information on public services provided to citizens by Government",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 18
+  },
+  {
+    "text": "National statistics on population, environment, businesses by industry, and others",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 18
+  },
+  {
+    "text": "Data Classification Levels",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 18
+  },
+  {
+    "text": "Confidential",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 18
+  },
+  {
+    "text": "Public",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 18
+  },
+  {
+    "text": "Information that damages the reputation of a public",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 18
+  },
+  {
+    "text": "Negative effect on individuals' interests",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 18
+  },
+  {
+    "text": "Detailed statements of individual transactions",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 18
+  },
+  {
+    "text": "Results of practical research and studies before publication thereof",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 18
+  },
+  {
+    "text": "Information related to products under manufacturing, government entities, operations, KSA economy, and/or which may damage fair competition",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 18
+  },
+  {
+    "text": "Damage to any entity's assets and competitive status, and/or sensitive administrative decisions and appointments information",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 18
+  },
+  {
+    "text": "Information on an individual's medical file",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 18
+  },
+  {
+    "text": "Personally Identifiable Information (PII) such as name, address, social security numbers, phone numbers, and account numbers, license numbers, biometric identifiers",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 18
+  },
+  {
+    "text": "Employees' salary information",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 18
+  },
+  {
+    "text": "Documents such as tactical level plans, marketing programs prior to public release, technology innovation plans",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 18
+  },
+  {
+    "text": "Vendor contracts and quotations",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 18
+  },
+  {
+    "text": "Requests for proposals",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 18
+  },
+  {
+    "text": "New product specification prior to public release",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 18
+  },
+  {
+    "text": "Design & implementation details of security systems (firewalls, access control, network diagrams, etc.)",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 18
+  },
+  {
+    "text": "Internal Entities Policies and Procedures",
+    "type": "Document",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 18
+  },
+  {
+    "text": "Internal Communications/Memos",
+    "type": "Document",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 18
+  },
+  {
+    "text": "Entities internal phone lists and email lists",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 18
+  },
+  {
+    "text": "National strategic trends",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 18
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 19
+  },
+  {
+    "text": "Confidential",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 19
+  },
+  {
+    "text": "Sector or general economic activity",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 19
+  },
+  {
+    "text": "Multiple entities or group of individuals",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 19
+  },
+  {
+    "text": "Single entity or specific individual",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 19
+  },
+  {
+    "text": "Top Secret",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 19
+  },
+  {
+    "text": "Secret",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 19
+  },
+  {
+    "text": "Public",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 19
+  },
+  {
+    "text": "Reputation",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 19
+  },
+  {
+    "text": "International media interest",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 19
+  },
+  {
+    "text": "National media interest",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 19
+  },
+  {
+    "text": "Diplomatic relationships and political affiliations",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 19
+  },
+  {
+    "text": "National Interest",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 19
+  },
+  {
+    "text": "Operational efficiency of security or military forces",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 19
+  },
+  {
+    "text": "Regional police operational stability",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 19
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 20
+  },
+  {
+    "text": "KSA economy",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 20
+  },
+  {
+    "text": "GDP",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 20
+  },
+  {
+    "text": "employment rate",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 20
+  },
+  {
+    "text": "National Economy",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 20
+  },
+  {
+    "text": "infrastructure assets",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 20
+  },
+  {
+    "text": "critical national security and infrastructure assets",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 20
+  },
+  {
+    "text": "Energy, Transport, Health",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 20
+  },
+  {
+    "text": "Government entities",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 20
+  },
+  {
+    "text": "critical services of the country",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 20
+  },
+  {
+    "text": "cyber-attack",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 20
+  },
+  {
+    "text": "Government functions",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 20
+  },
+  {
+    "text": "daily operations and business operations",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 20
+  },
+  {
+    "text": "third parties",
+    "type": "Organization",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 20
+  },
+  {
+    "text": "financial loss",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 20
+  },
+  {
+    "text": "bankruptcy",
+    "type": "Event",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 20
+  },
+  {
+    "text": "organization assets",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 20
+  },
+  {
+    "text": "KSA organizations",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 20
+  },
+  {
+    "text": "long period of time",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 20
+  },
+  {
+    "text": "period of time",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 20
+  },
+  {
+    "text": "Would disclosure of this information lead to third Organization parties„ financial loss or incurring heavy Limited damage to bankruptcy?",
+    "type": "Question",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 20
+  },
+  {
+    "text": "Organization",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 20
+  },
+  {
+    "text": "Limited damage to bankruptcy",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 20
+  },
+  {
+    "text": "financial loss that could lead to limited financial loss illegal transfers of funds, illegal appropriation of assets High impact on the KSA organizations",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 20
+  },
+  {
+    "text": "KSA organizations",
+    "type": "Organization",
+    "importation": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 20
+  },
+  {
+    "text": "Would the release of this information cause any damage to private organizations of the country?",
+    "type": "Question",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 20
+  },
+  {
+    "text": "No impact on the national interest",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 20
+  },
+  {
+    "text": "Entity cannot perform one of its key functions or the Functions of the organization",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 20
+  },
+  {
+    "text": "organization",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 20
+  },
+  {
+    "text": "significant number of employees being fired",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 20
+  },
+  {
+    "text": "Would it affect the competitiveness of the organization?",
+    "type": "Question",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 20
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 21
+  },
+  {
+    "text": "General",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 21
+  },
+  {
+    "text": "Minor injury with no significant harm or loss of life; Loss of health/safety of an individual",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 21
+  },
+  {
+    "text": "Risk to the life or health of an individual",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 21
+  },
+  {
+    "text": "Name and location of under-protect agents, people under protection orders",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 21
+  },
+  {
+    "text": "VIP person",
+    "type": "Person",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 21
+  },
+  {
+    "text": "Personal information",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 21
+  },
+  {
+    "text": "Data Privacy Regulation",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 21
+  },
+  {
+    "text": "Intellectual Property Rights",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 21
+  },
+  {
+    "text": "Individuals",
+    "type": "Person",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 21
+  },
+  {
+    "text": "Environmental Resources",
+    "type": "Location",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 21
+  },
+  {
+    "text": "National interest",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 21
+  },
+  {
+    "text": "Service/product development",
+    "type": "Product",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 21
+  },
+  {
+    "text": "Confidential",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 21
+  },
+  {
+    "text": "Protective Marking",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 21
+  },
+  {
+    "text": "Access control",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 21
+  },
+  {
+    "text": "Least Privilege",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 21
+  },
+  {
+    "text": "Need-to-Know",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 21
+  },
+  {
+    "text": "Data protection controls and guidelines",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 21
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 22
+  },
+  {
+    "text": "Storage",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 22
+  },
+  {
+    "text": "Top Secret",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 22
+  },
+  {
+    "text": "Secret",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 22
+  },
+  {
+    "text": "Confidential",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 22
+  },
+  {
+    "text": "Mobile device",
+    "type": "Product",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 22
+  },
+  {
+    "text": "National Cybersecurity Authority",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 22
+  },
+  {
+    "text": "Data Sharing",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 22
+  },
+  {
+    "text": "Entities",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 22
+  },
+  {
+    "text": "Government Service Bus",
+    "type": "Product",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 22
+  },
+  {
+    "text": "National Information Center Network",
+    "type": "Product",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 22
+  },
+  {
+    "text": "Secured Government Network",
+    "type": "Product",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 22
+  },
+  {
+    "text": "Wire",
+    "type": "Product",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 22
+  },
+  {
+    "text": "Removable storage media",
+    "type": "Product",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 22
+  },
+  {
+    "text": "Wi-Fi",
+    "type": "Product",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 22
+  },
+  {
+    "text": "Remote access / VPN",
+    "type": "Product",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 22
+  },
+  {
+    "text": "API",
+    "type": "Product",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 22
+  },
+  {
+    "text": "Retention",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 22
+  },
+  {
+    "text": "Data Disposal Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 22
+  },
+  {
+    "text": "Business Data Executive",
+    "type": "Role",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 22
+  },
+  {
+    "text": "Archival",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 22
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 23
+  },
+  {
+    "text": "Business Data Executive",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 23
+  },
+  {
+    "text": "Data user",
+    "type": "Person",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 23
+  },
+  {
+    "text": "Entity",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 23
+  },
+  {
+    "text": "Data register",
+    "type": "Document",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 23
+  },
+  {
+    "text": "Development sector",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 23
+  },
+  {
+    "text": "Political and Security sectors",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 23
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 24
+  },
+  {
+    "text": "Business Data Executive",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 24
+  },
+  {
+    "text": "Data Classification Impact Assessment Categories and Levels",
+    "type": "Document",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 24
+  },
+  {
+    "text": "Top Secret",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 24
+  },
+  {
+    "text": "Secret",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 24
+  },
+  {
+    "text": "Public",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 24
+  },
+  {
+    "text": "Anti-Cybercrime Law",
+    "type": "Document",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 24
+  },
+  {
+    "text": "e-Commerce Law",
+    "type": "Document",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 24
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 25
+  },
+  {
+    "text": "Business Data Executive",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 25
+  },
+  {
+    "text": "data management office",
+    "type": "Organization",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 25
+  },
+  {
+    "text": "government operations",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 25
+  },
+  {
+    "text": "citizens",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 25
+  },
+  {
+    "text": "new added-value services",
+    "type": "Product",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 25
+  },
+  {
+    "text": "data classification controls",
+    "type": "Document",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 25
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 26
+  },
+  {
+    "text": "Data Classification Process",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 26
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 27
+  },
+  {
+    "text": "Business Data Executive",
+    "type": "Role",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 27
+  },
+  {
+    "text": "Data Classification Reviewer",
+    "type": "Role",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 27
+  },
+  {
+    "text": "Business Data Steward",
+    "type": "Role",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 27
+  },
+  {
+    "text": "Data User",
+    "type": "Role",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 27
+  },
+  {
+    "text": "Kingdom",
+    "type": "Location",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 27
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 28
+  },
+  {
+    "text": "Personal Data Protection",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 28
+  },
+  {
+    "text": "Interim Regulations",
+    "type": "Document",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 28
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 29
+  },
+  {
+    "text": "Personal Data Protection Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 29
+  },
+  {
+    "text": "Kingdom",
+    "type": "Location",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 29
+  },
+  {
+    "text": "Data Subject",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 29
+  },
+  {
+    "text": "government entity",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 29
+  },
+  {
+    "text": "security purposes",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 29
+  },
+  {
+    "text": "enforce another law",
+    "type": "Event",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 29
+  },
+  {
+    "text": "fulfill judicial requirements",
+    "type": "Event",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 29
+  },
+  {
+    "text": "agreement to which the Kingdom is a party",
+    "type": "Document",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 29
+  },
+  {
+    "text": "public health or safety",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 29
+  },
+  {
+    "text": "vital interests of individuals",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 29
+  },
+  {
+    "text": "Accountability",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 29
+  },
+  {
+    "text": "Transparency",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 29
+  },
+  {
+    "text": "Choice and Consent",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 29
+  },
+  {
+    "text": "Limiting Data Collection",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 29
+  },
+  {
+    "text": "Use, Retention and Destruction",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 29
+  },
+  {
+    "text": "Access to Data",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 29
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 30
+  },
+  {
+    "text": "Data Disclosure Limitation Principle",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 30
+  },
+  {
+    "text": "Privacy Notice",
+    "type": "Document",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 30
+  },
+  {
+    "text": "National Cybersecurity Authority",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 30
+  },
+  {
+    "text": "Data Subject",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 30
+  },
+  {
+    "text": "Data Security Principle",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 30
+  },
+  {
+    "text": "Data Quality Principle",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 30
+  },
+  {
+    "text": "Monitoring and Compliance Principle",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 30
+  },
+  {
+    "text": "Data Subject Rights",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 30
+  },
+  {
+    "text": "Legal Basis",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 30
+  },
+  {
+    "text": "CDO Offices",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 30
+  },
+  {
+    "text": "Data Controller",
+    "type": "Person",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 30
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 31
+  },
+  {
+    "text": "Data Controller",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 31
+  },
+  {
+    "text": "head of the entity (or his designee)",
+    "type": "Person",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 31
+  },
+  {
+    "text": "Service Level Contracts and Agreements",
+    "type": "Document",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 31
+  },
+  {
+    "text": "privacy policies and procedures adopted by Controller's senior management/governance committee",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 31
+  },
+  {
+    "text": "Regulatory Authority",
+    "type": "Organization",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 31
+  },
+  {
+    "text": "NDMO (National Data Management Office)",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 31
+  },
+  {
+    "text": "Data Subject",
+    "type": "Person",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 31
+  },
+  {
+    "text": "purpose and legal justification/actual requirement",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 31
+  },
+  {
+    "text": "security measures to ensure that data privacy is maintained in accordance with laws and regulations",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 31
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 32
+  },
+  {
+    "text": "Controller",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 32
+  },
+  {
+    "text": "Regulatory Authority",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 32
+  },
+  {
+    "text": "NDMO",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 32
+  },
+  {
+    "text": "National Cybersecurity Authority",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 32
+  },
+  {
+    "text": "Data Controller",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 32
+  },
+  {
+    "text": "Data Subject",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 32
+  },
+  {
+    "text": "Personal data",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 32
+  },
+  {
+    "text": "Data Processor",
+    "type": "Organization",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 32
+  },
+  {
+    "text": "Privacy procedures and policies",
+    "type": "Document",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 32
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 33
+  },
+  {
+    "text": "National Cybersecurity Authority",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 33
+  },
+  {
+    "text": "Regulatory Authorities",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 33
+  },
+  {
+    "text": "NDMO (National Data Management Office)",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 33
+  },
+  {
+    "text": "Data Controller",
+    "type": "Role",
+    "importation": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 33
+  },
+  {
+    "text": "Data Processor",
+    "type": "Role",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 33
+  },
+  {
+    "text": "Data Protection Officer",
+    "type": "Role",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 33
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 34
+  },
+  {
+    "text": "Data Sharing",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 34
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 35
+  },
+  {
+    "text": "Data Sharing Interim Regulations",
+    "type": "Document",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 35
+  },
+  {
+    "text": "government data",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 35
+  },
+  {
+    "text": "public entities",
+    "type": "Organization",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 35
+  },
+  {
+    "text": "private sector",
+    "type": "Organization",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 35
+  },
+  {
+    "text": "individuals",
+    "type": "Person",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 35
+  },
+  {
+    "text": "governmental agency",
+    "type": "Organization",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 35
+  },
+  {
+    "text": "Single Source of Truth (SSOT)",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 35
+  },
+  {
+    "text": "data custodian",
+    "type": "Role",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 35
+  },
+  {
+    "text": "Data Requestor",
+    "type": "Role",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 35
+  },
+  {
+    "text": "Royal Decree",
+    "type": "Document",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 35
+  },
+  {
+    "text": "security clearance",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 35
+  },
+  {
+    "text": "national interests",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 35
+  },
+  {
+    "text": "organizations",
+    "type": "Organization",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 35
+  },
+  {
+    "text": "environment",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 35
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 36
+  },
+  {
+    "text": "Data Security",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 36
+  },
+  {
+    "text": "Ethical Data Use",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 36
+  },
+  {
+    "text": "Data Sharing Process",
+    "type": "Process",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 36
+  },
+  {
+    "text": "Public sector",
+    "type": "Organization",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 36
+  },
+  {
+    "text": "Private sector",
+    "type": "Organization",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 36
+  },
+  {
+    "text": "Individual",
+    "type": "Person",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 36
+  },
+  {
+    "text": "Data Classification Interim Regulations",
+    "type": "Document",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 36
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 37
+  },
+  {
+    "text": "Business Data Steward",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 37
+  },
+  {
+    "text": "Data Sharing Agreement",
+    "type": "Document",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 37
+  },
+  {
+    "text": "Data Requestor",
+    "type": "Person",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 37
+  },
+  {
+    "text": "Public Entity",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 37
+  },
+  {
+    "text": "Business Data Executive",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 37
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 38
+  },
+  {
+    "text": "Data Sharing Agreement",
+    "type": "Document",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 38
+  },
+  {
+    "text": "Data Steward",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 38
+  },
+  {
+    "text": "Data Requestor",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 38
+  },
+  {
+    "text": "Data Sharing Process",
+    "type": "Process",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 38
+  },
+  {
+    "text": "Data Sharing Culture",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 38
+  },
+  {
+    "text": "Clear Purpose for Data Sharing",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 38
+  },
+  {
+    "text": "Collective Accountability",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 38
+  },
+  {
+    "text": "Ethical Data Use",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 38
+  },
+  {
+    "text": "Authorized Access",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 38
+  },
+  {
+    "text": "Data Security",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 38
+  },
+  {
+    "text": "SSOT (Single Source of Truth)",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 38
+  },
+  {
+    "text": "Intellectual Property Rights",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 38
+  },
+  {
+    "text": "Data Classification Interim Regulations",
+    "type": "Document",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 38
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 39
+  },
+  {
+    "text": "National Cybersecurity Agency",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 39
+  },
+  {
+    "text": "Government Service Bus",
+    "type": "Product",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 39
+  },
+  {
+    "text": "National Information Center Network",
+    "type": "Product",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 39
+  },
+  {
+    "text": "Wi-Fi",
+    "type": "Product",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 39
+  },
+  {
+    "text": "Remote access / VPN, API",
+    "type": "Product",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 39
+  },
+  {
+    "text": "Data Security",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 39
+  },
+  {
+    "text": "Clear Purpose for Data Sharing",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 39
+  },
+  {
+    "text": "Transparency",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 39
+  },
+  {
+    "text": "Ethical Data Use",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 39
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 40
+  },
+  {
+    "text": "Liability Provisions",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 40
+  },
+  {
+    "text": "Principle 5 – Collective Accountability",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 40
+  },
+  {
+    "text": "Data Sharing Agreement",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 40
+  },
+  {
+    "text": "Public Entities",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 40
+  },
+  {
+    "text": "Government Service Bus",
+    "type": "Product",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 40
+  },
+  {
+    "text": "National Information Center Network",
+    "type": "Product",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 40
+  },
+  {
+    "text": "Business Data Steward",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 40
+  },
+  {
+    "text": "Data Privacy Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 40
+  },
+  {
+    "text": "NDMO (National Data Management Office)",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 40
+  },
+  {
+    "text": "Regulatory Authorities",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 40
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 41
+  },
+  {
+    "text": "NDMO",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 41
+  },
+  {
+    "text": "Data Sharing principles",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 41
+  },
+  {
+    "text": "government data",
+    "type": "Product",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 41
+  },
+  {
+    "text": "appropriate balance",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 41
+  },
+  {
+    "text": "data confidentiality",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 41
+  },
+  {
+    "text": "potential risks",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 41
+  },
+  {
+    "text": "Data Sharing requests and related decisions",
+    "type": "Product",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 41
+  },
+  {
+    "text": "internal Data Sharing policies",
+    "type": "Product",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 41
+  },
+  {
+    "text": "Sharing Entity (SSOT)",
+    "type": "Organization",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 41
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 42
+  },
+  {
+    "text": "Freedom of Information",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 42
+  },
+  {
+    "text": "Interim Regulations",
+    "type": "Document",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 42
+  },
+  {
+    "text": "42",
+    "type": "Number",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 42
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 43
+  },
+  {
+    "text": "Freedom of Information Interim Regulations",
+    "type": "Document",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 43
+  },
+  {
+    "text": "Kingdom of Saudi Arabia",
+    "type": "Location",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 43
+  },
+  {
+    "text": "national security, policies, interests or rights",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 43
+  },
+  {
+    "text": "military and security information",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 43
+  },
+  {
+    "text": "documents and information obtained in agreement with another state",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 43
+  },
+  {
+    "text": "inquiries, investigations, checks, inspections and monitoring in respect of a crime or violation",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 43
+  },
+  {
+    "text": "recommendations, suggestions or consultations for issuing governmental legislation or decision not issued yet",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 43
+  },
+  {
+    "text": "commercial, industrial, financial or economic information that, if disclosed, may result in gaining profits or avoiding losses in an illegitimate manner",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 43
+  },
+  {
+    "text": "scientific or technological searches or rights included intellectual property right",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 43
+  },
+  {
+    "text": "tender and bidding Information that, if disclosed, may give rise to violation of fair competition",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 43
+  },
+  {
+    "text": "information and the like, which are protected, confidential or personal under another law, or require certain legal action to be accessed or obtained",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 43
+  },
+  {
+    "text": "transparency",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 43
+  },
+  {
+    "text": "accountability and reasonable justification",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 43
+  },
+  {
+    "text": "public information – unprotected",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 43
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 44
+  },
+  {
+    "text": "Equality",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 44
+  },
+  {
+    "text": "Principle 4: Equality",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 44
+  },
+  {
+    "text": "7.3. The Rights of Individuals to Access Public Information",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 44
+  },
+  {
+    "text": "First: The right to access and obtain any public information – unprotected – by any public entity.",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 44
+  },
+  {
+    "text": "Second: The right to be informed about the reason for the denial of the request for access to information.",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 44
+  },
+  {
+    "text": "Third: The right to file a notice of appeal against the decision to refuse the request for access to information.",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 44
+  },
+  {
+    "text": "7.4. Obligations of Public Entities",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 44
+  },
+  {
+    "text": "1. The public entity shall be responsible for preparing and implementing policies and procedures related to exercising the right to access or obtain public information, and the entity's head is responsible for approving and adopting it.",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 44
+  },
+  {
+    "text": "2. The public entity shall establish an organizational unit linked to the data management offices that have been established across public entities under the Royal Decree No. 59766 dated 20/11/1439 AH, and shall assign them the responsibility to develop, document and monitor the implementation of policies and procedures approved by the top management across these entities and related to the right to access public information.",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 44
+  },
+  {
+    "text": "3. The public entity shall determine and provide possible means (forms for requesting public information) – whether paper or electronic – through which the applicant can request access to public information.",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 44
+  },
+  {
+    "text": "4. The public entity shall verify the identity of individuals before granting them the right to access or obtain public information in accordance with the controls determined by the National Cyber Security Authority.",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 44
+  },
+  {
+    "text": "5. The public entity shall set the necessary standards for determining the fees for processing requests to access or obtain public information based on the nature of the data, its size, the effort spent, and the time taken - in accordance with the Data Revenue Framework Interim Regulation1.",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 44
+  },
+  {
+    "text": "6. The public entity shall document all records of requests to access or obtain public information and the decisions taken on these requests, provided that these records would be reviewed to address cases of misuse or non-response.",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 44
+  },
+  {
+    "text": "7. The public entity shall prepare and document policies and procedures for proper records keeping and disposing of it in accordance with the relevant national laws and regulations.",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 44
+  },
+  {
+    "text": "Data Classification Interim Regulations",
+    "type": "Document",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 44
+  },
+  {
+    "text": "National Cyber Security Authority",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 44
+  },
+  {
+    "text": "Royal Decree No. 59766 dated 20/11/1439 AH",
+    "type": "Document",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 44
+  },
+  {
+    "text": "Data Revenue Framework Interim Regulation1",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 44
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 45
+  },
+  {
+    "text": "public entity",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 45
+  },
+  {
+    "text": "Regulatory Authority",
+    "type": "Organization",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 45
+  },
+  {
+    "text": "NDMO",
+    "type": "Organization",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 45
+  },
+  {
+    "text": "applicant",
+    "type": "Person",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 45
+  },
+  {
+    "text": "top management of the entity",
+    "type": "Person",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 45
+  },
+  {
+    "text": "Freedom of Information policies and procedures",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 45
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 46
+  },
+  {
+    "text": "Public Information Request Form",
+    "type": "Product",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 46
+  },
+  {
+    "text": "public entity",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 46
+  },
+  {
+    "text": "applicant",
+    "type": "Person",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 46
+  },
+  {
+    "text": "request for information process",
+    "type": "Process",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 46
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 47
+  },
+  {
+    "text": "Notice of a right to appeal such delay",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 47
+  },
+  {
+    "text": "entity's website",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 47
+  },
+  {
+    "text": "public entity's Office",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 47
+  },
+  {
+    "text": "Board of Grievances",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 47
+  },
+  {
+    "text": "NDMO (National Data Management Office)",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 47
+  },
+  {
+    "text": "public entities",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 47
+  },
+  {
+    "text": "companies performing public services",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 47
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 48
+  },
+  {
+    "text": "Freedom of Information and Open data",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 48
+  },
+  {
+    "text": "Open data programs and policies",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 48
+  },
+  {
+    "text": "national economy",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 48
+  },
+  {
+    "text": "innovation agenda",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 48
+  },
+  {
+    "text": "specific datasets",
+    "type": "Product",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 48
+  },
+  {
+    "text": "public access and use",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 48
+  },
+  {
+    "text": "researchers, innovators, other members of the public",
+    "type": "Person",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 48
+  },
+  {
+    "text": "companies",
+    "type": "Organization",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 48
+  },
+  {
+    "text": "open and transparent government",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 48
+  },
+  {
+    "text": "public entity",
+    "type": "Organization",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 48
+  },
+  {
+    "text": "right to access public information",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 48
+  },
+  {
+    "text": "Freedom of Information requests",
+    "type": "Event",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 48
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 49
+  },
+  {
+    "text": "Open data",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 49
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 50
+  },
+  {
+    "text": "Open data Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 50
+  },
+  {
+    "text": "Scope",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 50
+  },
+  {
+    "text": "Public entities",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 50
+  },
+  {
+    "text": "Paper records",
+    "type": "Product",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 50
+  },
+  {
+    "text": "Emails",
+    "type": "Product",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 50
+  },
+  {
+    "text": "Information stored on computers",
+    "type": "Product",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 50
+  },
+  {
+    "text": "Audio or video cassettes",
+    "type": "Product",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 50
+  },
+  {
+    "text": "Microfiche",
+    "type": "Product",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 50
+  },
+  {
+    "text": "Maps",
+    "type": "Product",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 50
+  },
+  {
+    "text": "Photographs",
+    "type": "Product",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 50
+  },
+  {
+    "text": "Handwritten notes",
+    "type": "Product",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 50
+  },
+  {
+    "text": "Machine-readable format",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 50
+  },
+  {
+    "text": "CSV, XLS, JSON, XML",
+    "type": "Product",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 50
+  },
+  {
+    "text": "Metadata",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 50
+  },
+  {
+    "text": "National Data Privacy Regulation",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 50
+  },
+  {
+    "text": "KSA Open data License",
+    "type": "Product",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 50
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 51
+  },
+  {
+    "text": "Principle 8",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 51
+  },
+  {
+    "text": "Principle 9",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 51
+  },
+  {
+    "text": "Open data",
+    "type": "Product",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 51
+  },
+  {
+    "text": "Civic participation",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 51
+  },
+  {
+    "text": "Transparency",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 51
+  },
+  {
+    "text": "Accountability",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 51
+  },
+  {
+    "text": "Decision-making",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 51
+  },
+  {
+    "text": "Public services",
+    "type": "Product",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 51
+  },
+  {
+    "text": "Entities",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 51
+  },
+  {
+    "text": "Open datasets",
+    "type": "Product",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 51
+  },
+  {
+    "text": "Data Classification Interim Regulations",
+    "type": "Document",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 51
+  },
+  {
+    "text": "Public entity",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 51
+  },
+  {
+    "text": "GIS data",
+    "type": "Product",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 51
+  },
+  {
+    "text": "Health sector",
+    "type": "Location",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 51
+  },
+  {
+    "text": "Data sources",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 51
+  },
+  {
+    "text": "Step 1: Identifying the Data and Public Information Inventory",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 51
+  },
+  {
+    "text": "Step 2: Assessing Data Value",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 51
+  },
+  {
+    "text": "Step 3: Identifying Potential Stakeholders",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 51
+  },
+  {
+    "text": "Data value",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 51
+  },
+  {
+    "text": "Usefulness of the data",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 51
+  },
+  {
+    "text": "Completeness",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 51
+  },
+  {
+    "text": "Accuracy",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 51
+  },
+  {
+    "text": "Consistency",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 51
+  },
+  {
+    "text": "Timeliness",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 51
+  },
+  {
+    "text": "Restrictions",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 51
+  },
+  {
+    "text": "Exclusivity",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 51
+  },
+  {
+    "text": "Potential risks from publication",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 51
+  },
+  {
+    "text": "Ability to access and integrate with other data",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 51
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 52
+  },
+  {
+    "text": "Open data Regulation",
+    "type": "Document",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 52
+  },
+  {
+    "text": "Adopting Entities",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 52
+  },
+  {
+    "text": "National Open data Portal",
+    "type": "Product",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 52
+  },
+  {
+    "text": "NDMO (National Data Management Office)",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 52
+  },
+  {
+    "text": "Open data and Information Access Officer",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 52
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 53
+  },
+  {
+    "text": "NDMO",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 53
+  },
+  {
+    "text": "Open data",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 53
+  },
+  {
+    "text": "Public entity",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 53
+  },
+  {
+    "text": "National Open data Portal",
+    "type": "Product",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 53
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 54
+  },
+  {
+    "text": "Open data Performance Tracking",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 54
+  },
+  {
+    "text": "Public entity",
+    "type": "Organization",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 54
+  },
+  {
+    "text": "National Open Data Portal",
+    "type": "Product",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 54
+  },
+  {
+    "text": "NDMO (National Data Management Office)",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 54
+  },
+  {
+    "text": "Kingdom",
+    "type": "Location",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 54
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 55
+  },
+  {
+    "text": "National Information Center (NIC)",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 55
+  },
+  {
+    "text": "National Open data Portal",
+    "type": "Product",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 55
+  },
+  {
+    "text": "NDMO",
+    "type": "Organization",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 55
+  },
+  {
+    "text": "Open data Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 55
+  },
+  {
+    "text": "Entity",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 55
+  },
+  {
+    "text": "Open data and Information Access Officer",
+    "type": "Person",
+    "importance": "low",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 55
+  },
+  {
+    "text": "Head of the Entity",
+    "type": "Person",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 55
+  },
+  {
+    "text": "Head of the Entity„s Office",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 55
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 56
+  },
+  {
+    "text": "NDMO",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 56
+  },
+  {
+    "text": "Entity",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 56
+  },
+  {
+    "text": "Open data for their respective entity",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 56
+  },
+  {
+    "text": "ODIAO",
+    "type": "Person",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 56
+  },
+  {
+    "text": "Open Data Planning",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 56
+  },
+  {
+    "text": "Open data Management",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 56
+  },
+  {
+    "text": "Open data Requests Consolidation",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 56
+  },
+  {
+    "text": "Open Data Education and Awareness",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 56
+  },
+  {
+    "text": "Point of Contact for NDMO – Act as the first point of contact between the entity and the NDMO.",
+    "type": "Person",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 56
+  },
+  {
+    "text": "Point of Contact for NDMO (Secondary)",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 56
+  },
+  {
+    "text": "Business Data Executive (BDE)",
+    "type": "Person",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 56
+  },
+  {
+    "text": "Business Data Steward (BDS)",
+    "type": "Person",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 56
+  },
+  {
+    "text": "National Data Governance Interim Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 57
+  },
+  {
+    "text": "NDMO",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 57
+  },
+  {
+    "text": "Open data Interim Regulations",
+    "type": "Document",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 57
+  },
+  {
+    "text": "Regulatory Authorities",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 57
+  },
+  {
+    "text": "Public entities",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 57
+  },
+  {
+    "text": "Open data plan",
+    "type": "Document",
+    "importance": "medium",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 57
+  },
+  {
+    "text": "Compliance Terms",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesEn.pdf",
+    "page": 57
+  }
+]

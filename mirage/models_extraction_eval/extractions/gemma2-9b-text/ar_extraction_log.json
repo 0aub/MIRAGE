@@ -1,0 +1,19 @@
+{
+  "model": "gemma2-9b-text",
+  "model_full_name": "gemma2:9b",
+  "provider": "ollama",
+  "vision_mode": false,
+  "document": "PoliciesAr.pdf",
+  "language": "ar",
+  "start_time": "2025-12-26T17:50:48.172467",
+  "end_time": "2025-12-26T18:49:16.253186",
+  "elapsed_seconds": 3508.08,
+  "total_pages": 125,
+  "total_tokens": 313755,
+  "tokens_per_second": 89.44,
+  "pages_per_minute": 2.14,
+  "total_entities": 4869,
+  "total_relationships": 3794,
+  "errors_count": 0,
+  "errors": []
+}

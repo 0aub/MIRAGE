@@ -1,0 +1,19 @@
+{
+  "model": "gemma-3n-e4b-text",
+  "model_full_name": "gemma3:4b",
+  "provider": "ollama",
+  "vision_mode": false,
+  "document": "PoliciesEn.pdf",
+  "language": "en",
+  "start_time": "2025-12-26T17:28:09.840556",
+  "end_time": "2025-12-26T17:33:23.520702",
+  "elapsed_seconds": 313.68,
+  "total_pages": 57,
+  "total_tokens": 22168,
+  "tokens_per_second": 70.67,
+  "pages_per_minute": 10.9,
+  "total_entities": 769,
+  "total_relationships": 662,
+  "errors_count": 0,
+  "errors": []
+}

@@ -1,0 +1,6528 @@
+[
+  {
+    "source": "سياسات حوكمة",
+    "target": "البيانات الوطنية",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 1
+  },
+  {
+    "source": "األصدار الثاني",
+    "target": "م2021/05/26",
+    "type": "CONTAINS",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 1
+  },
+  {
+    "source": "National Data Governance Agency",
+    "target": "Data Classification Policy",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 4
+  },
+  {
+    "source": "National Data Governance Agency",
+    "target": "Data Protection Policy",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 4
+  },
+  {
+    "source": "National Data Governance Agency",
+    "target": "Data Sharing Policy",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 4
+  },
+  {
+    "source": "National Data Governance Agency",
+    "target": "Freedom of Information Policy",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 4
+  },
+  {
+    "source": "Data Classification Policy",
+    "target": "Scope, Principles, and Levels of Classification",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 4
+  },
+  {
+    "source": "Data Protection Policy",
+    "target": "Scope, Principles, and Responsibilities",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 4
+  },
+  {
+    "source": "Data Sharing Policy",
+    "target": "Scope, Principles, and Procedures",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 4
+  },
+  {
+    "source": "Freedom of Information Policy",
+    "target": "Scope, Principles, and Guidelines",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 4
+  },
+  {
+    "source": "سياسة حرية المعلومات",
+    "target": "النطاق",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 4
+  },
+  {
+    "source": "المبادئ الرئيسة لحرية المعلومات",
+    "target": "سياسة حرية المعلومات",
+    "type": "PART_OF",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 4
+  },
+  {
+    "source": "حقوق الأفراد",
+    "target": "النطاق",
+    "type": "AFFECTS",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 4
+  },
+  {
+    "source": "التزامات الجهات العامة",
+    "target": "سياسة حرية المعلومات",
+    "type": "RELATED_TO",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 4
+  },
+  {
+    "source": "الخطوات الرئيسة لالطالع على المعلومات أو الحصول عليها",
+    "target": "سياسة حرية المعلومات",
+    "type": "PART_OF",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 4
+  },
+  {
+    "source": "أحكام عامة",
+    "target": "النطاق",
+    "type": "RELATED_TO",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 4
+  },
+  {
+    "source": "حرية المعلومات والبيانات المفتوحة",
+    "target": "سياسة حرية المعلومات",
+    "type": "CONTAINS",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 4
+  },
+  {
+    "source": "Policy for Open Data 4.5",
+    "target": "Open Data",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 5
+  },
+  {
+    "source": "Policy for Open Data 4.5",
+    "target": "Principles",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 5
+  },
+  {
+    "source": "Evaluation of Public Value",
+    "target": "Open Data",
+    "type": "CAUSES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 5
+  },
+  {
+    "source": "Principles",
+    "target": "Open Data",
+    "type": "USES",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 5
+  },
+  {
+    "source": "Policy for Open Data 4.5",
+    "target": "Ministry of Data Protection",
+    "type": "CREATED_BY",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 5
+  },
+  {
+    "source": "Policy for Open Data 4.5",
+    "target": "Policy documents",
+    "type": "LOCATED_IN",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 5
+  },
+  {
+    "source": "Policy for Open Data 4.5",
+    "target": "Data Protection Policies",
+    "type": "BELONGS_TO",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 5
+  },
+  {
+    "source": "الوطنية",
+    "target": "التكامـل",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 8
+  },
+  {
+    "source": "البد",
+    "target": "مشاركة البيانات",
+    "type": "CREATED_BY",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 8
+  },
+  {
+    "source": "تصنيف البيانات",
+    "target": "تحقيق التوازن",
+    "type": "CAUSES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 8
+  },
+  {
+    "source": "تصنيف البيانات",
+    "target": "مسطويات موحدة",
+    "type": "USES",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 8
+  },
+  {
+    "source": "البد",
+    "target": "مشاركة البيانات",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 8
+  },
+  {
+    "source": "الوطنية",
+    "target": "القطاعي العام والخاص والثالث",
+    "type": "LOCATED_IN",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 8
+  },
+  {
+    "source": "Where the development of open data and transparency is related to the improvement of public services.",
+    "target": " الجهات العامّة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 8
+  },
+  {
+    "source": " الشفافية",
+    "target": " النزاهة",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 8
+  },
+  {
+    "source": " النزاهة",
+    "target": " السرية",
+    "type": "CONTAINS",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 8
+  },
+  {
+    "source": " التطوّر المطرد",
+    "target": " حَق الاطاع",
+    "type": "CAUSES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 8
+  },
+  {
+    "source": " حَق الاطاع",
+    "target": " الجهات العامّة",
+    "type": "USES",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 8
+  },
+  {
+    "source": " الجهات العامّة",
+    "target": "المعلومات العامة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 8
+  },
+  {
+    "source": "التطوّر المطرد في التقنية",
+    "target": "المعلومات العامة",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 8
+  },
+  {
+    "source": "الneed for data protection",
+    "target": "المحافظة على خصوصية",
+    "type": "CAUSES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 8
+  },
+  {
+    "source": "الحق في الطاع",
+    "target": "المعلومات العامة",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 8
+  },
+  {
+    "source": " الجهات العامّة",
+    "target": "concept of government agencies",
+    "type": "CREATED_BY",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 8
+  },
+  {
+    "source": "التطوّر المطرد في التقنية",
+    "target": "context of technological advancement",
+    "type": "LOCATED_IN",
+    "weight": 0.4,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 8
+  },
+  {
+    "source": "Microsoft",
+    "target": "Bill Gates",
+    "type": "RELATED_TO",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 10
+  },
+  {
+    "source": "Redmond",
+    "target": "Microsoft",
+    "type": "LOCATED_IN",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 10
+  },
+  {
+    "source": "Bill Gates",
+    "target": "Artificial Intelligence",
+    "type": "CREATED_BY",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 10
+  },
+  {
+    "source": "Artificial Intelligence",
+    "target": "Microsoft's AI Conference",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 10
+  },
+  {
+    "source": "المستقلة في المملكة",
+    "target": "شخصية ذات صفة طبيعية أو اعتبارية خاصة",
+    "type": "RELATED_TO",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 13
+  },
+  {
+    "source": "بيانات حساسة",
+    "target": "معالجة البيانات الشخصية",
+    "type": "CONTAINS",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 13
+  },
+  {
+    "source": "معالجة البيانات الشخصية",
+    "target": "بيانات حساسة",
+    "type": "CAUSES",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 13
+  },
+  {
+    "source": "معالجة البيانات الشخصية",
+    "target": "الغرض من معالجة البيانات الشخصية",
+    "type": "USES",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 13
+  },
+  {
+    "source": "المستقلة في المملكة",
+    "target": "المملك",
+    "type": "LOCATED_IN",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 13
+  },
+  {
+    "source": "شخصية ذات صفة طبيعية أو اعتبارية خاصة",
+    "target": "بيانات حساسة",
+    "type": "BELONGS_TO",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 13
+  },
+  {
+    "source": "الحكومية",
+    "target": "أنشطة الجهات",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 13
+  },
+  {
+    "source": "أي شــخصية ذات مستويات تصنيف البيانات",
+    "target": "مســتويات التصنيــف",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 13
+  },
+  {
+    "source": "الحكومية",
+    "target": "أنشطة الجهات",
+    "type": "USES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 13
+  },
+  {
+    "source": "أي شــخصية ذات مستويات تصنيف البيانات",
+    "target": "الحكومية",
+    "type": "CREATED_BY",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 13
+  },
+  {
+    "source": "المملكــة",
+    "target": "ســري للغايــة",
+    "type": "LOCATED_IN",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 13
+  },
+  {
+    "source": "عــام",
+    "target": "الفرد",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 13
+  },
+  {
+    "source": "الفرد",
+    "target": "بيانــات الشــPERSONAL_DATA",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 13
+  },
+  {
+    "source": "صاحب البيانات الشخصية",
+    "target": "بيانــات الشــPERSONAL_DATA",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 13
+  },
+  {
+    "source": "الفرد",
+    "target": "بيانــات الشــPERSONAL_DATA",
+    "type": "CREATED_BY",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 13
+  },
+  {
+    "source": "بيانــات الشــPERSONAL_DATA",
+    "target": "concept:Personal Data",
+    "type": "LOCATED_IN",
+    "weight": 0.4,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 13
+  },
+  {
+    "source": "كتوقيـع العقــود أو الموافقـة علــى",
+    "target": "جهة المعالجة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 14
+  },
+  {
+    "source": "جهة المعالجة",
+    "target": "الشــروط واألحــكام",
+    "type": "CONTAINS",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 14
+  },
+  {
+    "source": "جهة حكوميــة أو جهة اعتباريــة عامــة",
+    "target": "مســتقلة فــي المملكــة، وأي شــخصية ذات",
+    "type": "PART_OF",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 14
+  },
+  {
+    "source": "ألطراف الخارجية:",
+    "target": "صفــة  طبيعيــة  أو  اعتباريــة  خاصــة؛ تعالــج",
+    "type": "RELATED_TO",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 14
+  },
+  {
+    "source": "أي  جهــة  حكوميــة  أو  جهــة  اعتباريــة  عامــة",
+    "target": "البيانــات الشــخصية لمصلحــة جهــة التحكــم",
+    "type": "CONTAINS",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 14
+  },
+  {
+    "source": "صاحــب البيانــات أو جهــة التحكــم أو جهــة",
+    "target": "المعالجــة واألشــخاص المصــرح لهــم،",
+    "type": "CREATED_BY",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 14
+  },
+  {
+    "source": "المنصة الوطنية للبيانات المفتوحة:",
+    "target": "المعالجــة واألشــخاص المصــرح لهــم،",
+    "type": "LOCATED_IN",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 14
+  },
+  {
+    "source": "منصة وطنية للبيانات المفتوحة",
+    "target": "رخصة تنظم استخدام البيانات المفتوحة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 14
+  },
+  {
+    "source": "منصة وطنية للبيانات المفتوحة",
+    "target": "صاحب البيانــات أو جهــة التحكــم أو جهــة",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 14
+  },
+  {
+    "source": "رخصة تنظم استخدام البيانات المفتوحة",
+    "target": "منصة وطنية للبيانات المفتوحة",
+    "type": "CREATED_BY",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 14
+  },
+  {
+    "source": "الجهة التنظيمية",
+    "target": "اتفاقية مشاركة البيانات",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 15
+  },
+  {
+    "source": "مكتب الجهة",
+    "target": "الجهة التنظيمية",
+    "type": "PART_OF",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 15
+  },
+  {
+    "source": "مكتب إدارة البيانات الوطنية",
+    "target": "بيانــات",
+    "type": "CONTAINS",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 15
+  },
+  {
+    "source": "الجهة التنظيمية",
+    "target": "اتفاقية مشاركة البيانات",
+    "type": "CREATED_BY",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 15
+  },
+  {
+    "source": "مكتب إدارة البيانات الوطنية",
+    "target": "البيانــات",
+    "type": "CONTAINS",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 15
+  },
+  {
+    "source": "الطفل",
+    "target": "البيانــات",
+    "type": "RELATED_TO",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 15
+  },
+  {
+    "source": "الطفل",
+    "target": "مكتب إدارة البيانات الوطنية",
+    "type": "LOCATED_IN",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 15
+  },
+  {
+    "source": "سلطة",
+    "target": "الولي",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 16
+  },
+  {
+    "source": "بيانات شخصية",
+    "target": "البيان الشخصي",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 16
+  },
+  {
+    "source": "الولي",
+    "target": "بيانات شخصية",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 16
+  },
+  {
+    "source": "سلطة",
+    "target": "الولي",
+    "type": "CREATED_BY",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 16
+  },
+  {
+    "source": "بدن",
+    "target": "نفس",
+    "type": "LOCATED_IN",
+    "weight": 0.4,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 16
+  },
+  {
+    "source": "Direct Marketing",
+    "target": "Control Entity",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 17
+  },
+  {
+    "source": "Government Agency",
+    "target": "General Public",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 17
+  },
+  {
+    "source": "Direct Marketing",
+    "target": "Individual Person",
+    "type": "USES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 17
+  },
+  {
+    "source": "Control Entity",
+    "target": "Direct Marketing",
+    "type": "CREATED_BY",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 17
+  },
+  {
+    "source": "Government Agency",
+    "target": "",
+    "type": "LOCATED_IN",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 17
+  },
+  {
+    "source": "Individual Person",
+    "target": "General Public",
+    "type": "BELONGS_TO",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 17
+  },
+  {
+    "source": "جهة المعالجة",
+    "target": "أي شــخصية ذات",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 17
+  },
+  {
+    "source": "النقــل غير المباشر",
+    "target": "النقــل البيانــات الشـ الشخصية",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 17
+  },
+  {
+    "source": "جهة المعالجة",
+    "target": "النقــل البيانــات الشـ الشخصية",
+    "type": "CAUSES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 17
+  },
+  {
+    "source": "أي شــ_persona",
+    "target": "جهة المعالجة",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 17
+  },
+  {
+    "source": "المملكــة",
+    "target": "النقــل البيانــات الشـ الشخصية",
+    "type": "LOCATED_IN",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 17
+  },
+  {
+    "source": "النقــل غير المباشر",
+    "target": "جهة المعالجة",
+    "type": "BELONGS_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 17
+  },
+  {
+    "source": "أي شــ_persona",
+    "target": "جهة المعالجة",
+    "type": "DEPENDS_ON",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 17
+  },
+  {
+    "source": "النقل العرضي",
+    "target": "البيانات الشخصية",
+    "type": "RELATED_TO",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 17
+  },
+  {
+    "source": "البيانات غير المعالجة",
+    "target": "البيانات الشخصية",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 17
+  },
+  {
+    "source": "منتظم",
+    "target": "الأشخاص",
+    "type": "CREATED_BY",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 17
+  },
+  {
+    "source": "معاجل",
+    "target": "دولة أخرى",
+    "type": "LOCATED_IN",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 17
+  },
+  {
+    "source": "صاحْب الهوية الوطنية",
+    "target": "النقل العرضي",
+    "type": "BELONGS_TO",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 17
+  },
+  {
+    "source": "The Minister",
+    "target": "Ministry of Information",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 22
+  },
+  {
+    "source": "The decision",
+    "target": "three main objectives",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 22
+  },
+  {
+    "source": "The Ministry",
+    "target": "data management practices and international standards",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 22
+  },
+  {
+    "source": "The Ministry",
+    "target": "The decision",
+    "type": "CREATED_BY",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 22
+  },
+  {
+    "source": "The Ministry",
+    "target": "Saudi Arabia",
+    "type": "LOCATED_IN",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 22
+  },
+  {
+    "source": "The Minister",
+    "target": "The Ministry of Information",
+    "type": "BELONGS_TO",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 22
+  },
+  {
+    "source": "الرقــي بالبحــوث العلميــة",
+    "target": "الباحثيــن",
+    "type": "RELATED_TO",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 23
+  },
+  {
+    "source": "المعلومــات العامــة",
+    "target": "مجتمــع",
+    "type": "CONTAINS",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 23
+  },
+  {
+    "source": "توفيــر الفــرص المتكافئــة",
+    "target": "المعلومــات العامــة",
+    "type": "USES",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 23
+  },
+  {
+    "source": "الرقــي بالبحــوث العلميــة",
+    "target": "توفيــر الفــرص المتكافئــة",
+    "type": "CREATED_BY",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 23
+  },
+  {
+    "source": "سياسة حماية البيانات الشخصية",
+    "target": "تنظيــم عمليــة جمــع البيانــات الشــخصية",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 26
+  },
+  {
+    "source": "سياسة مشاركة البيانات",
+    "target": "سياسة حرية المعلومات",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 26
+  },
+  {
+    "source": "المستفيدين",
+    "target": "الجهــات الحكوميــة",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 26
+  },
+  {
+    "source": "الرقميــة",
+    "target": "الجهــات الحكوميــة",
+    "type": "LOCATED_IN",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 26
+  },
+  {
+    "source": "البيانات المفتوحة",
+    "target": "سياسة حماية البيانات الشخصية",
+    "type": "BELONGS_TO",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 26
+  },
+  {
+    "source": "سياسة مشاركة البيانات",
+    "target": "سياسة حرية المعلومات",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 26
+  },
+  {
+    "source": "مصادرهــا",
+    "target": "سياسة مشاركة البيانات",
+    "type": "CONTAINS",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 26
+  },
+  {
+    "source": "الجهــات الحكوميــة",
+    "target": "سياسة مشاركة البيانات",
+    "type": "USES",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 26
+  },
+  {
+    "source": "سياسة حرية المعلومات",
+    "target": "الجهــات الحكوميــة",
+    "type": "CREATED_BY",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 26
+  },
+  {
+    "source": "المعلومات العامــة",
+    "target": "الجهــات الحكوميــة",
+    "type": "LOCATED_IN",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 26
+  },
+  {
+    "source": "الجهــات ذات االختصــاص",
+    "target": "ألطفــال",
+    "type": "BELONGS_TO",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 26
+  },
+  {
+    "source": "مسياسة حماية البيانات الشخصية",
+    "target": "ألطفــال",
+    "type": "DEPENDS_ON",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 26
+  },
+  {
+    "source": "سياسة تصنيف البيانات4.1",
+    "target": "النطاق4.1.1",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 28
+  },
+  {
+    "source": "سياسة تصنيف البيانات4.1",
+    "target": "جهات عامة",
+    "type": "APPLIES_TO",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 28
+  },
+  {
+    "source": "المبادئ الرئيسة لتصنيف البيانات",
+    "target": "األصل في البيانات اإلتاحة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 28
+  },
+  {
+    "source": "4.1.2",
+    "target": "المبدأ األول: األصل في البيانات اإلتاحة",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 28
+  },
+  {
+    "source": "المبدأ الثاني: الضرورة والتناسب",
+    "target": "المبادئ الرئيسة لتصنيف البيانات",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 28
+  },
+  {
+    "source": "مستويات تصنيف البيانات",
+    "target": "التصنيف",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 30
+  },
+  {
+    "source": "مستويات تصنيف البيانات",
+    "target": "درجة األثر",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 30
+  },
+  {
+    "source": "مستويات تصنيف البيانات",
+    "target": "الوصف",
+    "type": "CONTAINS",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 30
+  },
+  {
+    "source": "مستويات تصنيف البيانات",
+    "target": "أمثلة استرشادية",
+    "type": "CONTAINS",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 30
+  },
+  {
+    "source": "كمــا1",
+    "target": "بيانــات ســرية للغايــة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 30
+  },
+  {
+    "source": "بيانــات ســرية للغايــة",
+    "target": null,
+    "type": "CONTAINS",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 30
+  },
+  {
+    "source": "المتـعلــقـــــــة بالعــــالقــــــــات الدولـــــيـــــــــة",
+    "target": null,
+    "type": "LOCATED_IN",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 30
+  },
+  {
+    "source": "مباحثـــــات ودراســـــــات وأعمــال",
+    "target": "كمــا1",
+    "type": "AFFECTS",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 30
+  },
+  {
+    "source": "المعـلــــومـــــــات",
+    "target": "المصالح الوطنيــة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 30
+  },
+  {
+    "source": "المصالح الوطنيــة",
+    "target": "األعمــال",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 30
+  },
+  {
+    "source": "المصالح الوطنيــة",
+    "target": "التشفيــــــر",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 30
+  },
+  {
+    "source": "الوطنــي",
+    "target": "المصالح الوطنيــة",
+    "type": "LOCATED_IN",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 30
+  },
+  {
+    "source": "الوطني",
+    "target": "المملكــة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 30
+  },
+  {
+    "source": "الوطنــي",
+    "target": "البنيــــة التحتيــة الوطنيــــة",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 30
+  },
+  {
+    "source": "الضــرر",
+    "target": "سري للغاية",
+    "type": "CAUSES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 30
+  },
+  {
+    "source": "المملكــة",
+    "target": "العلاقــات الدبلوماســية",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 30
+  },
+  {
+    "source": "الوطني",
+    "target": "الكفــاءة التشــغيلية",
+    "type": "CREATED_BY",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 30
+  },
+  {
+    "source": "عروض منتجات (عامة)",
+    "target": "معلومــات العالقــات العامة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 32
+  },
+  {
+    "source": "مؤسســة",
+    "target": "اإلعالنات",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 32
+  },
+  {
+    "source": "مؤسســة",
+    "target": "مستويات تصنيف البيانات1",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 32
+  },
+  {
+    "source": "المبدأ الاول",
+    "target": "الاصل في البيانات الالتاحة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 33
+  },
+  {
+    "source": "تصنيف البيانات المصنف على مستوى مقيد",
+    "target": "مستوى أ",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 33
+  },
+  {
+    "source": "تصنيف البيانات المصنف على مستوى مقيد",
+    "target": "مستوى ب",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 33
+  },
+  {
+    "source": "مجموعة من الأفراد",
+    "target": null,
+    "type": "PART_OF",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 33
+  },
+  {
+    "source": "المبدأ الاول",
+    "target": "الاصل في البيانات الالتاحة",
+    "type": "CAUSES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 33
+  },
+  {
+    "source": "فئة الألثر الرئيسة",
+    "target": "المصلحة الوطنية",
+    "type": "RELATED_TO",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 34
+  },
+  {
+    "source": "المصلحة الوطنية",
+    "target": "الدول الصديقة",
+    "type": "CAUSES",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 34
+  },
+  {
+    "source": "المصلحة الوطنية",
+    "target": "information",
+    "type": "USES",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 34
+  },
+  {
+    "source": "فئة الألثر الرئيسة",
+    "target": "national vitality",
+    "type": "AFFECTS",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 34
+  },
+  {
+    "source": "national vitality",
+    "target": "level",
+    "type": "LOCATED_IN",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 34
+  },
+  {
+    "source": "وزارة الخارجية",
+    "target": "الرئيس",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 34
+  },
+  {
+    "source": "الاقتصاد الوطني",
+    "target": "الوطن",
+    "type": "PART_OF",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 34
+  },
+  {
+    "source": "الناتج المحلي اإلجمالي",
+    "target": "النسبة",
+    "type": "CONTAINS",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 34
+  },
+  {
+    "source": "الكشف عن المعلومات",
+    "target": "خسائر اقتصادية على المستوى الوطني",
+    "type": "CAUSES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 34
+  },
+  {
+    "source": "الاقتصاد الوطني",
+    "target": "الناتج المحلي اإلجمالي",
+    "type": "USES",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 34
+  },
+  {
+    "source": "الرئيس",
+    "target": "وزارة الخارجية",
+    "type": "CREATED_BY",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 34
+  },
+  {
+    "source": "الاقتصاد الوطني",
+    "target": "الوطن",
+    "type": "LOCATED_IN",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 34
+  },
+  {
+    "source": "الناتج المحلي اإلجمالي",
+    "target": "الاقتصاد الوطني",
+    "type": "BELONGS_TO",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 34
+  },
+  {
+    "source": "الرئيسة",
+    "target": "لفترة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 35
+  },
+  {
+    "source": "الرئيسة",
+    "target": "قصيرة",
+    "type": "RELATED_TO",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 35
+  },
+  {
+    "source": "الرئيسة",
+    "target": "طويل",
+    "type": "RELATED_TO",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 35
+  },
+  {
+    "source": "الوطنية",
+    "target": "فئة الألثر الرئيسة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 36
+  },
+  {
+    "source": "أنشطة الجهات",
+    "target": "مهام الجهات الخاصة",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 36
+  },
+  {
+    "source": "الكشف عن المعلومات",
+    "target": "العتبارات",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 36
+  },
+  {
+    "source": "الكشف عن المعلومات",
+    "target": "الجهات الخاصة",
+    "type": "AFFECTS",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 36
+  },
+  {
+    "source": "الكشف عن المعلومات",
+    "target": "إنهاء عقود الموظفين",
+    "type": "CAUSES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 36
+  },
+  {
+    "source": "مستوى الألثر",
+    "target": "فئة الألثر الرئيسة",
+    "type": "DEPENDS_ON",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 36
+  },
+  {
+    "source": "فئة أثر الرئيسة",
+    "target": "فئة أثر الفرعية",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 38
+  },
+  {
+    "source": "البيئة",
+    "target": "الموارد البيئية",
+    "type": "CONTAINS",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 38
+  },
+  {
+    "source": "تدمير الموارد",
+    "target": "تأثير كارثي",
+    "type": "CAUSES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 38
+  },
+  {
+    "source": "المصلحة الوطنية",
+    "target": "البيئة",
+    "type": "AFFECTS",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 38
+  },
+  {
+    "source": "المملكة",
+    "target": "Location",
+    "type": "LOCATED_IN",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 38
+  },
+  {
+    "source": "الجهة",
+    "target": "الوثائق الورقية واإللكترونية",
+    "type": "CONTAINS",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 39
+  },
+  {
+    "source": "المسؤول الأوّل",
+    "target": "الوثائق الورقية واإللكترونية",
+    "type": "CREATED_BY",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 39
+  },
+  {
+    "source": "عالمات الحماية",
+    "target": "الجهة",
+    "type": "USES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 39
+  },
+  {
+    "source": "تصنيف البيانــات",
+    "target": "البيانــات",
+    "type": "AFFECTS",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 39
+  },
+  {
+    "source": "هيئة الوطنية لامن السيباري",
+    "target": "ممثّل بيانات",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 40
+  },
+  {
+    "source": "بيانات سرية للغاية",
+    "target": "بيانات سري",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 40
+  },
+  {
+    "source": "التخلص من البيانات",
+    "target": "أرشفة البيانات",
+    "type": "CAUSES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 40
+  },
+  {
+    "source": "آلة تمزيق الورق",
+    "target": null,
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 40
+  },
+  {
+    "source": "ممثّل بيانات",
+    "target": null,
+    "type": "CREATED_BY",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 40
+  },
+  {
+    "source": "التخلص من البيانات",
+    "target": "أرشفة البيانات",
+    "type": "LOCATED_IN",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 40
+  },
+  {
+    "source": "آلة تمزيق الورق",
+    "target": "وثائق ورقية",
+    "type": "CONTAINS",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 40
+  },
+  {
+    "source": "الهيئة الوطنية لألمن السيباني",
+    "target": "آلة تمزيق الورق",
+    "type": "USES",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 40
+  },
+  {
+    "source": "ممثّل بيانات",
+    "target": "قائمة مفصّ ل عن جميع البيانات التي تم التخلص منها",
+    "type": "CREATED_BY",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 40
+  },
+  {
+    "source": "قائمة مفصّ ل عن جميع البيانات التي تم التخلص منها",
+    "target": "وثائق ورقية",
+    "type": "CONTAINS",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 40
+  },
+  {
+    "source": "الهيئة الوطنية لألمن السيباني",
+    "target": "بيانات سريّة",
+    "type": "LOCATED_IN",
+    "weight": 0.4,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 40
+  },
+  {
+    "source": "بيانات سريّة",
+    "target": "الهيئة الوطنية لألمن السيباني",
+    "type": "BELONGS_TO",
+    "weight": 0.3,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 40
+  },
+  {
+    "source": "بيانات سريّة",
+    "target": "الهيئة الوطنية لألمن السيبani",
+    "type": "DEPENDS_ON",
+    "weight": 0.2,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 40
+  },
+  {
+    "source": "بيانات سريّة",
+    "target": "الهيئة الوطنية لألمن السيباني",
+    "type": "AFFECTS",
+    "weight": 0.1,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 40
+  },
+  {
+    "source": "Ministry of Finance",
+    "target": "January 1, 2021",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 41
+  },
+  {
+    "source": "Ministry of Finance",
+    "target": "Specific event or circumstances that affect the documents",
+    "type": "CONTAINS",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 41
+  },
+  {
+    "source": "Government agencies",
+    "target": "",
+    "type": "LOCATED_IN",
+    "weight": 1,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 41
+  },
+  {
+    "source": "انقضاء تاريخ محدد",
+    "target": "إلغــاء التصنيــف",
+    "type": "CAUSES",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 41
+  },
+  {
+    "source": "الجهات الحكومية",
+    "target": "تصنيف",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 41
+  },
+  {
+    "source": "إحــداث تغييــر فــي األولويــات االســتراتيجية",
+    "target": "إلغــاء التصنيــف",
+    "type": "AFFECTS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 41
+  },
+  {
+    "source": "تحديد مستوى األثر- ب3- الخطوة",
+    "target": "ممثــل بيانــات األعمــال",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 43
+  },
+  {
+    "source": "مســتوى",
+    "target": "مدة",
+    "type": "USES",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 43
+  },
+  {
+    "source": "فترة",
+    "target": "حجم",
+    "type": "CONTAINS",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 43
+  },
+  {
+    "source": "أضــرارٍ جســيمة",
+    "target": "حــدوث",
+    "type": "CAUSES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 43
+  },
+  {
+    "source": "منخفض",
+    "target": "ال يوجــد أثــر",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 43
+  },
+  {
+    "source": "تقييــم األثــر محــددة",
+    "target": "مستوى تصنيف البيانات",
+    "type": "CONTAINS",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 43
+  },
+  {
+    "source": "مستوى تصنيف البيانات",
+    "target": "تصنيــف البيانــات",
+    "type": "CAUSES",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 43
+  },
+  {
+    "source": "منخفض",
+    "target": "ال يوجــد أثــر",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 43
+  },
+  {
+    "source": "Concept",
+    "target": "ألثــر محــددة",
+    "type": "LOCATED_IN",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 43
+  },
+  {
+    "source": "مستوى تصنيف البيانات",
+    "target": "أثر",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 43
+  },
+  {
+    "source": "فئات ومستويات تقييم أثر تصنيف البيانات",
+    "target": "مستوى األثر المحدد",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 43
+  },
+  {
+    "source": "مستوى األثر المحدد",
+    "target": "مستوى تصنيف البيانات",
+    "type": "CAUSES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 43
+  },
+  {
+    "source": "ال يوجــد أثــر",
+    "target": "بيانــات",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 43
+  },
+  {
+    "source": "ممثل بيانات األعمال",
+    "target": "تصنيف البيانات",
+    "type": "CREATED_BY",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 43
+  },
+  {
+    "source": "البيانات",
+    "target": "المزايا",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 44
+  },
+  {
+    "source": "المزايا",
+    "target": "اس्तخدام البيانــات لتطويــر خدمــات جديــة ذات قيمــة",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 44
+  },
+  {
+    "source": "تطوير خدمة جديدة ذات قيمة",
+    "target": "زيادة شفافية العمليــات الحكوميــة",
+    "type": "CAUSES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 44
+  },
+  {
+    "source": "البيانات",
+    "target": "المزايا",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 44
+  },
+  {
+    "source": "المزايا",
+    "target": "ائـلثــار السلبية",
+    "type": "AFFECTS",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 44
+  },
+  {
+    "source": "مراجعة مستوى التصنيف",
+    "target": "مكتب الجهة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 44
+  },
+  {
+    "source": "مراجعة",
+    "target": "تطبيق الضوابط المناسبة",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 44
+  },
+  {
+    "source": "مراجعة مستوى التصنيف",
+    "target": "تطبيق الضوابط المناسبة",
+    "type": "CAUSES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 44
+  },
+  {
+    "source": "شهر",
+    "target": "مراجعة",
+    "type": "LOCATED_IN",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 44
+  },
+  {
+    "source": "ﻋﺎﻟﻲ",
+    "target": "ﻣﺘﻮﺳﻂ",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 45
+  },
+  {
+    "source": "ﻋﺎﻟﻲ",
+    "target": "ﻻﻳﻮﺟﺪ",
+    "type": "RELATED_TO",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 45
+  },
+  {
+    "source": "الشخص المسؤول",
+    "target": "الجهة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 46
+  },
+  {
+    "source": "الدور",
+    "target": "المسؤولية",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 46
+  },
+  {
+    "source": "الجهة",
+    "target": "الشــخص المســؤول",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 46
+  },
+  {
+    "source": "الشــخص المســؤول",
+    "target": "ممثــل بيانــات األعمــال",
+    "type": "PART_OF",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 46
+  },
+  {
+    "source": "تصنيف البيانات",
+    "target": [
+      "تجميـع البيانـات",
+      "تنسـيق تصنيـف البيانـات",
+      "محميـة",
+      "مراجعـة"
+    ],
+    "type": "CONTAINS",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 46
+  },
+  {
+    "source": "التأكد مــن أن البيانـات المتبادلــة بيــن اإلدارات أو الجهــات مصنفــة",
+    "target": "تصنيف البيانات",
+    "type": "CAUSES",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 46
+  },
+  {
+    "source": "بيانات",
+    "target": "حماية",
+    "type": "RELATED_TO",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 49
+  },
+  {
+    "source": "بيانات",
+    "target": "سياسة",
+    "type": "CONTAINS",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 49
+  },
+  {
+    "source": "الشخصية",
+    "target": "بيانات",
+    "type": "CREATED_BY",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 49
+  },
+  {
+    "source": " الجهات الخارجية",
+    "target": "الأفراد",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 50
+  },
+  {
+    "source": " البيانات الشخصية",
+    "target": " الأفراد",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 50
+  },
+  {
+    "source": "شبة الإنترنيت",
+    "target": "وسيلة أخرى",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 50
+  },
+  {
+    "source": "الأفراد",
+    "target": "المملكة",
+    "type": "LOCATED_IN",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 50
+  },
+  {
+    "source": " البيانات الشخصية",
+    "target": " الأفراد",
+    "type": "BELONGS_TO",
+    "weight": 0.4,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 50
+  },
+  {
+    "source": "جهة التحكم",
+    "target": "متطلبات نظامية",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 50
+  },
+  {
+    "source": "جموع البيانات الشخصية",
+    "target": "Personal Data",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 50
+  },
+  {
+    "source": "حمايه الصحة أو السلامة العامة",
+    "target": "جهة التحكم",
+    "type": "CAUSES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 50
+  },
+  {
+    "source": "متطلبات نظامية",
+    "target": "اللوائح والسياسات",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 50
+  },
+  {
+    "source": "المملكة or الستيفا",
+    "target": "System Requirements and Laws/Policies",
+    "type": "CREATED_BY",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 50
+  },
+  {
+    "source": "جموع البيانات الشخصية",
+    "target": "المملكة or الستيفا",
+    "type": "LOCATED_IN",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 50
+  },
+  {
+    "source": "المبدأ الثاني",
+    "target": "المبدأ الثالث",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 50
+  },
+  {
+    "source": "سياسات",
+    "target": "إجراءات الخصوصية",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 50
+  },
+  {
+    "source": "صاحب البيانات الشخصية",
+    "target": "البيانات الشخصية",
+    "type": "USES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 50
+  },
+  {
+    "source": "المبدأ الثاني",
+    "target": "المبدأ الثالث",
+    "type": "CREATED_BY",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 50
+  },
+  {
+    "source": "البيانات الشخصية",
+    "target": "صاحب البيانات الشخصية",
+    "type": "LOCATED_IN",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 50
+  },
+  {
+    "source": "سياسات",
+    "target": "المبدأ الثاني",
+    "type": "BELONGS_TO",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 50
+  },
+  {
+    "source": "جهة",
+    "target": "مهام ومسؤوليات",
+    "type": "CONTAINS",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 52
+  },
+  {
+    "source": "جهة",
+    "target": "مسؤول الأوّل",
+    "type": "CREATED_BY",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 52
+  },
+  {
+    "source": "جهة",
+    "target": "من يفوضه",
+    "type": "CREATED_BY",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 52
+  },
+  {
+    "source": "جهة",
+    "target": "سياسات",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 52
+  },
+  {
+    "source": "جهة",
+    "target": "إجراءات",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 52
+  },
+  {
+    "source": "الخصوصية",
+    "target": "إدارة العليا",
+    "type": "LOCATED_IN",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 52
+  },
+  {
+    "source": "مستوى قبول",
+    "target": "جهة",
+    "type": "BELONGS_TO",
+    "weight": 0.4,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 52
+  },
+  {
+    "source": "جهة التحكم",
+    "target": "سياســات وإجــراءات الخصوصيـة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 52
+  },
+  {
+    "source": "فريق العمـل المختص",
+    "target": "المهام والمسؤوليات المتعلقــة",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 52
+  },
+  {
+    "source": "الجهة التنظيميّة والمكتب",
+    "target": "الجهة التنظيميّة",
+    "type": "LOCATED_IN",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 52
+  },
+  {
+    "source": "جهة التحكم",
+    "target": "مرrejــة وتحديــد العقــود واتفاقيــات مســتوى الخدمــة والتشــغيل",
+    "type": "CREATED_BY",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 52
+  },
+  {
+    "source": "المملكــة",
+    "target": "صاحــب البيانــات",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 53
+  },
+  {
+    "source": "البيانــات",
+    "target": "النظمــة واللوائــح والسياســات",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 53
+  },
+  {
+    "source": "صاحــب البيانــات",
+    "target": "البيانــات",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 53
+  },
+  {
+    "source": "جهة التحكم",
+    "target": "البيانات",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 53
+  },
+  {
+    "source": "البيانات",
+    "target": "البيانات الشخصية",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 53
+  },
+  {
+    "source": "البيانات",
+    "target": "المملكة",
+    "type": "LOCATED_IN",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 53
+  },
+  {
+    "source": "المكتب",
+    "target": "جهة التحكم",
+    "type": "BELONGS_TO",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 53
+  },
+  {
+    "source": "جهة التحكم",
+    "target": " الجهة التنظيمية",
+    "type": "DEPENDS_ON",
+    "weight": 0.4,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 53
+  },
+  {
+    "source": "المملكــة",
+    "target": "جهــة التحكــم",
+    "type": "CONTAINS",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 53
+  },
+  {
+    "source": "الهيئــة الوطنيــة",
+    "target": "سياســة",
+    "type": "CREATED_BY",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 53
+  },
+  {
+    "source": "جهــة التحكــم",
+    "target": "البيانــات",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 53
+  },
+  {
+    "source": "المكتب",
+    "target": "المملكــة",
+    "type": "LOCATED_IN",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 53
+  },
+  {
+    "source": "الهيئــة الوطنيــة",
+    "target": "المملكــة",
+    "type": "BELONGS_TO",
+    "weight": 0.4,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 53
+  },
+  {
+    "source": "جهة التحكم",
+    "target": "donnees personnalises",
+    "type": "CONTAINS",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 54
+  },
+  {
+    "source": "صاحب البيانات",
+    "target": "جهة التحكم",
+    "type": "BELONGS_TO",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 54
+  },
+  {
+    "source": "الهيئة الوطنية لألمن السيبراني",
+    "target": "Location",
+    "type": "LOCATED_IN",
+    "weight": 0.4,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 54
+  },
+  {
+    "source": "أصحاب البيانـات",
+    "target": "جهات",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 54
+  },
+  {
+    "source": "البيانـات",
+    "target": "الخصوصيـة",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 54
+  },
+  {
+    "source": "البيانـات",
+    "target": "الستخدامها",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 54
+  },
+  {
+    "source": "أصحاب البيانـات",
+    "target": "البيانـات",
+    "type": "CREATED_BY",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 54
+  },
+  {
+    "source": "البيانـات",
+    "target": "المملكـة",
+    "type": "LOCATED_IN",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 54
+  },
+  {
+    "source": "أصحاب البيانـات",
+    "target": "الخصوصيـة",
+    "type": "BELONGS_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 54
+  },
+  {
+    "source": "سادســاً",
+    "target": "المكتــب",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 55
+  },
+  {
+    "source": "قواعــد إضافيــة",
+    "target": "أنــواع محــددة مــن البيانــات الشــخصية",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 55
+  },
+  {
+    "source": "التنســيق مــع المكتــب",
+    "target": " الجهــات التنظيميــة",
+    "type": "CAUSES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 55
+  },
+  {
+    "source": "الجهــات التنظيميــة",
+    "target": "قواعــد إضافيــة",
+    "type": "USES",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 55
+  },
+  {
+    "source": "المكتــب",
+    "target": " جهــات التحكــم",
+    "type": "LOCATED_IN",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 55
+  },
+  {
+    "source": "الجــة الرئيسـة",
+    "target": " الجهــة الطالبــة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 58
+  },
+  {
+    "source": " البيانــات",
+    "target": "المطلــوب منهــا",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 58
+  },
+  {
+    "source": "المطلــوب منهــا",
+    "target": "الجــة الرئيسـة",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 58
+  },
+  {
+    "source": "الجــة الرئيسـة",
+    "target": " البيانــات",
+    "type": "CREATED_BY",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 58
+  },
+  {
+    "source": "المطلــوب منهــا",
+    "target": " الجهــة الطالبــة",
+    "type": "LOCATED_IN",
+    "weight": 0.4,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 58
+  },
+  {
+    "source": "فعلــى الجهـة",
+    "target": "المطلــوب منهــا",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 58
+  },
+  {
+    "source": "المبدأ الثاني: مشروعية الغرض",
+    "target": "المبدأ الثالث: الوصول المصرّ ح به",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 58
+  },
+  {
+    "source": "قبــل مشــاركتها مــع الجهــة الطالبــة",
+    "target": "فعلــى الجهـة",
+    "type": "CAUSES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 58
+  },
+  {
+    "source": "المبدأ الثاني: مشروعية الغرض",
+    "target": "المبدأ الثالث: الوصول المصرّ ح به",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 58
+  },
+  {
+    "source": "فعلــى الجهـة",
+    "target": "المطلــوب منهــا",
+    "type": "CREATED_BY",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 58
+  },
+  {
+    "source": "الهيئة الوطنية لألمن السبراني",
+    "target": "أمن البيانات",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 59
+  },
+  {
+    "source": "المبدأ السادس",
+    "target": "أمن البيانات",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 59
+  },
+  {
+    "source": "المبدأ السابع",
+    "target": "الاستخدام الأخلاقي",
+    "type": "CONTAINS",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 59
+  },
+  {
+    "source": "الهيئة الوطنية لألمن السبراني",
+    "target": "المبدأ السادس",
+    "type": "USES",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 59
+  },
+  {
+    "source": "الهيئة الوطنية لألمن السبراني",
+    "target": "المبدأ السابع",
+    "type": "USES",
+    "weight": 0.4,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 59
+  },
+  {
+    "source": "مختص بيانات األعمال",
+    "target": "المطلوب منهــا",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 60
+  },
+  {
+    "source": "البيانــات",
+    "target": "تصنيف البيانــات",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 60
+  },
+  {
+    "source": "البيانــات",
+    "target": "مبادئ الرئيسية لمشــاركة البيانــات",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 60
+  },
+  {
+    "source": "البيانــات",
+    "target": "مختص بيانات األعمال",
+    "type": "CREATED_BY",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 60
+  },
+  {
+    "source": "البيانــات",
+    "target": "سياســة تصنيــف البيانــات",
+    "type": "LOCATED_IN",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 60
+  },
+  {
+    "source": "الجهة",
+    "target": "البيانات المطلوبة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 60
+  },
+  {
+    "source": "المختص بيانات الأعمال",
+    "target": "البيانات المطلوبة",
+    "type": "CONTAINS",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 60
+  },
+  {
+    "source": "سياسة تصنيف البيانات",
+    "target": null,
+    "type": "CLASSIFICATION_LEVEL",
+    "weight": 0.4,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 60
+  },
+  {
+    "source": "مختص بيانات الأعمال",
+    "target": "ممثل بيانات الأعمال",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 60
+  },
+  {
+    "source": "مبادئ مشاركة البيانات",
+    "target": "الضوابط المناسبة",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 60
+  },
+  {
+    "source": "مختص بيانات الأعمال",
+    "target": "أن يتم الاتفاق بين المختصين",
+    "type": "CAUSES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 60
+  },
+  {
+    "source": "مكتب الجهة المطلوبة",
+    "target": "مختص بيانات الأعمال",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 60
+  },
+  {
+    "source": "مبادئ مشاركة البيانات",
+    "target": "مختص بيانات الأعمال",
+    "type": "CREATED_BY",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 60
+  },
+  {
+    "source": "مكتــب الجهـة",
+    "target": "البيانــات",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 61
+  },
+  {
+    "source": "مدير مكتــب البيانــات",
+    "target": "مكتــب الجهـة",
+    "type": "CREATED_BY",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 61
+  },
+  {
+    "source": "الطالبـة",
+    "target": "مكتــب الجهـة",
+    "type": "PART_OF",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 61
+  },
+  {
+    "source": "مراﺟﻌﺔ ﻣﺎدىء أﺧﺮى",
+    "target": "مكتــب الجهـة",
+    "type": "CONTAINS",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 61
+  },
+  {
+    "source": "تـصﻨﻴﻒ اﻟﺒﻴﺎﻧـﺎت",
+    "target": "البيانــات",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 61
+  },
+  {
+    "source": "قﻮاﻋﺪ ﺗﺼﻨﻴﻒ اﻟﺒﻴﺎﻧـﺎت",
+    "target": "مكتــب الجهـة",
+    "type": "CONTAINS",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 61
+  },
+  {
+    "source": "مھدّد",
+    "target": "البيانــات",
+    "type": "RELATED_TO",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 61
+  },
+  {
+    "source": "سﺮي",
+    "target": "مكتــب الجهـة",
+    "type": "LOCATED_IN",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 61
+  },
+  {
+    "source": "الجهـة الحكوميــة",
+    "target": "مشــاركة البيانــات",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 62
+  },
+  {
+    "source": "استالم الطلــب",
+    "target": "يومــاً مــن تاريــخ",
+    "type": "CONTAINS",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 62
+  },
+  {
+    "source": "الطلــب",
+    "target": "الجهـة الحكوميــة",
+    "type": "CAUSES",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 62
+  },
+  {
+    "source": "القــرار",
+    "target": "الجهـة الحكوميــة",
+    "type": "CREATED_BY",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 62
+  },
+  {
+    "source": "لا يوجد",
+    "target": "لا يوجد",
+    "type": "LOCATED_IN",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 62
+  },
+  {
+    "source": "مشروعية الغرض",
+    "target": "المبــدأ الثانــي",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 62
+  },
+  {
+    "source": "المبــدأ الثانــي",
+    "target": "أن يُ وضّ ــح األســاس النظامــي أو االحتيــاج الفعلــي لمشــاركة البيانــات",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 62
+  },
+  {
+    "source": "الخامــس",
+    "target": "المبــدأ الســابع: االســتخدام األخالقــي)",
+    "type": "CREATED_BY",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 62
+  },
+  {
+    "source": "أن يُ وضّ ــح األســاس النظامــي أو االحتيــاج الفعلــي لمشــاركة البيانــات",
+    "target": "المبــدأ الثانــي",
+    "type": "USES",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 62
+  },
+  {
+    "source": "المســؤولية المشــتركة",
+    "target": "الشخصية",
+    "type": "LOCATED_IN",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 62
+  },
+  {
+    "source": "الســتخدام األخالقــي",
+    "target": "الخامــس",
+    "type": "BELONGS_TO",
+    "weight": 0.4,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 62
+  },
+  {
+    "source": "أن يُ لتـزم",
+    "target": "الشخصية",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 62
+  },
+  {
+    "source": "المبدأ الثالث",
+    "target": "المبدأ السادس",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 62
+  },
+  {
+    "source": "أن تٌ حــدد الجهــات واألشــخاص المخوليــن",
+    "target": "البيانــات",
+    "type": "USES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 62
+  },
+  {
+    "source": "هيكلــة البيانــات",
+    "target": "نــوع البيانــات",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 63
+  },
+  {
+    "source": "المبدأ السادس: أمن البيانات",
+    "target": "معالجة المسبقة للبيانات",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 63
+  },
+  {
+    "source": "المثــال",
+    "target": "الهويــة",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 63
+  },
+  {
+    "source": "معالجة المسبقة للبيانات",
+    "target": "هيكلــة البيانــات",
+    "type": "CREATED_BY",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 63
+  },
+  {
+    "source": "الحجــب وإخفــاء الهويــة",
+    "target": "التجميــع",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 63
+  },
+  {
+    "source": "أن تُ قيّ ــم جــودة البيانــات المطلوبــة وصحتهــا وســامتها",
+    "target": "مكتــب الجهــة",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 63
+  },
+  {
+    "source": "المبدأ السادس: أمن البيانات",
+    "target": "التحقق من أمــن وموثوقيــة وســائل المشــاركة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 63
+  },
+  {
+    "source": "المبادئ ذات العالقة",
+    "target": "المبدأ السادس: أمن البيانات",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 63
+  },
+  {
+    "source": "الهيئة الوطنية لألمن السيبراني",
+    "target": "المبادئ ذات العالقة",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 63
+  },
+  {
+    "source": "الهيئة الوطنية لألمن السيبراني",
+    "target": "المبدأ السادس: أمن البيانات",
+    "type": "CREATED_BY",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 63
+  },
+  {
+    "source": "الجهات",
+    "target": "الهيئة الوطنية لألمن السيبراني",
+    "type": "LOCATED_IN",
+    "weight": 0.4,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 63
+  },
+  {
+    "source": "أنظمة المعلومات الوطنية",
+    "target": "مقدم الطلب",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 63
+  },
+  {
+    "source": "مقدم خدمة",
+    "target": "الشبكة الالكترونية, الشبكة الافتراضيية الخاصة",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 63
+  },
+  {
+    "source": "مقدم خدمة",
+    "target": "الشبكة الالكترونية, الشبكة الافتراضيية الخاصة",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 63
+  },
+  {
+    "source": "مقدم الطلب",
+    "target": "أنظمة المعلومات الوطنية",
+    "type": "CREATED_BY",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 63
+  },
+  {
+    "source": "الشبكة الالكترونية",
+    "target": "الشبكة الافتراضيية الخاصة",
+    "type": "LOCATED_IN",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 63
+  },
+  {
+    "source": "المشــاركة",
+    "target": "الضوابــط",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 65
+  },
+  {
+    "source": "الضوابــط",
+    "target": "الخصوصيــة",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 65
+  },
+  {
+    "source": "الضوابــط",
+    "target": "البيانــات الشــخصية",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 65
+  },
+  {
+    "source": "الشــخص المناســب",
+    "target": "المشــاركة",
+    "type": "CREATED_BY",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 65
+  },
+  {
+    "source": "Free",
+    "target": "Policy",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 67
+  },
+  {
+    "source": "سياسة حرية المعلومات",
+    "target": ".النطاق4.4.1",
+    "type": "LOCATED_IN",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 68
+  },
+  {
+    "source": "سياسة حرية المعلومات",
+    "target": "طلبات الأفراد",
+    "type": "APPLIES_TO",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 68
+  },
+  {
+    "source": "سياسة حرية المعلومات",
+    "target": "المعلومات العامة",
+    "type": "RELATED_TO",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 68
+  },
+  {
+    "source": "جهات عامة",
+    "target": "مصادر المعلومات",
+    "type": "CREATED_BY",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 68
+  },
+  {
+    "source": "شكل المعلومات",
+    "target": "أشكال المعلومات المسجلة",
+    "type": "CONTAINS",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 68
+  },
+  {
+    "source": "المعلومات",
+    "target": "سياسة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 68
+  },
+  {
+    "source": "الدولة",
+    "target": "الوطنية",
+    "type": "CONTAINS",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 68
+  },
+  {
+    "source": "إفشاء",
+    "target": "الضرار",
+    "type": "CAUSES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 68
+  },
+  {
+    "source": "الحصول",
+    "target": "اتفاق",
+    "type": "USES",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 68
+  },
+  {
+    "source": "التفتيش",
+    "target": " التحقيق",
+    "type": "CREATED_BY",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 68
+  },
+  {
+    "source": "الوطنية",
+    "target": "دولة أخرى",
+    "type": "LOCATED_IN",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 68
+  },
+  {
+    "source": "المعلومات",
+    "target": "سياسة",
+    "type": "BELONGS_TO",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 68
+  },
+  {
+    "source": "حقوق",
+    "target": "مصالح",
+    "type": "DEPENDS_ON",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 68
+  },
+  {
+    "source": "المساواة",
+    "target": "حقوق الأفراد",
+    "type": "RELATED_TO",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 69
+  },
+  {
+    "source": "حق الاطلاع",
+    "target": "الحق في معرفة سبب رفض",
+    "type": "CONTAINS",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 69
+  },
+  {
+    "source": "التزامات الجهات العامة",
+    "target": "أن تكون الجهة العامة مسؤولة عن إعداد وتطبيق السياسات والاجراءات",
+    "type": "CAUSES",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 69
+  },
+  {
+    "source": " الجهات العامة",
+    "target": " السياسات واإلجراءات",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 69
+  },
+  {
+    "source": " المسؤول األول بالجهة",
+    "target": " الوصول إللى المعلومات العامــة أو الحصــول عليهــا",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 69
+  },
+  {
+    "source": " الجهات العامة",
+    "target": " السياسات واإلجراءات",
+    "type": "CREATED_BY",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 69
+  },
+  {
+    "source": "المسؤول الأوّل بالجهة",
+    "target": "تأسيس الجهة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 69
+  },
+  {
+    "source": "الجهة",
+    "target": "مكاتب إدارة البيانات",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 69
+  },
+  {
+    "source": "الجهة",
+    "target": "مكاتب إدارة البيانات",
+    "type": "CREATED_BY",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 69
+  },
+  {
+    "source": "مكاتب إدارة البيانات",
+    "target": "الجهة",
+    "type": "LOCATED_IN",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 69
+  },
+  {
+    "source": "تأسيس الجهة",
+    "target": "المسؤول الأوّل بالجهة",
+    "type": "AFFECTS",
+    "weight": 0.4,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 69
+  },
+  {
+    "source": "الجهـة العامـة",
+    "target": "المعلومــات العامــة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 70
+  },
+  {
+    "source": "الفــرد",
+    "target": "المعلومــات العامــة",
+    "type": "USES",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 70
+  },
+  {
+    "source": "الهيئــة الوطنيــة لألمــن الســيبراني والجهــات ذات العالقـة",
+    "target": "حــق االطــاع علــى المعلومــات العامة",
+    "type": "CREATED_BY",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 70
+  },
+  {
+    "source": "الجهـة العامـة",
+    "target": "country/region",
+    "type": "LOCATED_IN",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 70
+  },
+  {
+    "source": "الفــرد",
+    "target": "society/community",
+    "type": "BELONGS_TO",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 70
+  },
+  {
+    "source": "جهة عامة",
+    "target": "رﻓﺾ/اﺷﻌﺎر",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 71
+  },
+  {
+    "source": "نموذج الطلب",
+    "target": "إستئناف",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 71
+  },
+  {
+    "source": "إستئناف",
+    "target": "decision",
+    "type": "CAUSES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 71
+  },
+  {
+    "source": "رﻓﺾ/اﺷﻌﺎر",
+    "target": "نموذج الطلب",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 71
+  },
+  {
+    "source": "مواﻓﻘﺔ",
+    "target": "إستئناف",
+    "type": "LOCATED_IN",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 71
+  },
+  {
+    "source": "الجهة العامّة",
+    "target": "تقديم الطلبات",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "source": "نموذج طلّب معلومات عامّة",
+    "target": "المعلومات العامّة",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "source": "طلب معلومات عامّة",
+    "target": "الجهة العامّة",
+    "type": "CAUSES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "source": "فترة زمنية محددة",
+    "target": "يوماً",
+    "type": "LOCATED_IN",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "source": "جهة عامة",
+    "target": "فرد",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "source": "أيام عمل من استالم المبلغ.10 العامّة",
+    "target": "زمنية",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "source": "وصول إلى المعلومات أو الحصول عليها",
+    "target": "فرد",
+    "type": "USES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "source": "جهة عامة",
+    "target": "الرسوم المطبقة",
+    "type": "CREATED_BY",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "source": "أيام عمل من استالم المبلغ.10 العامّة",
+    "target": "زمنية",
+    "type": "LOCATED_IN",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "source": "الجهة",
+    "target": "المعلومات",
+    "type": "CONTAINS",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "source": "أيام عمل من استالم المبلغ",
+    "target": "المعلومات",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "source": "الفرد",
+    "target": "الجهة",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "source": "الجهة",
+    "target": "المعلومات",
+    "type": "CREATED_BY",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "source": "المعلومات",
+    "target": "الوقت المحدد",
+    "type": "LOCATED_IN",
+    "weight": 0.4,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "source": "الحق في التظلّم",
+    "target": "تمديّد",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "source": "تمديّد",
+    "target": "أسباب التأخير",
+    "type": "CONTAINS",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "source": "الإشعار",
+    "target": "تاريخ المتوقع",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "source": "الإشعار",
+    "target": "أسباب التأخير",
+    "type": "CONTAINS",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "source": "فرد",
+    "target": "الحق في التظلّم",
+    "type": "USES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "source": "جهة عامة",
+    "target": "تمديّد",
+    "type": "CREATED_BY",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "source": "جهة عامة",
+    "target": "فرد",
+    "type": "CONTAINS",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "source": "تمديد",
+    "target": "إشعار",
+    "type": "USES",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "source": "جهة عامة",
+    "target": "تمديد",
+    "type": "CREATED_BY",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "source": "تمديد",
+    "target": "موقع الجهة",
+    "type": "LOCATED_IN",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "source": "فرد",
+    "target": "جهة عامة",
+    "type": "BELONGS_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "source": "تمديد",
+    "target": "مطلوب",
+    "type": "DEPENDS_ON",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "source": "إشعار",
+    "target": "فرد",
+    "type": "AFFECTS",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "source": "فرد",
+    "target": "بيان",
+    "type": "CREATED_BY",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "source": "بيان",
+    "target": "موقع الجهة",
+    "type": "LOCATED_IN",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "source": "فرد",
+    "target": "بيان",
+    "type": "USES",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "source": "فرد",
+    "target": "جهة",
+    "type": "BELONGS_TO",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "source": "فرد",
+    "target": "جهة",
+    "type": "AFFECTS",
+    "weight": 0.4,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "source": "Government",
+    "target": "Development of programs and policies",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 73
+  },
+  {
+    "source": "Open Data",
+    "target": "Public Information",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 73
+  },
+  {
+    "source": "Researchers, Innovators, Entrepreneurs",
+    "target": "Open Data",
+    "type": "USES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 73
+  },
+  {
+    "source": "Government",
+    "target": "Open Data",
+    "type": "CREATED_BY",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 73
+  },
+  {
+    "source": "Open Data",
+    "target": "Innovation and Development",
+    "type": "LOCATED_IN",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 73
+  },
+  {
+    "source": "Open government",
+    "target": "Public access to information",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 73
+  },
+  {
+    "source": "Programs and policies for open data",
+    "target": "Specific policies and guidelines",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 73
+  },
+  {
+    "source": "Requesting access to information",
+    "target": "Government expenditures",
+    "type": "CAUSES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 73
+  },
+  {
+    "source": "Open Data",
+    "target": "Policy",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 75
+  },
+  {
+    "source": "سياسة البيانات المفتوحة",
+    "target": "مجموعة فرعيــة مــن المعلومــات العامــة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 76
+  },
+  {
+    "source": "الجهــات العامــة",
+    "target": "مصدرهــا، أو شــكلها أو طبيعتهــا",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 76
+  },
+  {
+    "source": "الكمبيوتــر",
+    "target": "مصدرهــا، أو شــكلها أو طبيعتهــا",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 76
+  },
+  {
+    "source": "Open Data",
+    "target": "Data Sets",
+    "type": "CONTAINS",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 76
+  },
+  {
+    "source": "Government Agencies",
+    "target": "Open Data",
+    "type": "CREATED_BY",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 76
+  },
+  {
+    "source": " الجهات العامّة",
+    "target": " التنمية الشاملة واالبتكار",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 77
+  },
+  {
+    "source": " إعادة استخدام البيانات المفتوحة",
+    "target": " البيانــات المفتوحــة",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 77
+  },
+  {
+    "source": " البيانــات المفتوحــة",
+    "target": " الجهات العامّة",
+    "type": "USES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 77
+  },
+  {
+    "source": " التنمية الشاملة واالبتكار",
+    "target": " البيانــات المفتوحــة",
+    "type": "CREATED_BY",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 77
+  },
+  {
+    "source": " البيانــات المفتوحــة",
+    "target": " مجال البيانــات المفتوحــة",
+    "type": "LOCATED_IN",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 77
+  },
+  {
+    "source": "Open Data",
+    "target": "البيانات المفتوحة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 77
+  },
+  {
+    "source": "البيانات المفتوحة",
+    "target": "مجال البيانات المفتوح",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 77
+  },
+  {
+    "source": "المبتكرين",
+    "target": "البيانات المفتوحة",
+    "type": "CREATED_BY",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 77
+  },
+  {
+    "source": "البيانات المفتوحة",
+    "target": "Data Valuation",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 77
+  },
+  {
+    "source": "البيانات المفتوحة",
+    "target": "مجال البيانات المفتوح",
+    "type": "LOCATED_IN",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 77
+  },
+  {
+    "source": "حســب مــا",
+    "target": "البيانــات المفتوحــة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 78
+  },
+  {
+    "source": "التخطيط للبيانات المفتوحة",
+    "target": "تحديد البيانات المفتوحة",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 78
+  },
+  {
+    "source": "التخطيط للبيانات المفتوحة",
+    "target": "نشر البيانات المفتوحة",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 78
+  },
+  {
+    "source": "التخطيط للبيانات المفتوحة",
+    "target": "تحديث البيانات المفتوحة",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 78
+  },
+  {
+    "source": "التخطيط للبيانات المفتوحة",
+    "target": "متابعة أداء البيانات المفتوحة",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 78
+  },
+  {
+    "source": "التخطيط للبيانات المفتوحة",
+    "target": "البيانــات المفتوحــة",
+    "type": "CAUSES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 78
+  },
+  {
+    "source": "حســب مــا",
+    "target": "البيانــات المفتوحــة",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 78
+  },
+  {
+    "source": "سياسة",
+    "target": "بيانات مفتوحة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 78
+  },
+  {
+    "source": "تخطيط للبيانات المفتوحة",
+    "target": "تحديد البيانات المفتوحة",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 78
+  },
+  {
+    "source": "تخطيط للبيانات المفتوحة",
+    "target": "نشر البيانات المفتوحة",
+    "type": "CONTAINS",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 78
+  },
+  {
+    "source": "تخطيط للبيانات المفتوحة",
+    "target": "تحديث البيانات المفتوحة",
+    "type": "CONTAINS",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 78
+  },
+  {
+    "source": "تخطيط للبيانات المفتوحة",
+    "target": "متابعة أداء البيانات المفتوحة",
+    "type": "CONTAINS",
+    "weight": 0.4,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 78
+  },
+  {
+    "source": "مسؤول البيانات المفتوحة",
+    "target": "سياسة",
+    "type": "CREATED_BY",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 78
+  },
+  {
+    "source": "سياسة",
+    "target": "جهة عامة",
+    "type": "LOCATED_IN",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 78
+  },
+  {
+    "source": "تخطيط للبيانات المفتوحة",
+    "target": "سياسة",
+    "type": "BELONGS_TO",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 78
+  },
+  {
+    "source": "جهة عامة",
+    "target": "بيانات عامة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 79
+  },
+  {
+    "source": "بيانــات مفتوحـة",
+    "target": "بيانات عامة",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 79
+  },
+  {
+    "source": "عمليــات تحديد مجموعات البيانات العامة",
+    "target": "بيانــات المفتوحـة",
+    "type": "CAUSES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 79
+  },
+  {
+    "source": "جهة عامة",
+    "target": "بيانــات مفتوحـة",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 79
+  },
+  {
+    "source": "الصعيــد الوطنــي",
+    "target": "بيانــات مفتوحـة",
+    "type": "LOCATED_IN",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 79
+  },
+  {
+    "source": "بيانات عامة",
+    "target": "جهة عامة",
+    "type": "BELONGS_TO",
+    "weight": 0.4,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 79
+  },
+  {
+    "source": "البيانات المفتوحة",
+    "target": "البيانــات المفتوحــة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 79
+  },
+  {
+    "source": "خطة البيانات المفتوحة",
+    "target": "أهــداف",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 79
+  },
+  {
+    "source": "مراجعة خطة البيانات المفتوحة",
+    "target": "تحديثها",
+    "type": "CAUSES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 79
+  },
+  {
+    "source": "المكتب",
+    "target": "دورة تدريبية",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 79
+  },
+  {
+    "source": "المكتب",
+    "target": "خطة البيانات المفتوحة",
+    "type": "CREATED_BY",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 79
+  },
+  {
+    "source": "الصعيــد الوطنــي",
+    "target": "",
+    "type": "LOCATED_IN",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 79
+  },
+  {
+    "source": "المسستخدمين المحتمليون",
+    "target": "الجهات العامة",
+    "type": "BELONGS_TO",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 79
+  },
+  {
+    "source": "المكتب",
+    "target": "البيانات المفتوحة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 79
+  },
+  {
+    "source": "دورة تدريبية",
+    "target": "تحديد البيانات المفتوحة",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 79
+  },
+  {
+    "source": "المستخدمون",
+    "target": "البيانــات المصنفــة",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 79
+  },
+  {
+    "source": "المكتب",
+    "target": "البيانــات المصنفــا",
+    "type": "CREATED_BY",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 79
+  },
+  {
+    "source": "تحديد البيانات المفتوحة",
+    "target": "المكتب",
+    "type": "LOCATED_IN",
+    "weight": 0.4,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 79
+  },
+  {
+    "source": "دراسة",
+    "target": " الجمع بين عدة مجموعات من البيانات المفتوحة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "source": "البيانات المفتوحة",
+    "target": " الجمع بين عدة مجموعات من البيانات المفتوحة",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "source": "المكتتب",
+    "target": "الجهات العامة",
+    "type": "CREATED_BY",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "source": "المنصة الوطنية للبيانات المفتوحة",
+    "target": "الجهات العامة",
+    "type": "LOCATED_IN",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "source": "النشر",
+    "target": "البيانات المفتوحة",
+    "type": "USES",
+    "weight": 0.4,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "source": "W3C",
+    "target": "Tim Berners-Lee",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "source": "Tim Berners-Lee",
+    "target": "W3C",
+    "type": "CREATED_BY",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "source": "Europe",
+    "target": "W3C",
+    "type": "LOCATED_IN",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "source": "XML",
+    "target": [
+      "JSON",
+      "CSV"
+    ],
+    "type": "CONTAINS",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "source": "Publication of XML, JSON, and CSV standards",
+    "target": "W3C standards",
+    "type": "CAUSES",
+    "weight": 0.4,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "source": "W3C standards",
+    "target": [
+      "XML",
+      "JSON",
+      "CSV"
+    ],
+    "type": "USES",
+    "weight": 0.3,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "source": "مرrejaa msmtira",
+    "target": "ضمــان اســتيفائها للمتطلبــات التنظيميــة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "source": "مجموعــة البيانات",
+    "target": "ســجل إصــدارات",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "source": "مرrejaa msmtira",
+    "target": "مجموعــة البيانات",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "source": "نشــر مجموعــات البيانــات المفتوحــة",
+    "target": "مرrejaa msmtira",
+    "type": "CREATED_BY",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "source": "ســجل إصــدارات",
+    "target": "مجموعــة البيانات",
+    "type": "LOCATED_IN",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "source": "نشــر مجموعــات البيانــات المفتوحــة",
+    "target": "بيانات مفتوحة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "source": "بيانات مفتوحة",
+    "target": "بيانــات",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "source": "الجهات العامة",
+    "target": "بيانات مفتوحة",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "source": "نشــر مجموعــات البيانــات المفتوحــة",
+    "target": "بيانات مفتوحة",
+    "type": "CREATED_BY",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "source": "بيانات مفتوحة",
+    "target": "الوطنية",
+    "type": "LOCATED_IN",
+    "weight": 0.4,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "source": "بيانات مفتوحة",
+    "target": "جودة",
+    "type": "BELONGS_TO",
+    "weight": 0.3,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "source": "نشــر مجموعــات البيانــات المفتوحــة",
+    "target": "توثيق",
+    "type": "DEPENDS_ON",
+    "weight": 0.2,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "source": "المكتب 1",
+    "target": "",
+    "type": "PART_OF",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 81
+  },
+  {
+    "source": "المكتب",
+    "target": "المكتب 1",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 81
+  },
+  {
+    "source": "المكتب",
+    "target": "",
+    "type": "CREATED_BY",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 81
+  },
+  {
+    "source": "المكتب 1",
+    "target": "البيانــات المفتوحــة",
+    "type": "RELATED_TO",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 81
+  },
+  {
+    "source": "المكتب 1",
+    "target": "سياســة البيانــات المفتوحــة",
+    "type": "CONTAINS",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 81
+  },
+  {
+    "source": "المكتب 1",
+    "target": "سياســة البيانــات المفتوحــة",
+    "type": "CREATED_BY",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 81
+  },
+  {
+    "source": "المكتب 1",
+    "target": "المملكـة",
+    "type": "LOCATED_IN",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 81
+  },
+  {
+    "source": "مراجعة مجموعات البيانات المفتوحة",
+    "target": "تأثير البيانات المفتوحة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 81
+  },
+  {
+    "source": "ترخيص البيانات المفتوحة",
+    "target": "مجموعات البيانات المفتوحة",
+    "type": "CONTAINS",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 81
+  },
+  {
+    "source": "مراجعة مجموعات البيانات المفتوحة",
+    "target": "تأثير البيانات المفتوحة",
+    "type": "CAUSES",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 81
+  },
+  {
+    "source": "الوطني",
+    "target": null,
+    "type": "LOCATED_IN",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 81
+  },
+  {
+    "source": "الجهة",
+    "target": "مدير مكتب الجهة",
+    "type": "CONTAINS",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 82
+  },
+  {
+    "source": "رئيس الجهة",
+    "target": "مدير مكتب الجهة",
+    "type": "CREATED_BY",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 82
+  },
+  {
+    "source": "مدير مكتب الجهة",
+    "target": "البيانــات المفتوحــة",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 82
+  },
+  {
+    "source": "رئيس الجهة",
+    "target": "البيانــات المفتوحــة",
+    "type": "AFFECTS",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 82
+  },
+  {
+    "source": "مدير مكتب الجهة",
+    "target": "رئيس الجهة",
+    "type": "DEPENDS_ON",
+    "weight": 0.4,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 82
+  },
+  {
+    "source": "رئيس الجهة",
+    "target": "جهة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 82
+  },
+  {
+    "source": "رئيس الجهة",
+    "target": "جهة",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 82
+  },
+  {
+    "source": "تخصيص الأدوار المتعلقة بالبيانات المفتوحة",
+    "target": "التخطيط الاستراتيجي للبيانات المفتوحة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 82
+  },
+  {
+    "source": "مدير مكتب الجهة",
+    "target": "مسؤولياته",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 82
+  },
+  {
+    "source": "التخطيط الاستراتيجي للبيانات المفتوحة",
+    "target": "إيلاء خطة البيانات المفتوحة",
+    "type": "CAUSES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 82
+  },
+  {
+    "source": "الجهة",
+    "target": "مكتب",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "source": "البيانات المفتوحة",
+    "target": "مسؤول البيانات المفتوحة والمعلومات",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "source": "التخطيط",
+    "target": "حل المشاكل",
+    "type": "CAUSES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "source": "المدير التشغيلي",
+    "target": "التخطيط",
+    "type": "CREATED_BY",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "source": "المدير المنسق",
+    "target": "الجهة",
+    "type": "LOCATED_IN",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "source": "مسؤول البيانــات المفتوحــة والمعلومــات",
+    "target": "المديــر التشــغيلي",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "source": "المديــر التشــغيلي",
+    "target": "الجهة",
+    "type": "PART_OF",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "source": "التخطيــط للبيانــات المفتوحــة",
+    "target": "إدارة البيانات المفتوحة",
+    "type": "CONTAINS",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "source": "التخطيــط للبيانــات المفتوحــة",
+    "target": "إدارة البيانات المفتوحة",
+    "type": "CAUSES",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "source": "الجهة",
+    "target": null,
+    "type": "LOCATED_IN",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "source": "National Data Platform",
+    "target": "Employees of the organization",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "source": "Open data",
+    "target": "Specific datasets",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "source": "Employees",
+    "target": "Open data",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "source": "National Data Platform",
+    "target": "Open data",
+    "type": "CREATED_BY",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "source": "Open data",
+    "target": "National level",
+    "type": "LOCATED_IN",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "source": "Employees",
+    "target": "Organization",
+    "type": "BELONGS_TO",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "source": "جمــع طلبــات البيانــات المفتوحــة",
+    "target": "مسؤول البيانات المفتوحة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "source": "مسؤول البيانات المفتوحة",
+    "target": "جمــع طلبات البيانــات المفتوحــة",
+    "type": "PART_OF",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "source": "تثقيــف والتوعيــة بالبيانــات المفتوحــة",
+    "target": "تثقيــف موظفــي الجهــة",
+    "type": "CONTAINS",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "source": "تثقيــف والتوعيــة بالبيانــات المفتوحــة",
+    "target": "توعيتهــم بشــأن البيانــات",
+    "type": "CAUSES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "source": "مسؤول البيانات المفتوحة",
+    "target": "التنســيق مــع المكتــب",
+    "type": "USES",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "source": "مسؤول البيانات المفتوحة",
+    "target": "جمــع طلبات البيانــات المنشورة",
+    "type": "CREATED_BY",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "source": "مكتب الجهة",
+    "target": "جهة",
+    "type": "LOCATED_IN",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "source": "مسؤول البيانات المفتوحة",
+    "target": "جمــع طلبات البيانــات المنشورة",
+    "type": "BELONGS_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "source": "تثقيــف والتوعيــة بالبيانــات المفتوحــة",
+    "target": "مسؤول البيانات المفتوحة والمعلومات",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "source": "مسؤول البيانات المفتوحة والمعلومات",
+    "target": "تثقيــف والتوعيــة بالبيانــات المفتوحــة",
+    "type": "PART_OF",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "source": "ممثل بيانات أعمال",
+    "target": "مسؤول البيانات المفتوحة والمعلومات",
+    "type": "CONTAINS",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "source": "مسؤول البيانات المفتوحة والمعلومات",
+    "target": "تثقيــف والتوعيــة بالبيانــات المفتوحــة",
+    "type": "USES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "source": "تثقيــف والتوعيــة بالبيانــات المفتوحــة",
+    "target": "الجهــة",
+    "type": "LOCATED_IN",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "source": "مسؤول البيانات المفتوحة والمعلومات",
+    "target": "تثقيــف والتوعيــة بالبيانــات المفتوحــة",
+    "type": "BELONGS_TO",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "source": "مكتب البيانات المفتوحة",
+    "target": "مسؤول البيانات المفتوحة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 84
+  },
+  {
+    "source": "قيمة مجموعات البيانات العامة",
+    "target": "مكتب البيانات المفتوحة",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 84
+  },
+  {
+    "source": "الاستثمارات المطلوبة لنشرة",
+    "target": "تحديث البيانات",
+    "type": "CAUSES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 84
+  },
+  {
+    "source": "مسؤول البيانات المفتوحة",
+    "target": "مكتب البيانات المفتوحة",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 84
+  },
+  {
+    "source": " الجهات العامّة",
+    "target": " التقدم ومستوى اإلنجاز الذي حققته الجهة في خطتها المحددة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 84
+  },
+  {
+    "source": " الأهداف ومؤشرات األداء الرئيسة المحددة في خطة البيانات المفتوحة",
+    "target": " التقدم ومستوى اإلنجاز الذي حققته الجهة في خطتها المحددة",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 84
+  },
+  {
+    "source": " مجموعات البيانات المفتوحة",
+    "target": " الجهات العامّة",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 84
+  },
+  {
+    "source": " تسوية النزاعــات المتعلقــة بالبيانــات المفتوحــة",
+    "target": " الجهات العامّة",
+    "type": "CAUSES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 84
+  },
+  {
+    "source": " الجهات العامّة",
+    "target": " التقدم ومستوى اإلنجاز الذي حققته الجهة في خطتها المحددة",
+    "type": "CREATED_BY",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 84
+  },
+  {
+    "source": " تسوية النزاعــات المتعلقــة بالبيانــات المفتوحــة",
+    "target": " الجهات العامّة",
+    "type": "LOCATED_IN",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 84
+  },
+  {
+    "source": "المكتب",
+    "target": "حاالات عدم الامتثال",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 85
+  },
+  {
+    "source": "التوعيــة",
+    "target": "التوعيــة عنــد التعامــل مــع حــاالت عــدم االمتثــال",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 85
+  },
+  {
+    "source": "المكتب",
+    "target": "التوعيــة",
+    "type": "USES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 85
+  },
+  {
+    "source": "حمايــة سياســة",
+    "target": "مــن لألطفــال الشــ الشخصية",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 87
+  },
+  {
+    "source": "سياسة حماية البيانات الشخصية لألطفال ومن في حكمهم",
+    "target": "الحقوق",
+    "type": "CONTAINS",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "source": "سياسة حماية البيانات الشخصية لألطفال ومن في حكمهم",
+    "target": "القواعــة العامــة",
+    "type": "CONTAINS",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "source": "سياسة حماية البيانات الشخصية لألطفال ومن في حكمهم",
+    "target": "الجهــات المشــمولة",
+    "type": "APPLIES_TO",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "source": "سياسة حماية البيانات الشخصية لألطفال ومن في حكمهم",
+    "target": "ألطفــال",
+    "type": "PROTECTS",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "source": "سياسة حماية البيانات الشخصية لألطفال ومن في حكمهم",
+    "target": "الجهــات المشــمولة",
+    "type": "REQUIRES",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "source": "سياسة حماية البيانات الشخصية لألطفال ومن في حكمهم",
+    "target": "ألطفــال",
+    "type": "ENSURES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "source": "المحافظة",
+    "target": "خصوصية",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "source": "المحافظة",
+    "target": "حماية حقوق",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "source": "جموع البيانات الشخصية",
+    "target": "المحافظة",
+    "type": "CONTAINS",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "source": "جموع البيانات الشخصية",
+    "target": "شبة الإنترنيت",
+    "type": "USES",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "source": "نطاق4.6.1",
+    "target": "بيانــات شــخصية",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "source": "نطاق4.6.1",
+    "target": "بيانــات شــ الشخصية",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "source": "طفل",
+    "target": "نطاق4.6.1",
+    "type": "AFFECTS",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "source": "مملكــة",
+    "target": "نطاق4.6.1",
+    "type": "LOCATED_IN",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "source": "طفل",
+    "target": "نطاق4.6.1",
+    "type": "BELONGS_TO",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "source": "الولي",
+    "target": "جماعه ومعالجه بيانات الشخصية",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "source": "قواعد عامة",
+    "target": "القاعدة 4.6.3",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "source": "جهة التحكم",
+    "target": "القواعد الاضافية",
+    "type": "USES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "source": "سياسة حمايه البيانات الشخصية",
+    "target": "الولي",
+    "type": "CREATED_BY",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "source": "جهة التحكم",
+    "target": "الأطفال",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "source": "التقييم",
+    "target": "المخاطر",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "source": "التقييم",
+    "target": "المصلحة",
+    "type": "CONTAINS",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "source": "التقييم",
+    "target": "الحقوق",
+    "type": "CONTAINS",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "source": "مسؤول أول",
+    "target": "جهة التحكم",
+    "type": "USES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "source": "جهة التحكم",
+    "target": "مفهوم الخصوصية",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 89
+  },
+  {
+    "source": "الولي",
+    "target": "البيانات الشخصية",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 89
+  },
+  {
+    "source": "جهة التحكم",
+    "target": "جمع البيانات الشخصية",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 89
+  },
+  {
+    "source": "الولي",
+    "target": "جهة التحكم",
+    "type": "CREATED_BY",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 89
+  },
+  {
+    "source": "جهة التحكم",
+    "target": "الولي",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 90
+  },
+  {
+    "source": "بيانات شخصية",
+    "target": "جهة التحكم",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 90
+  },
+  {
+    "source": "الولي",
+    "target": "منح الوصول إلى البيانات",
+    "type": "CAUSES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 90
+  },
+  {
+    "source": "جهة التحكم",
+    "target": "بيانات شخصية",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 90
+  },
+  {
+    "source": "جهة التحكم",
+    "target": "الولي",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 90
+  },
+  {
+    "source": "بيانات شخصية",
+    "target": "جهة التحكم",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 90
+  },
+  {
+    "source": "الولي",
+    "target": "بيانات شخصية",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 90
+  },
+  {
+    "source": "الهيئة الوطنية لألمن السيبراني",
+    "target": "جهة التحكم",
+    "type": "CREATED_BY",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 90
+  },
+  {
+    "source": "الولي",
+    "target": "الهيئة الوطنية لألمن السيبراني",
+    "type": "LOCATED_IN",
+    "weight": 0.4,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 90
+  },
+  {
+    "source": "جهة التحكم",
+    "target": "الولي",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 90
+  },
+  {
+    "source": " البيانات الشخصية",
+    "target": " البيانات",
+    "type": "CONTAINS",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 90
+  },
+  {
+    "source": " البيانات",
+    "target": "العقود",
+    "type": "USES",
+    "weight": 0.4,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 90
+  },
+  {
+    "source": " البيانات",
+    "target": "الاتفاقيات",
+    "type": "USES",
+    "weight": 0.4,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 90
+  },
+  {
+    "source": "جهة التحكم",
+    "target": " البيانات الشخصية",
+    "type": "CREATED_BY",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 90
+  },
+  {
+    "source": "الولي",
+    "target": " جهة التحكم",
+    "type": "BELONGS_TO",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 90
+  },
+  {
+    "source": "جهة التحكم",
+    "target": "الأطفال",
+    "type": "RELATED_TO",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 91
+  },
+  {
+    "source": "الأطفال",
+    "target": "حكمهم",
+    "type": "CONTAINS",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 91
+  },
+  {
+    "source": "الأطفال",
+    "target": "حمايته",
+    "type": "AFFECTS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 91
+  },
+  {
+    "source": "جهة التحكم",
+    "target": "التدابر المناسبة",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 91
+  },
+  {
+    "source": "جهة التحكم",
+    "target": "البيانات الشخصية",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 91
+  },
+  {
+    "source": "البيانات الشخصية",
+    "target": "لطفال",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 91
+  },
+  {
+    "source": "حكمهم",
+    "target": "جهة التحكم",
+    "type": "LOCATED_IN",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 91
+  },
+  {
+    "source": "المسؤول الأوّل",
+    "target": "جهة التحكم",
+    "type": "BELONGS_TO",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 91
+  },
+  {
+    "source": "ويجب علَى",
+    "target": "جهة التنظيمية",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 92
+  },
+  {
+    "source": "أحكام عامة",
+    "target": null,
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 92
+  },
+  {
+    "source": "جهة التنظيمية",
+    "target": "إعداد السياسة",
+    "type": "CAUSES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 92
+  },
+  {
+    "source": "جهة التنظيمية",
+    "target": "وثائقــه التنظيميـة",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 92
+  },
+  {
+    "source": "جميــع",
+    "target": null,
+    "type": "LOCATED_IN",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 92
+  },
+  {
+    "source": "جهة التنظيمية",
+    "target": "ويجب علَى",
+    "type": "BELONGS_TO",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 92
+  },
+  {
+    "source": "الجهة التنظيمية",
+    "target": "الجهات التنظيميّة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 92
+  },
+  {
+    "source": "الجهة التنظيمية",
+    "target": "السياسة",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 92
+  },
+  {
+    "source": "الجهة التنظيمية",
+    "target": "التوثيق",
+    "type": "CAUSES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 92
+  },
+  {
+    "source": "الجهة التنظيمية",
+    "target": "آلليّات وإلجّراءات",
+    "type": "USES",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 92
+  },
+  {
+    "source": "الجهات التنظيميّة",
+    "target": "السياسة",
+    "type": "CREATED_BY",
+    "weight": 0.4,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 92
+  },
+  {
+    "source": "وقوع أو اكتشاف أي حادثة",
+    "target": "الجهة التنظيمية",
+    "type": "LOCATED_IN",
+    "weight": 0.3,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 92
+  },
+  {
+    "source": "وقوع أو اكتشاف أي حادثة",
+    "target": "الجهة التنظيمية",
+    "type": "BELONGS_TO",
+    "weight": 0.2,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 92
+  },
+  {
+    "source": "جهة التحكم",
+    "target": "الولي",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 93
+  },
+  {
+    "source": "جهة التحكم",
+    "target": "بيانات شخصية",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 93
+  },
+  {
+    "source": "الولي",
+    "target": "بيانات شخصية",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 93
+  },
+  {
+    "source": "الولي",
+    "target": "بيانات شخصية",
+    "type": "CREATED_BY",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 93
+  },
+  {
+    "source": "حكم",
+    "target": "جهة التحكم",
+    "type": "LOCATED_IN",
+    "weight": 0.4,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 93
+  },
+  {
+    "source": "البيانات",
+    "target": "القواعد",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 95
+  },
+  {
+    "source": "الجدود",
+    "target": "شخصية",
+    "type": "PART_OF",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 95
+  },
+  {
+    "source": " الجهات",
+    "target": "المملكة",
+    "type": "PART_OF",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 97
+  },
+  {
+    "source": "البيانــات الشــخصية",
+    "target": "أصحابه",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 97
+  },
+  {
+    "source": "المعالجــة",
+    "target": "المملكة",
+    "type": "LOCATED_IN",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 97
+  },
+  {
+    "source": "أصحابه",
+    "target": "الجهات",
+    "type": "BELONGS_TO",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 97
+  },
+  {
+    "source": "البيانــات الشــخصية",
+    "target": "الســيادة الوطنيــة",
+    "type": "DEPENDS_ON",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 97
+  },
+  {
+    "source": "حمايــة خصوصيــة",
+    "target": "أصحابه",
+    "type": "AFFECTS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 97
+  },
+  {
+    "source": "وزارة",
+    "target": "المعالج الخارجي",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 97
+  },
+  {
+    "source": "نقلهما أو معالجتهما",
+    "target": "البيانات الشخصية",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 97
+  },
+  {
+    "source": "جهة التحكم/جهة المعالج الداخلي",
+    "target": "وزارة",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 97
+  },
+  {
+    "source": "المعالج الخارجي",
+    "target": "البيانات الشخصية",
+    "type": "CREATED_BY",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 97
+  },
+  {
+    "source": "دولة",
+    "target": "",
+    "type": "LOCATED_IN",
+    "weight": 0.4,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 97
+  },
+  {
+    "source": "وزارة",
+    "target": "",
+    "type": "BELONGS_TO",
+    "weight": 0.3,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 97
+  },
+  {
+    "source": "كالتشــفير",
+    "target": "الضوابــط األمنيــة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 98
+  },
+  {
+    "source": "الحمايــة",
+    "target": "المستوى",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 98
+  },
+  {
+    "source": "الضوابــط األمنيــة",
+    "target": "حقوق أصحــاب البيانــات",
+    "type": "CAUSES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 98
+  },
+  {
+    "source": "تقييــم مســتوى الحمايــة",
+    "target": "المعاييــر القانونيــة",
+    "type": "DEPENDS_ON",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 98
+  },
+  {
+    "source": "Ministry of Information",
+    "target": "Confidentiality",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 99
+  },
+  {
+    "source": "Kingdom",
+    "target": null,
+    "type": "PART_OF",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 99
+  },
+  {
+    "source": "Ministry of Information",
+    "target": "Department",
+    "type": "CONTAINS",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 99
+  },
+  {
+    "source": "Data Transfer",
+    "target": "Confidentiality",
+    "type": "CAUSES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 99
+  },
+  {
+    "source": "Regulations",
+    "target": "Personal Data",
+    "type": "USES",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 99
+  },
+  {
+    "source": "Ministry of Information",
+    "target": "Regulations",
+    "type": "CREATED_BY",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 99
+  },
+  {
+    "source": "المملكة",
+    "target": "أصحاب البيانات",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 100
+  },
+  {
+    "source": "الحدود الجغرافية",
+    "target": "المملكة",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 100
+  },
+  {
+    "source": "المصلحة العامة",
+    "target": "المملكة",
+    "type": "CAUSES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 100
+  },
+  {
+    "source": "أصحاب البيانات",
+    "target": "الم المملكة",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 100
+  },
+  {
+    "source": "أصحاب البيانات",
+    "target": "المملكة",
+    "type": "CREATED_BY",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 100
+  },
+  {
+    "source": "الحدود الجغرافية",
+    "target": "المملكة",
+    "type": "LOCATED_IN",
+    "weight": 0.4,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 100
+  },
+  {
+    "source": "أصحاب البيانات",
+    "target": "الم المملكة",
+    "type": "BELONGS_TO",
+    "weight": 0.3,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 100
+  },
+  {
+    "source": "المحافظة على المصلحة العامة",
+    "target": "حماية الصحة أو السالمة العامة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 100
+  },
+  {
+    "source": "جهة التحكــم أو المعالجـة",
+    "target": "النقل البيانات",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 100
+  },
+  {
+    "source": "المحافظة على المصلحة العامة",
+    "target": "حماية الصحة أو السالمة العامة",
+    "type": "CREATED_BY",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 100
+  },
+  {
+    "source": "الجهة التنظيميـة",
+    "target": "Location",
+    "type": "LOCATED_IN",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 100
+  },
+  {
+    "source": "جهة التحكــم أو المعالجـة",
+    "target": "المحافظة على المصلحة العامة",
+    "type": "BELONGS_TO",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 100
+  },
+  {
+    "source": "جهات التحكم",
+    "target": "جهات المعالجة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 100
+  },
+  {
+    "source": "القواعد",
+    "target": [
+      "الآليات",
+      "الإجراءات"
+    ],
+    "type": "CONTAINS",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 100
+  },
+  {
+    "source": "جهات التحكم",
+    "target": "القواعد",
+    "type": "USES",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 100
+  },
+  {
+    "source": "جهات المعالجة",
+    "target": "التعاقدات",
+    "type": "CREATED_BY",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 100
+  },
+  {
+    "source": "المعالجة",
+    "target": "المكتب",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 100
+  },
+  {
+    "source": "المكتブ",
+    "target": "قواعد إضافية",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 100
+  },
+  {
+    "source": "المعالجة",
+    "target": "البيانات الشخصية",
+    "type": "USES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 100
+  },
+  {
+    "source": "المكتب",
+    "target": "التنسيق",
+    "type": "CREATED_BY",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 100
+  },
+  {
+    "source": "المعتمــدة",
+    "target": "السياســات",
+    "type": "RELATED_TO",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 103
+  },
+  {
+    "source": "الإدارة",
+    "target": "مجلس",
+    "type": "PART_OF",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 103
+  },
+  {
+    "source": "قبل من",
+    "target": "104",
+    "type": "CONTAINS",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 103
+  },
+  {
+    "source": "الإليارات",
+    "target": "تحقيق سياسة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 105
+  },
+  {
+    "source": "الإليارات",
+    "target": "البيانات",
+    "type": "CONTAINS",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 105
+  },
+  {
+    "source": "المكتّب",
+    "target": "الهيئة السعودية للبيانات والذكاء الاصطناعي",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 106
+  },
+  {
+    "source": "الهيئة السعودية للبيانات والذكاء الاصطناعي",
+    "target": "سياسة تصنيف البيانات",
+    "type": "CREATED_BY",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 106
+  },
+  {
+    "source": "سياسة تصنيف البيانات",
+    "target": "التزامات مزودي البيانات",
+    "type": "USES",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 106
+  },
+  {
+    "source": "المكتّب",
+    "target": "Saudi Arabia",
+    "type": "LOCATED_IN",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 106
+  },
+  {
+    "source": "السياســة",
+    "target": "تصنيــف البيانــات",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 106
+  },
+  {
+    "source": "السياســة",
+    "target": "التزامــات مــزودي البيانــات",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 106
+  },
+  {
+    "source": "السياســة",
+    "target": "حمايــة البيانــات الشــخصية",
+    "type": "CAUSES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 106
+  },
+  {
+    "source": "المبدأ الثاني: تنمية الإيرادات",
+    "target": "المبدأ الثالث: الخصوصية بالتصميم",
+    "type": "RELATED_TO",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 107
+  },
+  {
+    "source": "المبدأ الثالث: الخصوصية بالتصميم",
+    "target": "متطلبات الخصوصيـة",
+    "type": "CONTAINS",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 107
+  },
+  {
+    "source": "المبدأ الرابع: األصل في البيانات اإلتاحة",
+    "target": "تسويق البيانــات غيــر المعالجــة",
+    "type": "CAUSES",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 107
+  },
+  {
+    "source": "مبادرات البيانــات المفتوحــة",
+    "target": "سياســة البيانــات المفتوحــة",
+    "type": "USES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 107
+  },
+  {
+    "source": "الخصوصية بالتصميم",
+    "target": "المعالجة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 107
+  },
+  {
+    "source": "مبــادرات البيانــات المفتوحــة",
+    "target": "الجهات الحكومية",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 107
+  },
+  {
+    "source": "الخصوصية بالتصميم",
+    "target": "الصحيحــة",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 107
+  },
+  {
+    "source": "المعالجة",
+    "target": "مصادره",
+    "type": "CAUSES",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 107
+  },
+  {
+    "source": "المبدأ الرابع",
+    "target": "تسويق البيانــات",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 107
+  },
+  {
+    "source": "المبدأ الخامس",
+    "target": "مبادرات البيانــات المفتوحــة",
+    "type": "PART_OF",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 107
+  },
+  {
+    "source": "سياســة البيانــات المفتوحــة",
+    "target": "استراتيجياتها",
+    "type": "CONTAINS",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 107
+  },
+  {
+    "source": "تسويق البيانــات",
+    "target": "المبدأ الرابع",
+    "type": "CAUSES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 107
+  },
+  {
+    "source": "المبدأ الخامس",
+    "target": "سياســة البيانــات المفتوحــة",
+    "type": "USES",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 107
+  },
+  {
+    "source": "الجهــات الحكوميــة",
+    "target": "Government Agencies",
+    "type": "LOCATED_IN",
+    "weight": 1.0,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 107
+  },
+  {
+    "source": "المبدأ الرابع",
+    "target": "المبدأ الخامس",
+    "type": "BELONGS_TO",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 107
+  },
+  {
+    "source": "المبدأ الثامن",
+    "target": "المبدأ السادس",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 108
+  },
+  {
+    "source": "نموذج تسعير استرداد التكاليف",
+    "target": "سعر السوق",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 108
+  },
+  {
+    "source": "جهات حكومية",
+    "target": "نموذج تسعير استرداد التكاليف",
+    "type": "USES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 108
+  },
+  {
+    "source": "المبدأ الثامن",
+    "target": "تحقيق أققل قدر ممكن من الأرباح",
+    "type": "AFFECTS",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 108
+  },
+  {
+    "source": "Cost Recovery + ROI",
+    "target": "Model for Cost Recovery",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 109
+  },
+  {
+    "source": "Model for Cost Recovery",
+    "target": "Product/Service",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 109
+  },
+  {
+    "source": "Government Agencies",
+    "target": "Model for Cost Recovery",
+    "type": "USES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 109
+  },
+  {
+    "source": "Experts in the field of cost recovery and ROI",
+    "target": "Model for Cost Recovery",
+    "type": "CREATED_BY",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 109
+  },
+  {
+    "source": "الجهات الحكومية",
+    "target": "البيانات المفتوحة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 109
+  },
+  {
+    "source": "البيانات المصنّ فة",
+    "target": "البيانات المفتوحة",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 109
+  },
+  {
+    "source": "استرداد التكاليف",
+    "target": "البيانات المصنّ فة",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 109
+  },
+  {
+    "source": "هـــ.16/3/1441",
+    "target": "البيانات المفتوحة",
+    "type": "CREATED_BY",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 109
+  },
+  {
+    "source": "المســتفيدة",
+    "target": "الجهات الحكومية",
+    "type": "LOCATED_IN",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 109
+  },
+  {
+    "source": "البيانات المصنّ فة",
+    "target": "الجهات الحكومية",
+    "type": "BELONGS_TO",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 109
+  },
+  {
+    "source": "جهات حكومية",
+    "target": "بيانات مفتوحة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 109
+  },
+  {
+    "source": "بيانات مصنفة",
+    "target": "بيانات مفتوحة",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 109
+  },
+  {
+    "source": "استرداد التكاليف",
+    "target": "بيانات مصنفة",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 109
+  },
+  {
+    "source": "هـــ.16/3/1441",
+    "target": "بيانات مفتوحة",
+    "type": "CREATED_BY",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 109
+  },
+  {
+    "source": "مســتفيدة",
+    "target": "جهات حكومية",
+    "type": "LOCATED_IN",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 109
+  },
+  {
+    "source": "بيانات مصنفة",
+    "target": "جهات حكومية",
+    "type": "BELONGS_TO",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 109
+  },
+  {
+    "source": "Government",
+    "target": "G2G",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 109
+  },
+  {
+    "source": "Open Data",
+    "target": "Publicly Available Data",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 109
+  },
+  {
+    "source": "Cost Recovery",
+    "target": "Publicly Available Data",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 109
+  },
+  {
+    "source": "هذه القاعدة",
+    "target": " المنتجات",
+    "type": "CONTAINS",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 110
+  },
+  {
+    "source": " الجهات الحكومية",
+    "target": " المنتجات",
+    "type": "USES",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 110
+  },
+  {
+    "source": "هذه القاعدة",
+    "target": " الجهات الحكومية",
+    "type": "CREATED_BY",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 110
+  },
+  {
+    "source": "هذه القاعدة",
+    "target": " السياسة",
+    "type": "LOCATED_IN",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 110
+  },
+  {
+    "source": "هذه القاعدة",
+    "target": " السياسة",
+    "type": "BELONGS_TO",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 110
+  },
+  {
+    "source": " الجهات الحكومية",
+    "target": " البيانات المفتوحة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 111
+  },
+  {
+    "source": " البيانات المفتوحة",
+    "target": " البيانات المعالجة",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 111
+  },
+  {
+    "source": " الجهات الحكومية",
+    "target": " المنتجات المطورة",
+    "type": "USES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 111
+  },
+  {
+    "source": " الجهات الحكومية",
+    "target": " البيانات المعالجة",
+    "type": "CREATED_BY",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 111
+  },
+  {
+    "source": " الجهة أو الجهات الخاصة",
+    "target": " location",
+    "type": "LOCATED_IN",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 111
+  },
+  {
+    "source": " الجهات الحكومية",
+    "target": " الجهة أو الجهات الخاصة",
+    "type": "BELONGS_TO",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 111
+  },
+  {
+    "source": " الجهات الحكومية",
+    "target": " أحكام سياسية مشاركة البيانات",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 111
+  },
+  {
+    "source": " البيانــات",
+    "target": " حمايه البيانات الشخصية عند",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 111
+  },
+  {
+    "source": " التعمية",
+    "target": " البيانــات",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 111
+  },
+  {
+    "source": " المزجMasking",
+    "target": " البيانــات",
+    "type": "USES",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 111
+  },
+  {
+    "source": "منتجات البيانات",
+    "target": "البيانات المفتوحة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 112
+  },
+  {
+    "source": "البيانات الحكومية",
+    "target": "البيانات المفتوحة",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 112
+  },
+  {
+    "source": "استرداد التكاليف (B2G)",
+    "target": "استرداد التكاليف (B2B/B2I)",
+    "type": "CAUSES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 112
+  },
+  {
+    "source": "الجهات التنظيميّة",
+    "target": "الجهات ذات العالقّة",
+    "type": "LOCATED_IN",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 112
+  },
+  {
+    "source": "العام",
+    "target": "الجهات الخاصة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 112
+  },
+  {
+    "source": "اتفاقيات تجارية",
+    "target": "ترخيص السستخدام البيانات",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 112
+  },
+  {
+    "source": "الجهات الخاصة",
+    "target": "اتفاقيات تجارية",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 112
+  },
+  {
+    "source": "جهة حكومية",
+    "target": "العام",
+    "type": "CREATED_BY",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 112
+  },
+  {
+    "source": "العام",
+    "target": "جهة حكومية",
+    "type": "LOCATED_IN",
+    "weight": 0.4,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 112
+  },
+  {
+    "source": "الجهات الخاصة",
+    "target": "العام",
+    "type": "BELONGS_TO",
+    "weight": 0.3,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 112
+  },
+  {
+    "source": "Model Pricing",
+    "target": "Data Standards",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 113
+  },
+  {
+    "source": "Model Pricing",
+    "target": "Data Sources",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 113
+  },
+  {
+    "source": "Model Pricing",
+    "target": "Rarity of Data",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 113
+  },
+  {
+    "source": "Model Pricing",
+    "target": "Number of Users/ Employees",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 113
+  },
+  {
+    "source": "Model Pricing",
+    "target": "Value of Data",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 113
+  },
+  {
+    "source": "Data Standards",
+    "target": "Data Sources",
+    "type": "CONTAINS",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 113
+  },
+  {
+    "source": "Model Pricing",
+    "target": "Data Standards",
+    "type": "USES",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 113
+  },
+  {
+    "source": "Model Pricing",
+    "target": "Data Sources",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 113
+  },
+  {
+    "source": "Model Pricing",
+    "target": "Rarity of Data",
+    "type": "USES",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 113
+  },
+  {
+    "source": "Model Pricing",
+    "target": "Number of Users/ Employees",
+    "type": "USES",
+    "weight": 0.4,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 113
+  },
+  {
+    "source": "Model Pricing",
+    "target": "Value of Data",
+    "type": "USES",
+    "weight": 0.3,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 113
+  },
+  {
+    "source": "قيمـة البيانــات",
+    "target": "نوع البيانات",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 113
+  },
+  {
+    "source": "حجم البيانات",
+    "target": "الحجم بالجيجابايت",
+    "type": "CONTAINS",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 113
+  },
+  {
+    "source": "المســتفيدين المســتهدفين",
+    "target": "قيمـة البيانــات",
+    "type": "USES",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 113
+  },
+  {
+    "source": "بنــاءً علــى المبــادئ األساســية والقواعــد العامــة الموضحــة",
+    "target": "قيمـة البيانــات",
+    "type": "CREATED_BY",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 113
+  },
+  {
+    "source": "قيمـة البيانــات",
+    "target": "نوع البيانات",
+    "type": "LOCATED_IN",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 113
+  },
+  {
+    "source": " الجهات الحكومية",
+    "target": "المكتب",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 113
+  },
+  {
+    "source": "تكلفة، تسعير، استرداد، ربح",
+    "target": "تقدير، تبرير، أخذ الموافقة",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 113
+  },
+  {
+    "source": " الجهات الحكومية",
+    "target": "تكلفة، تسعير، استرداد، ربح",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 113
+  },
+  {
+    "source": "المكتب",
+    "target": "تقدير، تبرير، أخذ الموافقة",
+    "type": "CREATED_BY",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 113
+  },
+  {
+    "source": "تقدير، تبرير، أخذ الموافقة",
+    "target": " الجهات الحكومية",
+    "type": "LOCATED_IN",
+    "weight": 0.4,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 113
+  },
+  {
+    "source": "أحكام عامة (.5.1.6)",
+    "target": " الجهات التنظيمية",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 114
+  },
+  {
+    "source": "أحكام عامة (.5.1.6)",
+    "target": "وثائق",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 114
+  },
+  {
+    "source": " الجهات التنظيمية",
+    "target": "أحكام عامة (.5.1.6)",
+    "type": "USES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 114
+  },
+  {
+    "source": "أحكام عامة (.5.1.6)",
+    "target": "ال政府",
+    "type": "CREATED_BY",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 114
+  },
+  {
+    "source": "أحكام عامة (.5.1.6)",
+    "target": "الدول",
+    "type": "LOCATED_IN",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 114
+  },
+  {
+    "source": "أحكام عامة (.5.1.6)",
+    "target": "ال政府",
+    "type": "BELONGS_TO",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 114
+  },
+  {
+    "source": "الجهات التنظيمية",
+    "target": "البيانات الحكومية",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 114
+  },
+  {
+    "source": "البيانات الحكومية",
+    "target": "الإيرادات",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 114
+  },
+  {
+    "source": "كل جهة حكومية",
+    "target": "تحصيل الإيرادات من البيانات الحكومية",
+    "type": "CAUSES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 114
+  },
+  {
+    "source": "رئيس الجهة أو من يفوضه",
+    "target": "موافقته الرسمية",
+    "type": "USES",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 114
+  },
+  {
+    "source": "كل جهة حكومية",
+    "target": "السياسة",
+    "type": "CREATED_BY",
+    "weight": 0.4,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 114
+  },
+  {
+    "source": "الدولة",
+    "target": "نظم الإيرادية",
+    "type": "LOCATED_IN",
+    "weight": 0.3,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 114
+  },
+  {
+    "source": "البيانات الحكومية",
+    "target": "الجهات التنظيمية",
+    "type": "BELONGS_TO",
+    "weight": 0.2,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 114
+  },
+  {
+    "source": "جهات حكومية",
+    "target": "إيرادات",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 114
+  },
+  {
+    "source": "المعالجة",
+    "target": "غيْر المعالجة",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 114
+  },
+  {
+    "source": "رئيس الجهة",
+    "target": "يفوضه",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 114
+  },
+  {
+    "source": "الإصدار",
+    "target": "جهات حكومية",
+    "type": "CREATED_BY",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 114
+  },
+  {
+    "source": "الدولة",
+    "target": "جهات حكومية",
+    "type": "LOCATED_IN",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 114
+  },
+  {
+    "source": "رئيس الجهة",
+    "target": "جهات حكومية",
+    "type": "BELONGS_TO",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 114
+  },
+  {
+    "source": "المبدأ السادس: األمان",
+    "target": "التحكْم",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 119
+  },
+  {
+    "source": "التحكْم",
+    "target": "توفير إمكانية",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 119
+  },
+  {
+    "source": "التحكْم",
+    "target": "عدم تمكنهما من إلحاق أي ضر أو أذى",
+    "type": "CONTAINS",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 119
+  },
+  {
+    "source": "جودة البيانات",
+    "target": "دقيق و صحيح و مكتمل و ذو علقة بالغرض",
+    "type": "CAUSES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 119
+  },
+  {
+    "source": "صاحب البيانــات الشــ الشخصية",
+    "target": "جودة البيانات",
+    "type": "USES",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 119
+  },
+  {
+    "source": "صاحب البيانات",
+    "target": "مع توفير إمكانية تتبع مراحل اتخاذ القرارات المهمة",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 119
+  },
+  {
+    "source": "صاحب البيانات",
+    "target": "مع توفير إمكانية تتبع مراحل اتخاذ القرارات المهمة",
+    "type": "PART_OF",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 119
+  },
+  {
+    "source": "التزام تعاقدي",
+    "target": "تنفيذ التزام تعاقدي",
+    "type": "CONTAINS",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 119
+  },
+  {
+    "source": "صاحب البيانات",
+    "target": "مع توفير إمكانية تتبع مراحل اتخاذ القرارات المهمة",
+    "type": "CAUSES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 119
+  },
+  {
+    "source": "جهات التنظيمية",
+    "target": "جهات التنظيمية",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 123
+  },
+  {
+    "source": "جهات التنظيمية",
+    "target": "ساعة من وقوع 72",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 123
+  },
+  {
+    "source": "جهات التنظيمية",
+    "target": "اكتشاف أي حادثة تسريب للبيانات الشخصية",
+    "type": "CAUSES",
+    "weight": 0.9,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 123
+  },
+  {
+    "source": "جهات التنظيمية",
+    "target": "جهات التنظيمية",
+    "type": "USES",
+    "weight": 0.6,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 123
+  }
+]

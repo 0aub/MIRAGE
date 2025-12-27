@@ -1,0 +1,19 @@
+{
+  "model": "qwen2.5-7b-instruct",
+  "model_full_name": "qwen2.5:7b",
+  "provider": "ollama",
+  "vision_mode": false,
+  "document": "PoliciesEn.pdf",
+  "language": "en",
+  "start_time": "2025-12-26T14:39:44.535937",
+  "end_time": "2025-12-26T14:45:30.061371",
+  "elapsed_seconds": 345.53,
+  "total_pages": 57,
+  "total_tokens": 22168,
+  "tokens_per_second": 64.16,
+  "pages_per_minute": 9.9,
+  "total_entities": 649,
+  "total_relationships": 628,
+  "errors_count": 0,
+  "errors": []
+}

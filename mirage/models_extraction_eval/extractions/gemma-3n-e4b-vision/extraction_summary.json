@@ -1,0 +1,45 @@
+{
+  "model": "gemma-3n-e4b-vision",
+  "model_full_name": "gemma3:4b",
+  "timestamp": "2025-12-26T17:50:25.680497",
+  "documents": {
+    "PoliciesAr.pdf": {
+      "model": "gemma-3n-e4b-vision",
+      "model_full_name": "gemma3:4b",
+      "provider": "ollama",
+      "vision_mode": true,
+      "document": "PoliciesAr.pdf",
+      "language": "en",
+      "start_time": "2025-12-26T17:33:53.362693",
+      "end_time": "2025-12-26T17:45:32.283971",
+      "elapsed_seconds": 698.92,
+      "total_pages": 125,
+      "total_tokens": 125000,
+      "tokens_per_second": 178.85,
+      "pages_per_minute": 10.73,
+      "total_entities": 0,
+      "total_relationships": 0,
+      "errors_count": 0,
+      "errors": []
+    },
+    "PoliciesEn.pdf": {
+      "model": "gemma-3n-e4b-vision",
+      "model_full_name": "gemma3:4b",
+      "provider": "ollama",
+      "vision_mode": true,
+      "document": "PoliciesEn.pdf",
+      "language": "en",
+      "start_time": "2025-12-26T17:45:32.285124",
+      "end_time": "2025-12-26T17:50:25.680075",
+      "elapsed_seconds": 293.39,
+      "total_pages": 57,
+      "total_tokens": 57000,
+      "tokens_per_second": 194.28,
+      "pages_per_minute": 11.66,
+      "total_entities": 0,
+      "total_relationships": 0,
+      "errors_count": 0,
+      "errors": []
+    }
+  }
+}

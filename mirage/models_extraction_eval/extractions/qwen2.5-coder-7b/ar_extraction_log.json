@@ -1,0 +1,19 @@
+{
+  "model": "qwen2.5-coder-7b",
+  "model_full_name": "qwen2.5-coder:7b",
+  "provider": "ollama",
+  "vision_mode": false,
+  "document": "PoliciesAr.pdf",
+  "language": "ar",
+  "start_time": "2025-12-26T14:45:53.690443",
+  "end_time": "2025-12-26T15:19:54.633685",
+  "elapsed_seconds": 2040.94,
+  "total_pages": 125,
+  "total_tokens": 313755,
+  "tokens_per_second": 153.73,
+  "pages_per_minute": 3.67,
+  "total_entities": 4101,
+  "total_relationships": 3368,
+  "errors_count": 0,
+  "errors": []
+}

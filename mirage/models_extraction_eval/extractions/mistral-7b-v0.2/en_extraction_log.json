@@ -1,0 +1,19 @@
+{
+  "model": "mistral-7b-v0.2",
+  "model_full_name": "mistral:7b",
+  "provider": "ollama",
+  "vision_mode": false,
+  "document": "PoliciesEn.pdf",
+  "language": "en",
+  "start_time": "2025-12-26T16:11:03.125153",
+  "end_time": "2025-12-26T16:16:17.834735",
+  "elapsed_seconds": 314.71,
+  "total_pages": 57,
+  "total_tokens": 22168,
+  "tokens_per_second": 70.44,
+  "pages_per_minute": 10.87,
+  "total_entities": 710,
+  "total_relationships": 638,
+  "errors_count": 0,
+  "errors": []
+}

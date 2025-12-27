@@ -1,0 +1,6571 @@
+[
+  {
+    "text": "سياسات حوكمة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 1
+  },
+  {
+    "text": "البيانات الوطنية",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 1
+  },
+  {
+    "text": "األصدار الثاني",
+    "type": "Event",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 1
+  },
+  {
+    "text": "National Data Governance Agency",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 4
+  },
+  {
+    "text": "Data Classification",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 4
+  },
+  {
+    "text": "Data Protection",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 4
+  },
+  {
+    "text": "Data Sharing",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 4
+  },
+  {
+    "text": "Freedom of Information",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 4
+  },
+  {
+    "text": "Policies (Data Classification, Data Protection, Data Sharing, Freedom of Information)",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 4
+  },
+  {
+    "text": "سياسة حرية المعلومات",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 4
+  },
+  {
+    "text": "النطاق",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 4
+  },
+  {
+    "text": "المبادئ الرئيسة لحرية المعلومات",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 4
+  },
+  {
+    "text": "حقوق الأفراد",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 4
+  },
+  {
+    "text": "التزامات الجهات العامة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 4
+  },
+  {
+    "text": "الخطوات الرئيسة لالطالع على المعلومات أو الحصول عليها",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 4
+  },
+  {
+    "text": "أحكام عامة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 4
+  },
+  {
+    "text": "حرية المعلومات والبيانات المفتوحة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 4
+  },
+  {
+    "text": "Ministry of Data Protection",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 5
+  },
+  {
+    "text": "Open Data",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 5
+  },
+  {
+    "text": "Personal Data",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 5
+  },
+  {
+    "text": "Child's Rights",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 5
+  },
+  {
+    "text": "Data Transfer",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 5
+  },
+  {
+    "text": "Revenue Generation",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 5
+  },
+  {
+    "text": "Policy documents",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 5
+  },
+  {
+    "text": "الوطنية",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 8
+  },
+  {
+    "text": "البد",
+    "type": "Person",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 8
+  },
+  {
+    "text": "التكامـل",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 8
+  },
+  {
+    "text": "التوازن",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 8
+  },
+  {
+    "text": "المزايا",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 8
+  },
+  {
+    "text": "المخاطرة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 8
+  },
+  {
+    "text": "تعارض",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 8
+  },
+  {
+    "text": "مصادر",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 8
+  },
+  {
+    "text": "البيانات",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 8
+  },
+  {
+    "text": " الجهات العامّة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 8
+  },
+  {
+    "text": " الشفافية",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 8
+  },
+  {
+    "text": " النزاهة",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 8
+  },
+  {
+    "text": " السرية",
+    "type": "Person",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 8
+  },
+  {
+    "text": " المعلومات العامة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 8
+  },
+  {
+    "text": " أنشطة الجهات العامّة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 8
+  },
+  {
+    "text": " حَق الاطاع",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 8
+  },
+  {
+    "text": " التطوّر المطرد",
+    "type": "Event",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 8
+  },
+  {
+    "text": " الجهات العامّة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 8
+  },
+  {
+    "text": "أصحاب البيانات",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 8
+  },
+  {
+    "text": "المعلومات العامة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 8
+  },
+  {
+    "text": "البيانات الشخصية",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 8
+  },
+  {
+    "text": "الحق في الطاع",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 8
+  },
+  {
+    "text": "المحافظة على خصوصية",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 8
+  },
+  {
+    "text": "التطوّر المطرد في التقنية",
+    "type": "Event",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 8
+  },
+  {
+    "text": "Microsoft",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 10
+  },
+  {
+    "text": "Bill Gates",
+    "type": "Person",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 10
+  },
+  {
+    "text": "Redmond",
+    "type": "Location",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 10
+  },
+  {
+    "text": "Artificial Intelligence",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 10
+  },
+  {
+    "text": "Microsoft's AI Conference",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 10
+  },
+  {
+    "text": "المستقلة في المملكة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 13
+  },
+  {
+    "text": "شخصية ذات صفة طبيعية أو اعتبارية خاصة",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 13
+  },
+  {
+    "text": "المملك",
+    "type": "Location",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 13
+  },
+  {
+    "text": "بيانات حساسة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 13
+  },
+  {
+    "text": "معالجة البيانات الشخصية",
+    "type": "Event",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 13
+  },
+  {
+    "text": "الغرض من معالجة البيانات الشخصية",
+    "type": "Document",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 13
+  },
+  {
+    "text": "الحكومية",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 13
+  },
+  {
+    "text": "أنشطة الجهات",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 13
+  },
+  {
+    "text": "أي شــخصية ذات مستويات تصنيف البيانات",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 13
+  },
+  {
+    "text": "المملكــة",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 13
+  },
+  {
+    "text": "حقوقهــم",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 13
+  },
+  {
+    "text": "عــام",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 13
+  },
+  {
+    "text": "الفرد",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 13
+  },
+  {
+    "text": "صاحب البيانات الشخصية",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 13
+  },
+  {
+    "text": "بيانــات الشــخصية",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 13
+  },
+  {
+    "text": "المعلومــات  العامــة",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 13
+  },
+  {
+    "text": "كتوقيـع العقــود أو الموافقـة علــى",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 14
+  },
+  {
+    "text": "جهة المعالجة",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 14
+  },
+  {
+    "text": "الشــروط واألحــكام",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 14
+  },
+  {
+    "text": "جهة حكوميــة أو جهة اعتباريــة عامــة",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 14
+  },
+  {
+    "text": "مســتقلة فــي المملكــة، وأي شــخصية ذات",
+    "type": "Person",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 14
+  },
+  {
+    "text": "ألطراف الخارجية:",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 14
+  },
+  {
+    "text": "صفــة  طبيعيــة  أو  اعتباريــة  خاصــة؛ تعالــج",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 14
+  },
+  {
+    "text": "أي  جهــة  حكوميــة  أو  جهــة  اعتباريــة  عامــة",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 14
+  },
+  {
+    "text": "البيانــات الشــخصية لمصلحــة جهــة التحكــم",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 14
+  },
+  {
+    "text": "مســتقلة فــي المملكــة، وأي شــخصية ذات",
+    "type": "Person",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 14
+  },
+  {
+    "text": "ونيابــةً عنهــا. صفــة طبيعيــة أو اعتباريــة خاصــة بخــاف",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 14
+  },
+  {
+    "text": "صاحــب البيانــات أو جهــة التحكــم أو جهــة",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 14
+  },
+  {
+    "text": "المنصة الوطنية للبيانات المفتوحة:",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 14
+  },
+  {
+    "text": "المعالجــة واألشــخاص المصــرح لهــم،",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 14
+  },
+  {
+    "text": "منصة وطنية للبيانات المفتوحة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 14
+  },
+  {
+    "text": "صاحب البيانــات أو جهــة التحكــم أو جهــة",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 14
+  },
+  {
+    "text": "رخصة تنظم استخدام البيانات المفتوحة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 14
+  },
+  {
+    "text": "الجهة التنظيمية",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 15
+  },
+  {
+    "text": "اتفاقية مشاركة البيانات",
+    "type": "Agreement",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 15
+  },
+  {
+    "text": "المملكة العربية",
+    "type": "Location",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 15
+  },
+  {
+    "text": "مكتب الجهة",
+    "type": "Office",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 15
+  },
+  {
+    "text": "مكتب إدارة البيانات الوطنية",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 15
+  },
+  {
+    "text": "الطفل",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 15
+  },
+  {
+    "text": "البيانــات",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 15
+  },
+  {
+    "text": "سلطة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 16
+  },
+  {
+    "text": "الولي",
+    "type": "Person",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 16
+  },
+  {
+    "text": "بدن",
+    "type": "Location",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 16
+  },
+  {
+    "text": "نفس",
+    "type": "Location",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 16
+  },
+  {
+    "text": "مال",
+    "type": "Location",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 16
+  },
+  {
+    "text": "بيانات شخصية",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 16
+  },
+  {
+    "text": "Direct Marketing",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 17
+  },
+  {
+    "text": "Control Entity",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 17
+  },
+  {
+    "text": "Government Agency",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 17
+  },
+  {
+    "text": "General Public",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 17
+  },
+  {
+    "text": "Individual Person",
+    "type": "Person",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 17
+  },
+  {
+    "text": "جهة المعالجة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 17
+  },
+  {
+    "text": "أي شــخصية ذات",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 17
+  },
+  {
+    "text": "المملكــة",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 17
+  },
+  {
+    "text": "النقل غير المباشر",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 17
+  },
+  {
+    "text": "النقــل البيانــات الشـ الشخصية",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 17
+  },
+  {
+    "text": "النقل العرضي",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 17
+  },
+  {
+    "text": "البيانات الشخصية",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 17
+  },
+  {
+    "text": "البيانات غير المعالجة",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 17
+  },
+  {
+    "text": "منتظم",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 17
+  },
+  {
+    "text": "معاجل",
+    "type": "Location",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 17
+  },
+  {
+    "text": "الأشخاص",
+    "type": "Person",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 17
+  },
+  {
+    "text": "دولة أخرى",
+    "type": "Location",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 17
+  },
+  {
+    "text": "صاحْب الهوية الوطنية",
+    "type": "Person",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 17
+  },
+  {
+    "text": "Ministry of Information",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 22
+  },
+  {
+    "text": "The Minister",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 22
+  },
+  {
+    "text": "Saudi Arabia",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 22
+  },
+  {
+    "text": "Data Management",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 22
+  },
+  {
+    "text": "Date 27/04/1441",
+    "type": "Event",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 22
+  },
+  {
+    "text": "Decision No. [insert number]",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 22
+  },
+  {
+    "text": "الرقــي بالبحــوث العلميــة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 23
+  },
+  {
+    "text": "الباحثيــن",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 23
+  },
+  {
+    "text": "المعلومــات العامــة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 23
+  },
+  {
+    "text": "مجتمــع",
+    "type": "Location",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 23
+  },
+  {
+    "text": "مؤسســاته",
+    "type": "Location",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 23
+  },
+  {
+    "text": "توفيــر الفــرص المتكافئــة",
+    "type": "Event",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 23
+  },
+  {
+    "text": "سياسة حماية البيانات الشخصية",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 26
+  },
+  {
+    "text": "تنظيــم عمليــة جمــع البيانــات الشــخصية",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 26
+  },
+  {
+    "text": "الرقميــة",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 26
+  },
+  {
+    "text": "سياسة مشاركة البيانات",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 26
+  },
+  {
+    "text": "المستفيدين",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 26
+  },
+  {
+    "text": " الجهــات الحكوميــة",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 26
+  },
+  {
+    "text": "سياسة حرية المعلومات",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 26
+  },
+  {
+    "text": "البيانات المفتوحة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 26
+  },
+  {
+    "text": "سياسة مشاركة البيانات",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 26
+  },
+  {
+    "text": "مصادرهــا",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 26
+  },
+  {
+    "text": "الجهــات الحكوميــة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 26
+  },
+  {
+    "text": "سياسة حرية المعلومات",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 26
+  },
+  {
+    "text": "المعلومات العامــة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 26
+  },
+  {
+    "text": "الجهــات ذات االختصــاص",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 26
+  },
+  {
+    "text": "ألطفــال",
+    "type": "Person",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 26
+  },
+  {
+    "text": "مسياسة حماية البيانات الشخصية",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 26
+  },
+  {
+    "text": "سياسة تصنيف البيانات4.1",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 28
+  },
+  {
+    "text": "النطاق4.1.1",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 28
+  },
+  {
+    "text": "المبادئ الرئيسة لتصنيف البيانات",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 28
+  },
+  {
+    "text": "4.1.2",
+    "type": "Document",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 28
+  },
+  {
+    "text": "األصل في البيانات اإلتاحة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 28
+  },
+  {
+    "text": "المبدأ الثاني: الضرورة والتناسب",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 28
+  },
+  {
+    "text": "التصنيف",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 30
+  },
+  {
+    "text": "مستويات تصنيف البيانات",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 30
+  },
+  {
+    "text": "أدنــاه يوضــح المســتويات الرئيســة لتصنيــف البيانــات بمــا يتوافــق مــع مســتوى األثــر",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 30
+  },
+  {
+    "text": "الجدول",
+    "type": "Document",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 30
+  },
+  {
+    "text": "كمــا1",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 30
+  },
+  {
+    "text": "بيانــات ســرية للغايــة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 30
+  },
+  {
+    "text": "المتـعلــقـــــــة بالعــــالقــــــــات الدولـــــيـــــــــة",
+    "type": "Location",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 30
+  },
+  {
+    "text": "مباحثـــــات ودراســـــــات وأعمــال",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 30
+  },
+  {
+    "text": "المعـلــــومـــــــات",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 30
+  },
+  {
+    "text": "المصالــح الوطنيــة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 30
+  },
+  {
+    "text": "الوطنــي",
+    "type": "Location",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 30
+  },
+  {
+    "text": "التشفيــــــر",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 30
+  },
+  {
+    "text": "األعمــال",
+    "type": "Event",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 30
+  },
+  {
+    "text": "الوطني",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 30
+  },
+  {
+    "text": "المملكــة",
+    "type": "Concept",
+    "importance": "medium/high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 30
+  },
+  {
+    "text": "العلاقــات الدبلوماســية",
+    "type": "Concept",
+    "importance": "medium/high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 30
+  },
+  {
+    "text": "النتمــاءات السياســية",
+    "type": "Concept",
+    "importance": "medium/high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 30
+  },
+  {
+    "text": "الكفــاءة التشــغيلية",
+    "type": "Concept",
+    "importance": "medium/high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 30
+  },
+  {
+    "text": " الوطنــي",
+    "type": "Location",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 30
+  },
+  {
+    "text": "البنيــــة التحتيــة الوطنيــــة",
+    "type": "Location",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 30
+  },
+  {
+    "text": "الضــرر",
+    "type": "Event",
+    "importance": "medium/high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 30
+  },
+  {
+    "text": "العســكرية",
+    "type": "Event",
+    "importance": "medium/high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 30
+  },
+  {
+    "text": "االقتصــاد",
+    "type": "Event",
+    "importance": "medium/high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 30
+  },
+  {
+    "text": "عروض منتجات (عامة)",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 32
+  },
+  {
+    "text": "معلومــات العالقــات العامة",
+    "type": "Location",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 32
+  },
+  {
+    "text": "مؤسســة",
+    "type": "Institution",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 32
+  },
+  {
+    "text": "اإلعالنات",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 32
+  },
+  {
+    "text": "مستويات تصنيف البيانات1",
+    "type": "Data Classification Level",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 32
+  },
+  {
+    "text": "المبدأ الاول",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 33
+  },
+  {
+    "text": "الاصل في البيانات الالتاحة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 33
+  },
+  {
+    "text": "تصنيف البيانات المصنف على مستوى مقيد",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 33
+  },
+  {
+    "text": "مستوى أ",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 33
+  },
+  {
+    "text": "مستوى ب",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 33
+  },
+  {
+    "text": "مجموعة من الأفراد",
+    "type": "Group",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 33
+  },
+  {
+    "text": "فئة الألثر الرئيسة",
+    "type": "Organization",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 34
+  },
+  {
+    "text": "المصلحة الوطنية",
+    "type": "Organization",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 34
+  },
+  {
+    "text": "الدول الصديقة",
+    "type": "Location",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 34
+  },
+  {
+    "text": "وزارة الخارجية",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 34
+  },
+  {
+    "text": "الرئيس",
+    "type": "Person",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 34
+  },
+  {
+    "text": "الوطن",
+    "type": "Location",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 34
+  },
+  {
+    "text": "الناتج المحلي اإلجمالي",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 34
+  },
+  {
+    "text": "الكشف عن المعلومات",
+    "type": "Event",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 34
+  },
+  {
+    "text": "الاقتصاد الوطني",
+    "type": "Product/Service",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 34
+  },
+  {
+    "text": "الرئيسة",
+    "type": "Person",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 35
+  },
+  {
+    "text": "لفترة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 35
+  },
+  {
+    "text": "قصيرة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 35
+  },
+  {
+    "text": "طويل",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 35
+  },
+  {
+    "text": "36",
+    "type": "Number",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 35
+  },
+  {
+    "text": "الوطنية",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 36
+  },
+  {
+    "text": "فئة الألثر الرئيسة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 36
+  },
+  {
+    "text": "أنشطة الجهات",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 36
+  },
+  {
+    "text": "مهام الجهات الخاصة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 36
+  },
+  {
+    "text": "فئة الألثر الفرعية",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 36
+  },
+  {
+    "text": "العتبارات",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 36
+  },
+  {
+    "text": "مستوى الألثر",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 36
+  },
+  {
+    "text": "عام",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 36
+  },
+  {
+    "text": "سري",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 36
+  },
+  {
+    "text": "سري للغاية",
+    "type": "Concept",
+    "importance": "very high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 36
+  },
+  {
+    "text": "مقيّ د",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 36
+  },
+  {
+    "text": "لا يوجد أثر",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 36
+  },
+  {
+    "text": "منخفض",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 36
+  },
+  {
+    "text": "متوسط",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 36
+  },
+  {
+    "text": "عالي",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 36
+  },
+  {
+    "text": "لا يوجد تأثير على",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 36
+  },
+  {
+    "text": "فئة أثر الرئيسة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 38
+  },
+  {
+    "text": "الأفراد",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 38
+  },
+  {
+    "text": "المملكة",
+    "type": "Location",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 38
+  },
+  {
+    "text": "البيئة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 38
+  },
+  {
+    "text": "الموارد البيئية",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 38
+  },
+  {
+    "text": "المصلحة الوطنية",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 38
+  },
+  {
+    "text": "تدمير الموارد",
+    "type": "Event",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 38
+  },
+  {
+    "text": "الجهة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 39
+  },
+  {
+    "text": "المسؤول الأوّل",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 39
+  },
+  {
+    "text": "الوثائق الورقية واإللكترونية",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 39
+  },
+  {
+    "text": "عالمات الحماية",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 39
+  },
+  {
+    "text": "تصنيف البيانــات",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 39
+  },
+  {
+    "text": "هيئة الوطنية لامن السيباري",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 40
+  },
+  {
+    "text": "ممثّل بيانات",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 40
+  },
+  {
+    "text": "بيانات سرية للغاية",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 40
+  },
+  {
+    "text": "بيانات سري",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 40
+  },
+  {
+    "text": "آلة تمزيق الورق",
+    "type": "Product",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 40
+  },
+  {
+    "text": "الهيئة الوطنية لألمن السيباني",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 40
+  },
+  {
+    "text": "ممثّل بيانات",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 40
+  },
+  {
+    "text": "بيانات سريّة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 40
+  },
+  {
+    "text": "آلة تمزيق الورق",
+    "type": "Product",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 40
+  },
+  {
+    "text": "وثائق ورقية",
+    "type": "Document",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 40
+  },
+  {
+    "text": "Ministry of Finance",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 41
+  },
+  {
+    "text": "January 1, 2021",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 41
+  },
+  {
+    "text": "Specific event or circumstances that affect the documents",
+    "type": "Event",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 41
+  },
+  {
+    "text": "Government agencies",
+    "type": "Location",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 41
+  },
+  {
+    "text": " الجهات الحكومية",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 41
+  },
+  {
+    "text": "انقضاء تاريخ محدد",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 41
+  },
+  {
+    "text": "إحــداث تغييــر فــي األولويــات االســتراتيجية",
+    "type": "Event",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 41
+  },
+  {
+    "text": "رفــع الســرية",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 41
+  },
+  {
+    "text": " التصنيــف",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 41
+  },
+  {
+    "text": "إلغــاء التصنيــف",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 41
+  },
+  {
+    "text": "تحديد مستوى األثر- ب3- الخطوة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 43
+  },
+  {
+    "text": "ممثــل بيانــات األعمــال",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 43
+  },
+  {
+    "text": "مســتوى، مدة، فترة، حجم",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 43
+  },
+  {
+    "text": "منخفض",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 43
+  },
+  {
+    "text": "عالٍ",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 43
+  },
+  {
+    "text": "متوسط",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 43
+  },
+  {
+    "text": "ال يوجــد أثــر",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 43
+  },
+  {
+    "text": "ألثــر محــددة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 43
+  },
+  {
+    "text": "مستوى تصنيف البيانات",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 43
+  },
+  {
+    "text": "تقييــم األثــر محــددة",
+    "type": "Event",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 43
+  },
+  {
+    "text": "تصنيــف البيانــات",
+    "type": "Event",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 43
+  },
+  {
+    "text": "ممثل بيانات األعمال",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 43
+  },
+  {
+    "text": "تصنيف البيانات",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 43
+  },
+  {
+    "text": "أثر",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 43
+  },
+  {
+    "text": "بيانــات",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 43
+  },
+  {
+    "text": "سرية",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 43
+  },
+  {
+    "text": "عامة",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 43
+  },
+  {
+    "text": "محاولــةٍ للحــد مــن التقديــرات الشــخصية",
+    "type": "Event",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 43
+  },
+  {
+    "text": "الحكومة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 44
+  },
+  {
+    "text": "الأفراد",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 44
+  },
+  {
+    "text": "البيانات",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 44
+  },
+  {
+    "text": "المزايا",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 44
+  },
+  {
+    "text": "تطوير خدمة جديدة ذات قيمة",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 44
+  },
+  {
+    "text": "مراجعة مستوى التصنيف",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 44
+  },
+  {
+    "text": "مكتب الجهة",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 44
+  },
+  {
+    "text": "شهر",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 44
+  },
+  {
+    "text": "مراجعة",
+    "type": "Event",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 44
+  },
+  {
+    "text": "ﻋﺎﻟﻲ",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 45
+  },
+  {
+    "text": "ﻣﺘﻮﺳﻂ",
+    "type": "Product/Service",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 45
+  },
+  {
+    "text": "ﻻﻳﻮﺟﺪ",
+    "type": "Product/Service",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 45
+  },
+  {
+    "text": "الشخص المسؤول",
+    "type": "Person",
+    "importance": "High",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 46
+  },
+  {
+    "text": "الجهة",
+    "type": "Organization",
+    "importance": "High",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 46
+  },
+  {
+    "text": "الدور",
+    "type": "Concept",
+    "importance": "Medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 46
+  },
+  {
+    "text": "الجهة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 46
+  },
+  {
+    "text": "الشــخص المســؤول",
+    "type": "Person",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 46
+  },
+  {
+    "text": "تصنيف البيانات",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 46
+  },
+  {
+    "text": "تجميـع البيانـات",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 46
+  },
+  {
+    "text": "تنسـيق تصنيـف البيانـات",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 46
+  },
+  {
+    "text": "محميـة",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 46
+  },
+  {
+    "text": "مراجعـة",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 46
+  },
+  {
+    "text": "بيانات",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 49
+  },
+  {
+    "text": "حماية",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 49
+  },
+  {
+    "text": "سياسة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 49
+  },
+  {
+    "text": "الشخصية",
+    "type": "Person",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 49
+  },
+  {
+    "text": " الجهات الخارجية",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 50
+  },
+  {
+    "text": "الأفراد",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 50
+  },
+  {
+    "text": "المملكة",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 50
+  },
+  {
+    "text": " البيانات الشخصية",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 50
+  },
+  {
+    "text": "شبة الإنترنيت",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 50
+  },
+  {
+    "text": "وسيلة أخرى",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 50
+  },
+  {
+    "text": "جهة التحكم",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 50
+  },
+  {
+    "text": "جموع البيانات الشخصية",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 50
+  },
+  {
+    "text": "المملكة",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 50
+  },
+  {
+    "text": "متطلبات نظامية",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 50
+  },
+  {
+    "text": "تنفيذ التزام بموجب اتفاق",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 50
+  },
+  {
+    "text": "المبدأ الثاني",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 50
+  },
+  {
+    "text": "المبدأ الثالث",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 50
+  },
+  {
+    "text": "المبدأ الرابع",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 50
+  },
+  {
+    "text": "صاحب البيانات الشخصية",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 50
+  },
+  {
+    "text": "سياسات",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 50
+  },
+  {
+    "text": "إجراءات الخصوصية",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 50
+  },
+  {
+    "text": "البيانات الشخصية",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 50
+  },
+  {
+    "text": "معالجة البيانات الشخصية",
+    "type": "Event",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 50
+  },
+  {
+    "text": "جهة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 52
+  },
+  {
+    "text": "مسؤول الأوّل",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 52
+  },
+  {
+    "text": "من يفوضه",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 52
+  },
+  {
+    "text": "الخصوصية",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 52
+  },
+  {
+    "text": "إدارة العليا",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 52
+  },
+  {
+    "text": "المخاطر",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 52
+  },
+  {
+    "text": "الألثار",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 52
+  },
+  {
+    "text": "مستوى قبول",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 52
+  },
+  {
+    "text": "سياسات",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 52
+  },
+  {
+    "text": "إجراءات",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 52
+  },
+  {
+    "text": "جهة التحكم",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 52
+  },
+  {
+    "text": "فريق العمـل المختص",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 52
+  },
+  {
+    "text": "الجهة التنظيميّة والمكتب",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 52
+  },
+  {
+    "text": "سياســات وإجــراءات الخصوصيـة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 52
+  },
+  {
+    "text": "مرجعــة وتحديــد العقــود واتفاقيــات مســتوى الخدمــة والتشــغيل",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 52
+  },
+  {
+    "text": "المملكــة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 53
+  },
+  {
+    "text": "صاحــب البيانــات",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 53
+  },
+  {
+    "text": "البيانــات",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 53
+  },
+  {
+    "text": "النظمــة واللوائــح والسياســات",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 53
+  },
+  {
+    "text": "جهة التحكم",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 53
+  },
+  {
+    "text": "البيانات",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 53
+  },
+  {
+    "text": "المملكة",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 53
+  },
+  {
+    "text": "المكتب",
+    "type": "Person",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 53
+  },
+  {
+    "text": "المملكــة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 53
+  },
+  {
+    "text": "جهــة التحكــم",
+    "type": "Person/Position",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 53
+  },
+  {
+    "text": "المكتب",
+    "type": "Location",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 53
+  },
+  {
+    "text": "سياســة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 53
+  },
+  {
+    "text": "التخلــص",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 53
+  },
+  {
+    "text": "البيانــات",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 53
+  },
+  {
+    "text": "17",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 53
+  },
+  {
+    "text": "54",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 53
+  },
+  {
+    "text": "جهة التحكم",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 54
+  },
+  {
+    "text": "صاحب البيانات",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 54
+  },
+  {
+    "text": "الهيئة الوطنية لألمن السيبراني",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 54
+  },
+  {
+    "text": "donnees personnalises",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 54
+  },
+  {
+    "text": "جهات",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 54
+  },
+  {
+    "text": "أصحاب البيانـات",
+    "type": "Person",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 54
+  },
+  {
+    "text": "البيانـات",
+    "type": "Document",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 54
+  },
+  {
+    "text": "المملكـة",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 54
+  },
+  {
+    "text": "الخصوصيـة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 54
+  },
+  {
+    "text": "الستخدامها",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 54
+  },
+  {
+    "text": "سادســاً",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 55
+  },
+  {
+    "text": "المكتــب",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 55
+  },
+  {
+    "text": "جهــات التحكــم",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 55
+  },
+  {
+    "text": "قواعــد إضافيــة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 55
+  },
+  {
+    "text": "التنســيق مــع المكتــب",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 55
+  },
+  {
+    "text": " الجهــات التنظيميــة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 55
+  },
+  {
+    "text": "الجــة الرئيسـة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 58
+  },
+  {
+    "text": "المطلــوب منهــا",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 58
+  },
+  {
+    "text": " الجهــة الطالبــة",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 58
+  },
+  {
+    "text": " البيانــات",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 58
+  },
+  {
+    "text": " قبــل مشــاركتها",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 58
+  },
+  {
+    "text": "فعلــى الجهـة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 58
+  },
+  {
+    "text": "المطلــوب منهــا",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 58
+  },
+  {
+    "text": " الجهــة الرئيسـة",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 58
+  },
+  {
+    "text": "مشــاركة هــذه البيانــات",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 58
+  },
+  {
+    "text": "قبــل مشــاركتها مــع الجهــة الطالبــة",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 58
+  },
+  {
+    "text": "الهيئة الوطنية لألمن السبراني",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 59
+  },
+  {
+    "text": "أمن البيانات",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 59
+  },
+  {
+    "text": "الاستخدام الأخلاقي",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 59
+  },
+  {
+    "text": "المبدأ السادس",
+    "type": "Document",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 59
+  },
+  {
+    "text": "المبدأ السابع",
+    "type": "Document",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 59
+  },
+  {
+    "text": "مختص بيانات األعمال",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 60
+  },
+  {
+    "text": "المطلوب منهــا",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 60
+  },
+  {
+    "text": "البيانــات",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 60
+  },
+  {
+    "text": "تصنيف البيانــات",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 60
+  },
+  {
+    "text": "تحديــد مســتوى التصنيـف",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 60
+  },
+  {
+    "text": "الجهة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 60
+  },
+  {
+    "text": "المختص بيانات الأعمال",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 60
+  },
+  {
+    "text": "البيانات المطلوبة",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 60
+  },
+  {
+    "text": "سياسة تصنيف البيانات",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 60
+  },
+  {
+    "text": "مختص بيانات الأعمال",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 60
+  },
+  {
+    "text": "ممثل بيانات الأعمال",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 60
+  },
+  {
+    "text": "مكتب الجهة المطلوبة",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 60
+  },
+  {
+    "text": "مبادئ مشاركة البيانات",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 60
+  },
+  {
+    "text": "عمليّة مشاركة البيانات",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 60
+  },
+  {
+    "text": "مكتــب الجهـة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 61
+  },
+  {
+    "text": "البيانــات",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 61
+  },
+  {
+    "text": "الطالبـة",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 61
+  },
+  {
+    "text": "مدير مكتــب البيانــات",
+    "type": "Person",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 61
+  },
+  {
+    "text": "مراﺟﻌﺔ ﻣﺎدىء أﺧﺮى",
+    "type": "Event",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 61
+  },
+  {
+    "text": "تـصﻨﻴﻒ اﻟﺒﻴﺎﻧـﺎت",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 61
+  },
+  {
+    "text": "قﻮاﻋﺪ ﺗﺼﻨﻴﻒ اﻟﺒﻴﺎﻧـﺎت",
+    "type": "Event",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 61
+  },
+  {
+    "text": "مھدّد",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 61
+  },
+  {
+    "text": "سﺮي",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 61
+  },
+  {
+    "text": "الجهـة الحكوميــة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 62
+  },
+  {
+    "text": "الطلــب",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 62
+  },
+  {
+    "text": "استالم الطلــب",
+    "type": "Event",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 62
+  },
+  {
+    "text": "يومــاً مــن تاريــخ",
+    "type": "Event",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 62
+  },
+  {
+    "text": "مشــاركة البيانــات",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 62
+  },
+  {
+    "text": "القــرار",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 62
+  },
+  {
+    "text": "مشروعية الغرض",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 62
+  },
+  {
+    "text": "المبــدأ الثانــي",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 62
+  },
+  {
+    "text": "الخامــس",
+    "type": "Person",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 62
+  },
+  {
+    "text": "المســؤولية المشــتركة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 62
+  },
+  {
+    "text": "الســتخدام األخالقــي",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 62
+  },
+  {
+    "text": "أن يُ لتـزم",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 62
+  },
+  {
+    "text": "الشخصية",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 62
+  },
+  {
+    "text": "المبادئ ذات العالقة",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 62
+  },
+  {
+    "text": "هيكلــة البيانــات",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 63
+  },
+  {
+    "text": "نــوع البيانــات",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 63
+  },
+  {
+    "text": "المبدأ السادس: أمن البيانات",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 63
+  },
+  {
+    "text": "معالجة المسبقة للبيانات",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 63
+  },
+  {
+    "text": "المثــال",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 63
+  },
+  {
+    "text": "الهويــة",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 63
+  },
+  {
+    "text": "الحجــب وإخفــاء الهويــة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 63
+  },
+  {
+    "text": "التجميــع",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 63
+  },
+  {
+    "text": "أن تُ قيّ ــم جــودة البيانــات المطلوبــة وصحتهــا وســامتها",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 63
+  },
+  {
+    "text": "مكتــب الجهــة",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 63
+  },
+  {
+    "text": "الهيئة الوطنية لألمن السيبراني",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 63
+  },
+  {
+    "text": "المبدأ السادس: أمن البيانات",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 63
+  },
+  {
+    "text": "المبادئ ذات العالقة",
+    "type": "Document",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 63
+  },
+  {
+    "text": "التحقق من أمــن وموثوقيــة وســائل المشــاركة",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 63
+  },
+  {
+    "text": "الجهات",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 63
+  },
+  {
+    "text": "أنظمة المعلومات الوطنية",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 63
+  },
+  {
+    "text": "مقدم الطلب",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 63
+  },
+  {
+    "text": "مقدم خدمة",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 63
+  },
+  {
+    "text": "الشبكة الالكترونية",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 63
+  },
+  {
+    "text": "الشبكة الافتراضيية الخاصة",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 63
+  },
+  {
+    "text": "آلية إتالف الوسائط المادية",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 63
+  },
+  {
+    "text": "المشــاركة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 65
+  },
+  {
+    "text": "الشــخص المناســب",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 65
+  },
+  {
+    "text": "أصحــاب البيانــات الشــخصية",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 65
+  },
+  {
+    "text": "الضوابــط",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 65
+  },
+  {
+    "text": "الخصوصيــة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 65
+  },
+  {
+    "text": "البيانــات الشــخصية",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 65
+  },
+  {
+    "text": "Free",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 67
+  },
+  {
+    "text": "Policy",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 67
+  },
+  {
+    "text": "68",
+    "type": "Number",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 67
+  },
+  {
+    "text": "سياسة حرية المعلومات",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 68
+  },
+  {
+    "text": ".النطاق4.4.1",
+    "type": "Location",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 68
+  },
+  {
+    "text": "طلبات الأفراد",
+    "type": "Event",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 68
+  },
+  {
+    "text": "المعلومات العامة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 68
+  },
+  {
+    "text": "جهات عامة",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 68
+  },
+  {
+    "text": "مصادر المعلومات",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 68
+  },
+  {
+    "text": "شكل المعلومات",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 68
+  },
+  {
+    "text": "أشكال المعلومات المسجلة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 68
+  },
+  {
+    "text": "الدولة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 68
+  },
+  {
+    "text": "المعلومات",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 68
+  },
+  {
+    "text": "الوطنية",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 68
+  },
+  {
+    "text": "دولة أخرى",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 68
+  },
+  {
+    "text": "إفشاء",
+    "type": "Event",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 68
+  },
+  {
+    "text": "الضرار",
+    "type": "Event",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 68
+  },
+  {
+    "text": "الحصول",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 68
+  },
+  {
+    "text": "التفتيش",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 68
+  },
+  {
+    "text": "المراقبة",
+    "type": "Event",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 68
+  },
+  {
+    "text": "وثائق",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 68
+  },
+  {
+    "text": "اتفاق",
+    "type": "Document",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 68
+  },
+  {
+    "text": "قروض",
+    "type": "Document",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 68
+  },
+  {
+    "text": "الجهة العامة",
+    "type": "Organization",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 69
+  },
+  {
+    "text": "المساواة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 69
+  },
+  {
+    "text": "حقوق الأفراد",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 69
+  },
+  {
+    "text": "الحق في معرفة سبب رفض",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 69
+  },
+  {
+    "text": "التزامات الجهات العامة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 69
+  },
+  {
+    "text": "أن تكون الجهة العامة مسؤولة عن إعداد وتطبيق السياسات والاجراءات",
+    "type": "Event",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 69
+  },
+  {
+    "text": " الجهات العامة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 69
+  },
+  {
+    "text": " المسؤول األول بالجهة",
+    "type": "Person",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 69
+  },
+  {
+    "text": " السياسات واإلجراءات",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 69
+  },
+  {
+    "text": " الوصول إللى المعلومات العامــة أو الحصــول عليهــا",
+    "type": "Event",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 69
+  },
+  {
+    "text": "الجهة",
+    "type": "Organization",
+    "importance": "High",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 69
+  },
+  {
+    "text": "المسؤول الأوّل بالجهة",
+    "type": "Person",
+    "importance": "Medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 69
+  },
+  {
+    "text": "مكاتب إدارة البيانات",
+    "type": "Location",
+    "importance": "Low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 69
+  },
+  {
+    "text": "تأسيس الجهة",
+    "type": "Event",
+    "importance": "High",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 69
+  },
+  {
+    "text": "20/11/1439",
+    "type": "Date",
+    "importance": "Medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 69
+  },
+  {
+    "text": "الجهـة العامـة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 70
+  },
+  {
+    "text": "الفــرد",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 70
+  },
+  {
+    "text": "المعلومــات العامــة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 70
+  },
+  {
+    "text": "حــق االطــاع علــى المعلومــات العامة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 70
+  },
+  {
+    "text": "الهيئــة الوطنيــة لألمــن الســيبراني والجهــات ذات العالقـة",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 70
+  },
+  {
+    "text": "جهة عامة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 71
+  },
+  {
+    "text": "رﻓﺾ/اﺷﻌﺎر",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 71
+  },
+  {
+    "text": "نموذج الطلب",
+    "type": "Document",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 71
+  },
+  {
+    "text": "إستئناف",
+    "type": "Event",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 71
+  },
+  {
+    "text": "مواﻓﻘﺔ",
+    "type": "Location",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 71
+  },
+  {
+    "text": "الجهة العامّة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "text": "طلب معلومات عامّة",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "text": "نموذج طلّب معلومات عامّة",
+    "type": "Document",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "text": "فترة زمنية محددة",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "text": "جهة عامة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "text": "فرد",
+    "type": "Person",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "text": "أيام عمل من استالم المبلغ.10 العامّة",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "text": "وصول إلى المعلومات أو الحصول عليها",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "text": "الرسوم المطبقة",
+    "type": "Document",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "text": "الجهة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "text": "الفرد",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "text": "أيام عمل من استالم المبلغ",
+    "type": "Event",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "text": "المعلومات",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "text": "الرفض",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "text": "التमديد",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "text": "جهة عامة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "text": "فرد",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "text": "الحق في التظلّم",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "text": "تمديّد",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "text": "المعلومات",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "text": "المطلوب",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "text": "يوم إضافي",
+    "type": "Event",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "text": "تاريخ المتوقع",
+    "type": "Event",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "text": "جهة عامة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "text": "فرد",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "text": "تمديد",
+    "type": "Event",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "text": "إشعار",
+    "type": "Document",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "text": "مطلوب",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "text": "أسباب التأخير",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "text": "الحق في التظلّ",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "text": "جهة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "text": "فرد",
+    "type": "Person",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "text": "بيان",
+    "type": "Document",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "text": "موقع الجهة",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "text": "نــوع اإلشــعار",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "text": "الحق في التظلّ",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 72
+  },
+  {
+    "text": "Government",
+    "type": "Location",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 73
+  },
+  {
+    "text": "Researchers, Innovators, Entrepreneurs",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 73
+  },
+  {
+    "text": "Open Data",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 73
+  },
+  {
+    "text": "Development of programs and policies",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 73
+  },
+  {
+    "text": "Government",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 73
+  },
+  {
+    "text": "Open government",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 73
+  },
+  {
+    "text": "Programs and policies for open data",
+    "type": "Product",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 73
+  },
+  {
+    "text": "Public access to information",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 73
+  },
+  {
+    "text": "Requesting access to information",
+    "type": "Event",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 73
+  },
+  {
+    "text": "Open Data",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 75
+  },
+  {
+    "text": "Policy",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 75
+  },
+  {
+    "text": "76",
+    "type": "Event",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 75
+  },
+  {
+    "text": "سياسة البيانات المفتوحة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 76
+  },
+  {
+    "text": "مجموعة فرعيــة مــن المعلومــات العامــة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 76
+  },
+  {
+    "text": "الجهــات العامــة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 76
+  },
+  {
+    "text": "مصدرهــا، أو شــكلها أو طبيعتهــا",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 76
+  },
+  {
+    "text": "الكمبيوتــر",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 76
+  },
+  {
+    "text": "Open Data",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 76
+  },
+  {
+    "text": "Data Sets",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 76
+  },
+  {
+    "text": "Government Agencies",
+    "type": "Organization",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 76
+  },
+  {
+    "text": " الجهات العامّة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 77
+  },
+  {
+    "text": " التنمية الشاملة واالبتكار",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 77
+  },
+  {
+    "text": " إعادة استخدام البيانات المفتوحة",
+    "type": "Event",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 77
+  },
+  {
+    "text": " البيانــات المفتوحــة",
+    "type": "Product",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 77
+  },
+  {
+    "text": " تقييم قيمة البيانات العامة",
+    "type": "Document",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 77
+  },
+  {
+    "text": "Open Data",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 77
+  },
+  {
+    "text": "المبتكرين",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 77
+  },
+  {
+    "text": "مجال البيانات المفتوح",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 77
+  },
+  {
+    "text": "البيانات المفتوحة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 77
+  },
+  {
+    "text": "Data Valuation",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 77
+  },
+  {
+    "text": "تقييم قيمة البيانات العامة",
+    "type": "Document",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 77
+  },
+  {
+    "text": "حســب مــا",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 78
+  },
+  {
+    "text": "البيانــات المفتوحــة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 78
+  },
+  {
+    "text": "دورة حيــاة البيانــات المفتوحــة",
+    "type": "Event",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 78
+  },
+  {
+    "text": "مراحــل",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 78
+  },
+  {
+    "text": "التخطيط للبيانات المفتوحة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 78
+  },
+  {
+    "text": "تحديد البيانات المفتوحة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 78
+  },
+  {
+    "text": "نشر البيانات المفتوحة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 78
+  },
+  {
+    "text": "تحديث البيانات المفتوحة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 78
+  },
+  {
+    "text": "متابعة أداء البيانات المفتوحة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 78
+  },
+  {
+    "text": "جهة عامة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 78
+  },
+  {
+    "text": "بيانات مفتوحة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 78
+  },
+  {
+    "text": "دورة حياة البيانات المفتوحة",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 78
+  },
+  {
+    "text": "مسؤول البيانات المفتوحة",
+    "type": "Person",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 78
+  },
+  {
+    "text": "سياسة",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 78
+  },
+  {
+    "text": "تقارير",
+    "type": "Document",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 78
+  },
+  {
+    "text": "جهة عامة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 79
+  },
+  {
+    "text": "بيانات عامة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 79
+  },
+  {
+    "text": "بيانــات مفتوحـة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 79
+  },
+  {
+    "text": "أمــن المعلومــات",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 79
+  },
+  {
+    "text": "خصوصية",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 79
+  },
+  {
+    "text": "الصعيــد الوطنــي",
+    "type": "Location",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 79
+  },
+  {
+    "text": "المكتب",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 79
+  },
+  {
+    "text": "المسستخدمين المحتمليون",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 79
+  },
+  {
+    "text": "البيانات المفتوحة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 79
+  },
+  {
+    "text": "البيانــات المفتوحــة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 79
+  },
+  {
+    "text": "أهــداف",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 79
+  },
+  {
+    "text": "مراجعة خطة البيانات المفتوحة",
+    "type": "Event",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 79
+  },
+  {
+    "text": "تقديم تقرير سنوي",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 79
+  },
+  {
+    "text": "الصعيــد الوطنــي",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 79
+  },
+  {
+    "text": "المكتب",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 79
+  },
+  {
+    "text": "المستخدمون",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 79
+  },
+  {
+    "text": "البيانات المفتوحة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 79
+  },
+  {
+    "text": "دورة تدريبية",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 79
+  },
+  {
+    "text": "البيانــات المصنفــة",
+    "type": "Document",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 79
+  },
+  {
+    "text": "دراسة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "text": " الجمع بين عدة مجموعات من البيانات المفتوحة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "text": "البيانات المفتوحة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "text": "المكتتب",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "text": "المنصة الوطنية للبيانات المفتوحة",
+    "type": "Location",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "text": "الجهات العامة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "text": "W3C",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "text": "Tim Berners-Lee",
+    "type": "Person",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "text": "Europe",
+    "type": "Location",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "text": "XML",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "text": "JSON",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "text": "CSV",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "text": "Publication of XML, JSON, and CSV standards",
+    "type": "Event",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "text": "W3C standards",
+    "type": "Product",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "text": "مرجعــة المســتمرة لمجموعــات البيانــات المنشــورة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "text": "ضمــان اســتيفائها للمتطلبــات التنظيميــة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "text": "مجموعــة البيانات",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "text": "نشــر مجموعــات البيانــات المفتوحــة",
+    "type": "Event",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "text": "ســجل إصــدارات",
+    "type": "Location",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "text": "نشــر مجموعــات البيانــات المفتوحــة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "text": "الجهات العامة",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "text": "بيانات مفتوحة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "text": "متابعة أداء البيانات المفتوحة",
+    "type": "Event",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 80
+  },
+  {
+    "text": "المكتب 1",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 81
+  },
+  {
+    "text": "المكتب",
+    "type": "Person",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 81
+  },
+  {
+    "text": "البيانات المفتوحة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 81
+  },
+  {
+    "text": "المملكة",
+    "type": "Location",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 81
+  },
+  {
+    "text": "المكتب 1",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 81
+  },
+  {
+    "text": "المملكـة",
+    "type": "Location",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 81
+  },
+  {
+    "text": "البيانــات المفتوحــة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 81
+  },
+  {
+    "text": "مجموعات البيانات المفتوحة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 81
+  },
+  {
+    "text": "مراجعة مجموعات البيانات المفتوحة",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 81
+  },
+  {
+    "text": "الوطني",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 81
+  },
+  {
+    "text": "تأثير البيانات المفتوحة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 81
+  },
+  {
+    "text": "ترخيص البيانات المفتوحة",
+    "type": "Document",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 81
+  },
+  {
+    "text": "الجهة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 82
+  },
+  {
+    "text": "مدير مكتب الجهة - رئيس الجهة",
+    "type": "Person",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 82
+  },
+  {
+    "text": "البيانــات المفتوحــة - أنشــطة البيانــات المفتوحــة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 82
+  },
+  {
+    "text": "رئيس الجهة",
+    "type": "Person",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 82
+  },
+  {
+    "text": "جهة",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 82
+  },
+  {
+    "text": "تخصيص الأدوار المتعلقة بالبيانات المفتوحة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 82
+  },
+  {
+    "text": "مدير مكتب الجهة",
+    "type": "Person",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 82
+  },
+  {
+    "text": "جهت",
+    "type": "Location",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 82
+  },
+  {
+    "text": "الجهة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "text": "مكتب",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "text": "المدير التشغيلي",
+    "type": "Person",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "text": "المدير المنسق",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "text": "البيانات المفتوحة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "text": "البيانات الشخصية",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "text": "حريّة المعلومات",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "text": "التخطيط",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "text": "حل المشاكل",
+    "type": "Event",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "text": "مسؤول البيانــات المفتوحــة والمعلومــات",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "text": "المديــر التشــغيلي",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "text": "الجهة",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "text": "البيانــات المفتوحــة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "text": "التخطيــط للبيانــات المفتوحــة",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "text": "National Data Platform",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "text": "Employees of the organization",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "text": "National level",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "text": "Open data, data publication, data quality, data analysis",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "text": "Request for open data, data publication process, data update and maintenance",
+    "type": "Event",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "text": "جمــع طلبــات البيانــات المفتوحــة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "text": "مسؤول البيانات المفتوحة",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "text": "مسؤول البيانات المفتوحة والمعلومات",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "text": "مدير مكتب الجهة",
+    "type": "Person",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "text": "جهة",
+    "type": "Location",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "text": "مكتب الجهة",
+    "type": "Location",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "text": "بيانــات المفتوحــة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "text": "بيانات مفتوحة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "text": "معلومات",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "text": "تثقيــف والتوعيــة بالبيانــات المفتوحــة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "text": "مسؤول البيانات المفتوحة والمعلومات",
+    "type": "Person",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "text": "الجهــة",
+    "type": "Location",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "text": "بيانــات المفتوحــة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "text": "التنســيق مــع المكتــب",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 83
+  },
+  {
+    "text": "مكتب البيانات المفتوحة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 84
+  },
+  {
+    "text": "مسؤول البيانات المفتوحة",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 84
+  },
+  {
+    "text": "قيمة مجموعات البيانات العامة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 84
+  },
+  {
+    "text": "الاستثمارات المطلوبة لنشرة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 84
+  },
+  {
+    "text": "تحديث البيانات",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 84
+  },
+  {
+    "text": "نشر البيانات",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 84
+  },
+  {
+    "text": " الجهات العامّة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 84
+  },
+  {
+    "text": " التقدم ومستوى اإلنجاز الذي حققته الجهة في خطتها المحددة",
+    "type": "Document",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 84
+  },
+  {
+    "text": " الأهداف ومؤشرات األداء الرئيسة المحددة في خطة البيانات المفتوحة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 84
+  },
+  {
+    "text": " مجموعات البيانات المفتوحة",
+    "type": "Product",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 84
+  },
+  {
+    "text": " تسوية النزاعــات المتعلقــة بالبيانــات المفتوحــة",
+    "type": "Event",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 84
+  },
+  {
+    "text": "المكتب",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 85
+  },
+  {
+    "text": "حاالات عدم الامتثال",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 85
+  },
+  {
+    "text": "مراجعــة حــاالت عــدم االمتثــال",
+    "type": "Event",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 85
+  },
+  {
+    "text": "المســتوية",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 85
+  },
+  {
+    "text": "حمايــة سياســة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 87
+  },
+  {
+    "text": "مــن لألطفــال الشــخصية",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 87
+  },
+  {
+    "text": "سياسة حماية البيانات الشخصية لألطفال ومن في حكمهم",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "text": "الحقوق",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "text": "القواعــة العامــة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "text": "الجهــات المشــمولة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "text": "ألطفــال",
+    "type": "Person",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "text": "معالجــة البيانــات الشــخصية",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "text": "حمايتهــم",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "text": "المحافظة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "text": "خصوصية",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "text": "حماية حقوق",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "text": "القطاع العام",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "text": "القطاع الخاص",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "text": "جموع البيانات الشخصية",
+    "type": "Event",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "text": "نطاق4.6.1",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "text": "طفل",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "text": "مملكــة",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "text": "بيانــات شــخصية",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "text": "جميع الجهــات",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "text": "الولي",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "text": "طفل",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "text": "جماعه ومعالجه بيانات الشخصية",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "text": "قواعد عامة",
+    "type": "Document",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "text": "سياسة حمايه البيانات الشخصية",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "text": "جهة التحكم",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "text": "الأطفال",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "text": "من في حكمهم",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "text": "أسرة",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "text": "التقييم",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "text": "المخاطر",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "text": "المصلحة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "text": "الحقوق",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 88
+  },
+  {
+    "text": "جهة التحكم",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 89
+  },
+  {
+    "text": "مفهوم الخصوصية",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 89
+  },
+  {
+    "text": "الولي",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 89
+  },
+  {
+    "text": "البيانات الشخصية",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 89
+  },
+  {
+    "text": "جمع البيانات الشخصية",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 89
+  },
+  {
+    "text": "جهة التحكم",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 90
+  },
+  {
+    "text": "الولي",
+    "type": "Person",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 90
+  },
+  {
+    "text": "الهيئة الوطنية لألمن السيبراني",
+    "type": "Location",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 90
+  },
+  {
+    "text": "بيانات شخصية",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 90
+  },
+  {
+    "text": "جهة التحكم",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 90
+  },
+  {
+    "text": "الولي",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 90
+  },
+  {
+    "text": "الهيئة الوطنية لألمن السيبراني",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 90
+  },
+  {
+    "text": "بيانات شخصية",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 90
+  },
+  {
+    "text": "جهة التحكم",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 90
+  },
+  {
+    "text": "الولي",
+    "type": "Person",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 90
+  },
+  {
+    "text": " البيانات الشخصية",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 90
+  },
+  {
+    "text": " البيانات",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 90
+  },
+  {
+    "text": "العقود",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 90
+  },
+  {
+    "text": "الاتفاقيات",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 90
+  },
+  {
+    "text": "جهة التحكم",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 91
+  },
+  {
+    "text": "الأطفال",
+    "type": "Person",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 91
+  },
+  {
+    "text": "حكمهم",
+    "type": "Location",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 91
+  },
+  {
+    "text": "حمايته",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 91
+  },
+  {
+    "text": "المراحل الأولى",
+    "type": "Event",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 91
+  },
+  {
+    "text": "جهة التحكم",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 91
+  },
+  {
+    "text": "البيانات الشخصية",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 91
+  },
+  {
+    "text": "حكمهم",
+    "type": "Location",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 91
+  },
+  {
+    "text": "المسؤول الأوّل",
+    "type": "Person",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 91
+  },
+  {
+    "text": "ويجب علَى",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 92
+  },
+  {
+    "text": "جهة التنظيمية",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 92
+  },
+  {
+    "text": "جميــع",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 92
+  },
+  {
+    "text": "أحكام عامة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 92
+  },
+  {
+    "text": "إعداد السياسة",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 92
+  },
+  {
+    "text": "الجهة التنظيمية",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 92
+  },
+  {
+    "text": "الجهات التنظيميّة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 92
+  },
+  {
+    "text": "وقوع أو اكتشاف أي حادثة",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 92
+  },
+  {
+    "text": "البيانات الشخصية",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 92
+  },
+  {
+    "text": "جهة التحكم",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 93
+  },
+  {
+    "text": "الولي",
+    "type": "Person",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 93
+  },
+  {
+    "text": "حكم",
+    "type": "Location",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 93
+  },
+  {
+    "text": "بيانات شخصية",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 93
+  },
+  {
+    "text": "البيانات",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 95
+  },
+  {
+    "text": "القواعد",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 95
+  },
+  {
+    "text": "الجدود",
+    "type": "Person",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 95
+  },
+  {
+    "text": "شخصية",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 95
+  },
+  {
+    "text": "للمملكة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 95
+  },
+  {
+    "text": "الجغرافية",
+    "type": "Location",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 95
+  },
+  {
+    "text": " الجهات",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 97
+  },
+  {
+    "text": "أصحابه",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 97
+  },
+  {
+    "text": "المملكة",
+    "type": "Location",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 97
+  },
+  {
+    "text": "دولة ضمــن",
+    "type": "Location",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 97
+  },
+  {
+    "text": "البيانــات الشــخصية",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 97
+  },
+  {
+    "text": "الســيادة الوطنيــة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 97
+  },
+  {
+    "text": "حمايــة خصوصيــة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 97
+  },
+  {
+    "text": "وزارة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 97
+  },
+  {
+    "text": "المعالج الخارجي",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 97
+  },
+  {
+    "text": "دولة",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 97
+  },
+  {
+    "text": "البيانات الشخصية",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 97
+  },
+  {
+    "text": "نقلهما أو معالجتهما",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 97
+  },
+  {
+    "text": "كالتشــفير",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 98
+  },
+  {
+    "text": "الضوابــط األمنيــة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 98
+  },
+  {
+    "text": "المعاييــر الدوليــة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 98
+  },
+  {
+    "text": "الحمايــة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 98
+  },
+  {
+    "text": "المستوى",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 98
+  },
+  {
+    "text": "Ministry of Information",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 99
+  },
+  {
+    "text": "Individual",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 99
+  },
+  {
+    "text": "Kingdom",
+    "type": "Location",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 99
+  },
+  {
+    "text": "Confidentiality",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 99
+  },
+  {
+    "text": "Data Transfer",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 99
+  },
+  {
+    "text": "Regulations",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 99
+  },
+  {
+    "text": "المملكة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 100
+  },
+  {
+    "text": "أصحاب البيانات",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 100
+  },
+  {
+    "text": "الحدود الجغرافية",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 100
+  },
+  {
+    "text": "المصلحة العامة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 100
+  },
+  {
+    "text": "الصحة العامة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 100
+  },
+  {
+    "text": "السالمة العامة",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 100
+  },
+  {
+    "text": "المحافظة على المصلحة العامة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 100
+  },
+  {
+    "text": "الصحاب البيانات",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 100
+  },
+  {
+    "text": "الجهة التنظيميـة",
+    "type": "Location",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 100
+  },
+  {
+    "text": "حماية الصحة أو السالمة العامة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 100
+  },
+  {
+    "text": "النقل البيانات",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 100
+  },
+  {
+    "text": "جهات التحكم",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 100
+  },
+  {
+    "text": "جهات المعالجة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 100
+  },
+  {
+    "text": "القواعد",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 100
+  },
+  {
+    "text": "التعاقدات",
+    "type": "Event",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 100
+  },
+  {
+    "text": "المعالجة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 100
+  },
+  {
+    "text": "المكتブ",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 100
+  },
+  {
+    "text": "البيانات الشخصية",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 100
+  },
+  {
+    "text": "التنسيق",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 100
+  },
+  {
+    "text": "المعتمــدة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 103
+  },
+  {
+    "text": "السياســات",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 103
+  },
+  {
+    "text": "الإدارة",
+    "type": "Person",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 103
+  },
+  {
+    "text": "مجلس",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 103
+  },
+  {
+    "text": "قبل من",
+    "type": "Event",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 103
+  },
+  {
+    "text": "104",
+    "type": "Document",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 103
+  },
+  {
+    "text": "الإليارات",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 105
+  },
+  {
+    "text": "تحقيق سياسة",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 105
+  },
+  {
+    "text": "البيانات",
+    "type": "Document",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 105
+  },
+  {
+    "text": "المكتّب",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 106
+  },
+  {
+    "text": "الهيئة السعودية للبيانات والذكاء الاصطناعي",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 106
+  },
+  {
+    "text": "سياسة تصنيف البيانات",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 106
+  },
+  {
+    "text": "التزامات مزودي البيانات",
+    "type": "Event",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 106
+  },
+  {
+    "text": "السياســة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 106
+  },
+  {
+    "text": "تصنيــف البيانــات",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 106
+  },
+  {
+    "text": "حمايــة البيانــات الشــخصية",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 106
+  },
+  {
+    "text": "التزامــات مــزودي البيانــات",
+    "type": "Event",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 106
+  },
+  {
+    "text": " الجهات الحكومية",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 107
+  },
+  {
+    "text": "تنمية الإيرادات",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 107
+  },
+  {
+    "text": "الخصوصية بالتصميم",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 107
+  },
+  {
+    "text": "األصل في البيانات اإلتاحة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 107
+  },
+  {
+    "text": "مبادرات البيانــات المفتوحــة",
+    "type": "Event",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 107
+  },
+  {
+    "text": "الجهات الحكومية",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 107
+  },
+  {
+    "text": "الخصوصية بالتصميم",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 107
+  },
+  {
+    "text": "المعالجة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 107
+  },
+  {
+    "text": "مصادره",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 107
+  },
+  {
+    "text": "الصحيحــة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 107
+  },
+  {
+    "text": "مبــادرات البيانــات المفتوحــة",
+    "type": "Event",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 107
+  },
+  {
+    "text": "المبدأ الرابع",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 107
+  },
+  {
+    "text": "المبدأ الخامس",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 107
+  },
+  {
+    "text": "تسويق البيانــات",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 107
+  },
+  {
+    "text": "مبادرات البيانــات المفتوحــة",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 107
+  },
+  {
+    "text": " الجهــات الحكوميــة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 107
+  },
+  {
+    "text": "سياســة البيانــات المفتوحــة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 107
+  },
+  {
+    "text": "استراتيجياتها",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 107
+  },
+  {
+    "text": "جهات حكومية",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 108
+  },
+  {
+    "text": "المبدأ الثامن",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 108
+  },
+  {
+    "text": "المبدأ السادس",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 108
+  },
+  {
+    "text": "نموذج تسعير استرداد التكاليف",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 108
+  },
+  {
+    "text": "سوق",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 108
+  },
+  {
+    "text": "اقتصادي",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 108
+  },
+  {
+    "text": "تحقيق أققل قدر ممكن من الأرباح",
+    "type": "Event",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 108
+  },
+  {
+    "text": "Cost Recovery + ROI",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 109
+  },
+  {
+    "text": "Model for Cost Recovery",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 109
+  },
+  {
+    "text": "Product/Service",
+    "type": "Product",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 109
+  },
+  {
+    "text": "Government Agencies",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 109
+  },
+  {
+    "text": "الجهات الحكومية",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 109
+  },
+  {
+    "text": "البيانات المفتوحة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 109
+  },
+  {
+    "text": "البيانات المصنّ فة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 109
+  },
+  {
+    "text": "هـــ.16/3/1441",
+    "type": "Event",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 109
+  },
+  {
+    "text": "17850 الحكوميــة",
+    "type": "Event",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 109
+  },
+  {
+    "text": "المســتفيدة",
+    "type": "Location",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 109
+  },
+  {
+    "text": "جهات حكومية",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 109
+  },
+  {
+    "text": "بيانات مفتوحة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 109
+  },
+  {
+    "text": "بيانات مصنفة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 109
+  },
+  {
+    "text": "هـــ.16/3/1441",
+    "type": "Event",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 109
+  },
+  {
+    "text": "17850 الحكومية",
+    "type": "Event",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 109
+  },
+  {
+    "text": "مســتفيدة",
+    "type": "Location",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 109
+  },
+  {
+    "text": "Government",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 109
+  },
+  {
+    "text": "G2G",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 109
+  },
+  {
+    "text": "Open Data",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 109
+  },
+  {
+    "text": "Publicly Available Data",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 109
+  },
+  {
+    "text": "Cost Recovery",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 109
+  },
+  {
+    "text": " الجهات الحكومية",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 110
+  },
+  {
+    "text": " المنتجات",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 110
+  },
+  {
+    "text": " البيانات المفتوحة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 110
+  },
+  {
+    "text": " البيانات المصنفة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 110
+  },
+  {
+    "text": " تاريخ 1441/3/16",
+    "type": "Event",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 110
+  },
+  {
+    "text": " الجهات الحكومية",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 111
+  },
+  {
+    "text": " البيانات المفتوحة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 111
+  },
+  {
+    "text": " البيانات المعالجة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 111
+  },
+  {
+    "text": " المنتجات المطورة",
+    "type": "Product",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 111
+  },
+  {
+    "text": " الجهة أو الجهات الخاصة",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 111
+  },
+  {
+    "text": " الجهات الحكومية",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 111
+  },
+  {
+    "text": " أحكام سياسية مشاركة البيانات",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 111
+  },
+  {
+    "text": " حمايه البيانات الشخصية عند",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 111
+  },
+  {
+    "text": " البيانــات",
+    "type": "Product",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 111
+  },
+  {
+    "text": " التعمية",
+    "type": "Process",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 111
+  },
+  {
+    "text": " المزجMasking",
+    "type": "Process",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 111
+  },
+  {
+    "text": "منتجات البيانات",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 112
+  },
+  {
+    "text": "البيانات المفتوحة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 112
+  },
+  {
+    "text": "البيانات الحكومية",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 112
+  },
+  {
+    "text": "استرداد التكاليف (B2G)",
+    "type": "Event",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 112
+  },
+  {
+    "text": "استرداد التكاليف (B2B/B2I)",
+    "type": "Event",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 112
+  },
+  {
+    "text": "الجهات التنظيميّة",
+    "type": "Location",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 112
+  },
+  {
+    "text": "الجهات ذات العالقّة",
+    "type": "Location",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 112
+  },
+  {
+    "text": "العام",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 112
+  },
+  {
+    "text": "الجهات الخاصة",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 112
+  },
+  {
+    "text": "جهة حكومية",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 112
+  },
+  {
+    "text": "اتفاقيات تجارية",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 112
+  },
+  {
+    "text": "ترخيص السستخدام البيانات",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 112
+  },
+  {
+    "text": "المعالجة",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 112
+  },
+  {
+    "text": "الألغرض المحدد",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 112
+  },
+  {
+    "text": "إعادة استخدم البيانات الحكومية",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 112
+  },
+  {
+    "text": "Model Pricing",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 113
+  },
+  {
+    "text": "Data Standards",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 113
+  },
+  {
+    "text": "Data Sources",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 113
+  },
+  {
+    "text": "Rarity of Data",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 113
+  },
+  {
+    "text": "Number of Users/ Employees",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 113
+  },
+  {
+    "text": "Value of Data",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 113
+  },
+  {
+    "text": "قيمـة البيانــات",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 113
+  },
+  {
+    "text": "نوع البيانات",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 113
+  },
+  {
+    "text": "حجم البيانات",
+    "type": "Product",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 113
+  },
+  {
+    "text": "المســتفيدين المســتهدفين",
+    "type": "Person",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 113
+  },
+  {
+    "text": "منتجات البيانات المماثلة في السوق",
+    "type": "Product",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 113
+  },
+  {
+    "text": " الجهات الحكومية",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 113
+  },
+  {
+    "text": "المكتب",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 113
+  },
+  {
+    "text": "تكلفة، تسعير، استرداد، ربح",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 113
+  },
+  {
+    "text": "تقدير، تبرير، أخذ الموافقة",
+    "type": "Event",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 113
+  },
+  {
+    "text": " الجهات التنظيمية",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 114
+  },
+  {
+    "text": "أحكام عامة (.5.1.6)",
+    "type": "Document",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 114
+  },
+  {
+    "text": "الدول",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 114
+  },
+  {
+    "text": "نظام إيرادات الدولة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 114
+  },
+  {
+    "text": "الجهات التنظيمية",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 114
+  },
+  {
+    "text": "رئيس الجهة أو من يفوضه",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 114
+  },
+  {
+    "text": "الدولة",
+    "type": "Location",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 114
+  },
+  {
+    "text": "سياسة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 114
+  },
+  {
+    "text": "المتابعة",
+    "type": "Event",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 114
+  },
+  {
+    "text": "جهات حكومية",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 114
+  },
+  {
+    "text": "رئيس الجهة",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 114
+  },
+  {
+    "text": "يفوضه",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 114
+  },
+  {
+    "text": "الدولة",
+    "type": "Location",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 114
+  },
+  {
+    "text": "إيرادات",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 114
+  },
+  {
+    "text": "البيانات الحكومية",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 114
+  },
+  {
+    "text": "المعالجة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 114
+  },
+  {
+    "text": "غيْر المعالجة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 114
+  },
+  {
+    "text": "الإصدار",
+    "type": "Event",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 114
+  },
+  {
+    "text": "المبدأ السادس: األمان",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 119
+  },
+  {
+    "text": "التحكْم",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 119
+  },
+  {
+    "text": "توفير إمكانية",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 119
+  },
+  {
+    "text": "عدم تمكنهما من إلحاق أي ضر أو أذى",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 119
+  },
+  {
+    "text": "جودة البيانات",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 119
+  },
+  {
+    "text": "دقيق و صحيح و مكتمل و ذو علقة بالغرض",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 119
+  },
+  {
+    "text": "صاحب البيانــات الشــ الشخصية",
+    "type": "Person",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 119
+  },
+  {
+    "text": "مع توفير إمكانية تتبع مراحل اتخاذ القرارات المهمة",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 119
+  },
+  {
+    "text": "صاحب البيانات",
+    "type": "Person",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 119
+  },
+  {
+    "text": "التزام تعاقدي",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 119
+  },
+  {
+    "text": "تنفيذ التزام تعاقدي",
+    "type": "Event",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 119
+  },
+  {
+    "text": "جهات التنظيمية",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 123
+  },
+  {
+    "text": "جهات التنظيمية",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 123
+  },
+  {
+    "text": "ساعة من وقوع 72",
+    "type": "Event",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 123
+  }
+]

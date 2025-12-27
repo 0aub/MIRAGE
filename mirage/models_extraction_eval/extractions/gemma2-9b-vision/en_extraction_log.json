@@ -1,0 +1,19 @@
+{
+  "model": "gemma2-9b-vision",
+  "model_full_name": "gemma2:9b",
+  "provider": "ollama",
+  "vision_mode": true,
+  "document": "PoliciesEn.pdf",
+  "language": "en",
+  "start_time": "2025-12-26T19:05:51.498063",
+  "end_time": "2025-12-26T19:09:05.708489",
+  "elapsed_seconds": 194.21,
+  "total_pages": 57,
+  "total_tokens": 57000,
+  "tokens_per_second": 293.5,
+  "pages_per_minute": 17.61,
+  "total_entities": 0,
+  "total_relationships": 0,
+  "errors_count": 0,
+  "errors": []
+}

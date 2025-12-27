@@ -1,0 +1,689 @@
+[
+  {
+    "page": 1,
+    "chunk_preview": " املبادئ ألاساسية و \n\nNational Data Governance Interim Regulations\n \n\nVersion 1\n \n\nJune 1st, 2020\n \n\nللبيانات الوطنية \n\n\"\"مسودة \n",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 2,
+    "chunk_preview": "National Data Governance Interim Regulations \n\nTable of Content \n\n1.  \nIntroduction ....................................................................................................................",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 3,
+    "chunk_preview": "National Data Governance Interim Regulations \n\nPrinciple 9: Data Quality ...............................................................................................................................",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 4,
+    "chunk_preview": "National Data Governance Interim Regulations \n\n7.4\n.\n \nObligations of Public Entities ..................................................................................................................",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 5,
+    "chunk_preview": "National Data Governance Interim Regulations \n\n1. Introduction \n\nGovernment data represents a national asset that can enhance performance and productivity and facilitate public \nservices delivery. Thi",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 6,
+    "chunk_preview": "National Data Governance Interim Regulations \n\nFigure1 – Relationship and Interdependencies of Data-specific Policies and Regulations\n \n\n6 \n",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 7,
+    "chunk_preview": "National Data Governance Interim Regulations \n\n2. Definitions \n\nFor the purposes of this Interim Regulations, the following words and phrases, wherever mentioned herein, shall \n\nhave meanings ascribed",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 8,
+    "chunk_preview": "National Data Governance Interim Regulations \n\nOpen data: Datasets – that are machine-readable - made publicly available for free such that any individual, \n\nBusiness, or Public Entity can use or shar",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 9,
+    "chunk_preview": "National Data Governance Interim Regulations \n\nDisclosure of Personal Data: The intentional or unintentional access of Personal Data to any party, apart from \n\nData Controller, Data Processor or Data ",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 10,
+    "chunk_preview": "National Data Governance Interim Regulations \n\nNational Open data Portal: The central national portal dedicated for managing, storing, and publishing open \n\ndatasets across the Kingdom. \n\nOpen data Li",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 11,
+    "chunk_preview": "National Data Governance Interim Regulations \n\nChief Data and Privacy Officer (CDPO): The head of the entity„s office. Therefore, an executive within the \n\norganization who has the authority and the i",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 12,
+    "chunk_preview": "National Data Governance Interim Regulations \n\n3. Objectives \n\nWith reference to the Council of Ministers„ resolution No. (292) dated 27/04/1441H., stating in Paragraph (1) of \nArticle “Tenth” that ND",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 13,
+    "chunk_preview": "National Data Governance Interim Regulations \n\n18. Provide equal opportunity for requestors of public information thereby reinforcing citizen equality and \n\nthe collective awareness and participation ",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 14,
+    "chunk_preview": "National Data Governance Interim Regulations \n\n14 \n",
+    "response": "{\n  \"entities\": [\n    {\n      \"text\": \"National Data Governance Interim Regulations\",\n      \"type\": \"Document\",\n      \"importance\": \"high\"\n    },\n    {\n      \"text\": \"14\",\n      \"type\": \"Concept\",\n      \"importance\": \"medium\"\n    }\n  ],\n  \"relationships\": [\n    {\n      \"source\": \"National Data Governance Interim Regulations\",\n      \"target\": \"14\",\n      \"type\": \"CONTAINS\",\n      \"weight\": 0.8\n    }\n  ]\n}",
+    "parsed": {
+      "entities": [
+        {
+          "text": "National Data Governance Interim Regulations",
+          "type": "Document",
+          "importance": "high",
+          "source_doc": "PoliciesEn.pdf",
+          "page": 14
+        },
+        {
+          "text": "14",
+          "type": "Concept",
+          "importance": "medium",
+          "source_doc": "PoliciesEn.pdf",
+          "page": 14
+        }
+      ],
+      "relationships": [
+        {
+          "source": "National Data Governance Interim Regulations",
+          "target": "14",
+          "type": "CONTAINS",
+          "weight": 0.8,
+          "source_doc": "PoliciesEn.pdf",
+          "page": 14
+        }
+      ]
+    }
+  },
+  {
+    "page": 15,
+    "chunk_preview": "National Data Governance Interim Regulations \n\n4. Data Classification Interim Regulations \n\n4.1. Scope \nThe Data Classification Interim Regulations applies to all data received, produced, or managed b",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 16,
+    "chunk_preview": "National Data Governance Interim Regulations \n\n4.3. Data Classification Levels \nData Classification levels applicable to KSA public entities along with relevant impact levels, definitions and \n\nClassi",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 17,
+    "chunk_preview": "National Data Governance Interim Regulations \n\nData shall be classified as “Secret”, if \nunauthorized access to or disclosure of such \ndata or its content adversely affects:  \n\n- Information on logist",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 18,
+    "chunk_preview": "National Data Governance Interim Regulations \n\n- Information that damages the reputation of a public \n\nData shall be classified as “Confidential” \ndata, if unauthorized access to or disclosure \nof suc",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 19,
+    "chunk_preview": "National Data Governance Interim Regulations \n\nData classified as “Confidential” can be further classified into one of the following sub-levels based on the impact \nof unauthorized access or disclosur",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 20,
+    "chunk_preview": "National Data Governance Interim Regulations \n\nLong-term effect on \n\nMinimal or no effect \n\nKSA economy with \n\non KSA economy with \n\nLong-term effect on \n\nan unrecoverable \n\na quick recoverable \n\ndecr",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 20,
+    "chunk_preview": "long period of time \n\nperiod of time \n\nWould disclosure of this \n\ninformation lead to third \n\nOrganization \n\nparties„ financial loss or \n\nincurring heavy \n\nLimited damage to \n\nbankruptcy? For example,",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 21,
+    "chunk_preview": "National Data Governance Interim Regulations \n\nWould the access to this \n\ninformation mean the release \n\nGeneral or massive \n\nMinor injury with no \n\nSignificant harm or \n\nof names or locations etc.? (",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 22,
+    "chunk_preview": "National Data Governance Interim Regulations \n\nStorage \n “Top Secret”, “Secret” and “Confidential” data, or a mobile device that processes, stores or communicates \n\n“Top Secret”, “Secret” and “Confid",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 23,
+    "chunk_preview": "National Data Governance Interim Regulations \n\n In case data has been wrongly classified, the data user must notify the Business Data Executive regarding \n\nthe need to appropriately re-classify it. \n",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 24,
+    "chunk_preview": "National Data Governance Interim Regulations \n\n The organizations \n The individuals  \n The environment  \nStep 3.b – Identify the level of the impact: \nThe second stage implies that the Business Dat",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 25,
+    "chunk_preview": "National Data Governance Interim Regulations \n\nthe disclosure of the data would be against the laws and regulations, data should be classified as \n“Confidential”, otherwise the Business Data Executive",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 26,
+    "chunk_preview": "National Data Governance Interim Regulations \n\nFigure 2 – Data Classification Process \n\n26 \n",
+    "response": "{\n  \"entities\": [\n    {\n      \"text\": \"National Data Governance Interim Regulations\",\n      \"type\": \"Document\",\n      \"importance\": \"high\"\n    },\n    {\n      \"text\": \"Data Classification Process\",\n      \"type\": \"Concept\",\n      \"importance\": \"high\"\n    }\n  ],\n  \"relationships\": [\n    {\n      \"source\": \"National Data Governance Interim Regulations\",\n      \"target\": \"Data Classification Process\",\n      \"type\": \"CONTAINS\",\n      \"weight\": 0.8\n    }\n  ]\n}",
+    "parsed": {
+      "entities": [
+        {
+          "text": "National Data Governance Interim Regulations",
+          "type": "Document",
+          "importance": "high",
+          "source_doc": "PoliciesEn.pdf",
+          "page": 26
+        },
+        {
+          "text": "Data Classification Process",
+          "type": "Concept",
+          "importance": "high",
+          "source_doc": "PoliciesEn.pdf",
+          "page": 26
+        }
+      ],
+      "relationships": [
+        {
+          "source": "National Data Governance Interim Regulations",
+          "target": "Data Classification Process",
+          "type": "CONTAINS",
+          "weight": 0.8,
+          "source_doc": "PoliciesEn.pdf",
+          "page": 26
+        }
+      ]
+    }
+  },
+  {
+    "page": 27,
+    "chunk_preview": "National Data Governance Interim Regulations \n\n4.6. Roles and Responsibilities Within the Entity  \nAll Entities within the Kingdom shall designate individuals who will be responsible for carrying out ",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 28,
+    "chunk_preview": "National Data Governance Interim Regulations \n\nPersonal Data Protection \n\nInterim Regulations\n \n\n28 \n",
+    "response": "{\n  \"entities\": [\n    {\n      \"text\": \"National Data Governance Interim Regulations\",\n      \"type\": \"Document\",\n      \"importance\": \"high\"\n    },\n    {\n      \"text\": \"Personal Data Protection\",\n      \"type\": \"Concept\",\n      \"importance\": \"high\"\n    },\n    {\n      \"text\": \"Interim Regulations\",\n      \"type\": \"Concept\",\n      \"importance\": \"medium\"\n    }\n  ],\n  \"relationships\": [\n    {\n      \"source\": \"National Data Governance Interim Regulations\",\n      \"target\": \"Personal Data Protection\",\n      \"type\": \"RELATED_TO\",\n      \"weight\": 0.9\n    },\n    {\n      \"source\": \"National Data Governance Interim Regulations\",\n      \"target\": \"Interim Regulations\",\n      \"type\": \"BELONGS_TO\",\n      \"weight\": 0.8\n    }\n  ]\n}",
+    "parsed": {
+      "entities": [
+        {
+          "text": "National Data Governance Interim Regulations",
+          "type": "Document",
+          "importance": "high",
+          "source_doc": "PoliciesEn.pdf",
+          "page": 28
+        },
+        {
+          "text": "Personal Data Protection",
+          "type": "Concept",
+          "importance": "high",
+          "source_doc": "PoliciesEn.pdf",
+          "page": 28
+        },
+        {
+          "text": "Interim Regulations",
+          "type": "Concept",
+          "importance": "medium",
+          "source_doc": "PoliciesEn.pdf",
+          "page": 28
+        }
+      ],
+      "relationships": [
+        {
+          "source": "National Data Governance Interim Regulations",
+          "target": "Personal Data Protection",
+          "type": "RELATED_TO",
+          "weight": 0.9,
+          "source_doc": "PoliciesEn.pdf",
+          "page": 28
+        },
+        {
+          "source": "National Data Governance Interim Regulations",
+          "target": "Interim Regulations",
+          "type": "BELONGS_TO",
+          "weight": 0.8,
+          "source_doc": "PoliciesEn.pdf",
+          "page": 28
+        }
+      ]
+    }
+  },
+  {
+    "page": 29,
+    "chunk_preview": "National Data Governance Interim Regulations \n\n5. Personal Data Protection Interim Regulations \n\n5.1. Scope \nThe Personal Data Protection Interim Regulations apply to all entities in the Kingdom that ",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 30,
+    "chunk_preview": "National Data Governance Interim Regulations \n\nPrinciple 7: Data Disclosure Limitation \nDisclosure of personal data to third parties shall be restricted to the purposes provided for in Privacy Notice,",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 31,
+    "chunk_preview": "National Data Governance Interim Regulations \n\n3. The Data Controller shall assess the potential risks and impacts of specific activities. Evaluation results shall be \n\npresented to the head of the en",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 32,
+    "chunk_preview": "National Data Governance Interim Regulations \n\noutside the Kingdom after the Controller obtains a written approval from the Regulatory Authority and the \nRegulatory Authority shall coordinate with NDM",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 33,
+    "chunk_preview": "National Data Governance Interim Regulations \n\no Use the appropriate security measures (For example: Encryption, and separate the environments relating \n\nto development) in order to protect personal d",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 34,
+    "chunk_preview": "National Data Governance Interim Regulations \n\nData Sharing\n \n\nInterim Regulations\n \n\n34 \n",
+    "response": "{\n  \"entities\": [\n    {\n      \"text\": \"National Data Governance Interim Regulations\",\n      \"type\": \"Document\",\n      \"importance\": \"high\"\n    },\n    {\n      \"text\": \"Data Sharing\",\n      \"type\": \"Concept\",\n      \"importance\": \"medium\"\n    },\n    {\n      \"text\": \"Interim Regulations\",\n      \"type\": \"Concept\",\n      \"importance\": \"medium\"\n    }\n  ],\n  \"relationships\": [\n    {\n      \"source\": \"National Data Governance Interim Regulations\",\n      \"target\": \"Interim Regulations\",\n      \"type\": \"BELONGS_TO\",\n      \"weight\": 0.9\n    },\n    {\n      \"source\": \"National Data Governance Interim Regulations\",\n      \"target\": \"Data Sharing\",\n      \"type\": \"AFFECTS\",\n      \"weight\": 0.8\n    }\n  ]\n}",
+    "parsed": {
+      "entities": [
+        {
+          "text": "National Data Governance Interim Regulations",
+          "type": "Document",
+          "importance": "high",
+          "source_doc": "PoliciesEn.pdf",
+          "page": 34
+        },
+        {
+          "text": "Data Sharing",
+          "type": "Concept",
+          "importance": "medium",
+          "source_doc": "PoliciesEn.pdf",
+          "page": 34
+        },
+        {
+          "text": "Interim Regulations",
+          "type": "Concept",
+          "importance": "medium",
+          "source_doc": "PoliciesEn.pdf",
+          "page": 34
+        }
+      ],
+      "relationships": [
+        {
+          "source": "National Data Governance Interim Regulations",
+          "target": "Interim Regulations",
+          "type": "BELONGS_TO",
+          "weight": 0.9,
+          "source_doc": "PoliciesEn.pdf",
+          "page": 34
+        },
+        {
+          "source": "National Data Governance Interim Regulations",
+          "target": "Data Sharing",
+          "type": "AFFECTS",
+          "weight": 0.8,
+          "source_doc": "PoliciesEn.pdf",
+          "page": 34
+        }
+      ]
+    }
+  },
+  {
+    "page": 35,
+    "chunk_preview": "National Data Governance Interim Regulations \n\n6. Data Sharing Interim Regulations \n\n6.1. Scope \nThe Data Sharing Interim Regulations applies to all government data to share the data that is produced ",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 36,
+    "chunk_preview": "National Data Governance Interim Regulations \n\nPrinciple 6:  Data Security \nAll parties involved in Data Sharing should have an adequate set of security controls to protect and safeguard \ndata and ena",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 37,
+    "chunk_preview": "National Data Governance Interim Regulations \n\n7. The Business Data Steward defines and sets the required controls that satisfy Data Sharing principles and \n\nmeet the objectives set for each. The Busi",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 38,
+    "chunk_preview": "National Data Governance Interim Regulations \n\nAfter signing the Data Sharing Agreement (step 8 of the Data Sharing process), the Data Steward has 7 days \nfrom the data of signing the Agreement to sha",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 39,
+    "chunk_preview": "National Data Governance Interim Regulations \n\no Evaluate the quality of requested data and decide if it requires an improvement before sharing. If needed, \n\nthe entity„s office should prepare and cle",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 40,
+    "chunk_preview": "National Data Governance Interim Regulations \n\nLiability Provisions \n\n(Supported by Principle 5 – Collective Accountability) \n\no Develop the roles and responsibilities for the parties involved in the ",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 41,
+    "chunk_preview": "National Data Governance Interim Regulations \n\n10. Whenever there is an aspect of sharing government data that these Interim Regulations does not cover, \n\nthe entity„s office can set additional contro",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 42,
+    "chunk_preview": "National Data Governance Interim Regulations \n\nFreedom of Information\n \n\nInterim Regulations\n \n\n42 \n",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 43,
+    "chunk_preview": "National Data Governance Interim Regulations \n\n7. Freedom of Information Interim Regulations \n\n7.1. Scope \nThis Interim Regulation applies to all requests coming from any individual to access or obtai",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 44,
+    "chunk_preview": "National Data Governance Interim Regulations \n\nPrinciple 4: Equality \nAll the requests for access to information are treated equally and in a non-discriminatory manner. \n\n7.3. The Rights of Individual",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 45,
+    "chunk_preview": "National Data Governance Interim Regulations \n\n8. The public entity shall prepare and develop the necessary procedures to manage, process, and document \n\nthe requests subject to extension or denial. T",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 46,
+    "chunk_preview": "National Data Governance Interim Regulations \n\nFigure 4 - Request for Information Process \n \n\nThe main steps for the request to access public information: \nFirst: Applications should be submitted by f",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 47,
+    "chunk_preview": "National Data Governance Interim Regulations \n\no Notice of a right to appeal such delay, including notice as to the time and manner in which any \n\nappeal must be taken. \n\n4. Notice: If the required in",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 48,
+    "chunk_preview": "National Data Governance Interim Regulations \n\n7.7. Freedom of Information and Open data \nOpen data programs and policies have been launched around the world to support growth of the national \neconomy",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 49,
+    "chunk_preview": "National Data Governance Interim Regulations \n\nOpen data\n \n\nInterim Regulations\n \n\n49 \n",
+    "response": "{\n  \"entities\": [\n    {\n      \"text\": \"National Data Governance Interim Regulations\",\n      \"type\": \"Document\",\n      \"importance\": \"high\"\n    },\n    {\n      \"text\": \"Open data\",\n      \"type\": \"Concept\",\n      \"importance\": \"high\"\n    },\n    {\n      \"text\": \"Interim Regulations\",\n      \"type\": \"Concept\",\n      \"importance\": \"high\"\n    }\n  ],\n  \"relationships\": [\n    {\n      \"source\": \"National Data Governance Interim Regulations\",\n      \"target\": \"Open data\",\n      \"type\": \"RELATED_TO\",\n      \"weight\": 0.8\n    },\n    {\n      \"source\": \"National Data Governance Interim Regulations\",\n      \"target\": \"Interim Regulations\",\n      \"type\": \"BELONGS_TO\",\n      \"weight\": 0.8\n    }\n  ]\n}",
+    "parsed": {
+      "entities": [
+        {
+          "text": "National Data Governance Interim Regulations",
+          "type": "Document",
+          "importance": "high",
+          "source_doc": "PoliciesEn.pdf",
+          "page": 49
+        },
+        {
+          "text": "Open data",
+          "type": "Concept",
+          "importance": "high",
+          "source_doc": "PoliciesEn.pdf",
+          "page": 49
+        },
+        {
+          "text": "Interim Regulations",
+          "type": "Concept",
+          "importance": "high",
+          "source_doc": "PoliciesEn.pdf",
+          "page": 49
+        }
+      ],
+      "relationships": [
+        {
+          "source": "National Data Governance Interim Regulations",
+          "target": "Open data",
+          "type": "RELATED_TO",
+          "weight": 0.8,
+          "source_doc": "PoliciesEn.pdf",
+          "page": 49
+        },
+        {
+          "source": "National Data Governance Interim Regulations",
+          "target": "Interim Regulations",
+          "type": "BELONGS_TO",
+          "weight": 0.8,
+          "source_doc": "PoliciesEn.pdf",
+          "page": 49
+        }
+      ]
+    }
+  },
+  {
+    "page": 50,
+    "chunk_preview": "National Data Governance Interim Regulations \n\n8. Open data Interim Regulations \n\n8.1. Scope \nThe scope of the Open data Interim Regulations covers all data and public information – unprotected – \npro",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 51,
+    "chunk_preview": "National Data Governance Interim Regulations \n\nPrinciple 8: For Improved Governance and Citizen Engagement \nOpen data should enable informed civic participation and reinforce governments„ transparency",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 52,
+    "chunk_preview": "National Data Governance Interim Regulations \n\n8.4. Open data Rules and Obligations \nThe Open data Regulation defines rules and obligations that Adopting Entities should comply with throughout \nthe Op",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 53,
+    "chunk_preview": "National Data Governance Interim Regulations \n\n6. Conduct training related to Open data with support or coordination with NDMO. \n7. Perform awareness campaigns to ensure potential users are aware of t",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 54,
+    "chunk_preview": "National Data Governance Interim Regulations \n\nOpen data Performance Tracking \nThe public entity shall: \n\n1. Analyze the demand, download, and usage of its Open data to understand public demand and re",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 55,
+    "chunk_preview": "National Data Governance Interim Regulations \n\n2. National Information Center (NIC) \n\nNIC shall act as the technical operator of the National Open data Portal including the design, build, operations \n",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 56,
+    "chunk_preview": "National Data Governance Interim Regulations \n\n Point of Contact for NDMO – Act as the first point of contact between the entity and the NDMO. The \n\nhead of the entity„s office shall resolve any pend",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  },
+  {
+    "page": 57,
+    "chunk_preview": "National Data Governance Interim Regulations \n\n8.6. Compliance \nNDMO, as the national regulator of the data agenda, shall monitor compliance against the Open data Interim \nRegulations with the support",
+    "response": "",
+    "parsed": {
+      "entities": [],
+      "relationships": []
+    }
+  }
+]

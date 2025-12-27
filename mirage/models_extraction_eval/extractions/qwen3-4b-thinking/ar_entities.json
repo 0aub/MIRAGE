@@ -1,0 +1,296 @@
+[
+  {
+    "text": "المحتويات",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 3
+  },
+  {
+    "text": "4",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 3
+  },
+  {
+    "text": "JSON",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 3
+  },
+  {
+    "text": "التعريفات2",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 11
+  },
+  {
+    "text": "12",
+    "type": "Document",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 11
+  },
+  {
+    "text": "الأهداف",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 21
+  },
+  {
+    "text": "3",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 21
+  },
+  {
+    "text": "22",
+    "type": "Concept",
+    "importance": "low",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 21
+  },
+  {
+    "text": "القواعد العامة لمشاركة البيانات",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 65
+  },
+  {
+    "text": "الجهات",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 65
+  },
+  {
+    "text": "قناة التكامل الحكومي",
+    "type": "Product",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 65
+  },
+  {
+    "text": "شبكة مركّز المعلومات الوطني",
+    "type": "Product",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 65
+  },
+  {
+    "text": "مكتب الجهة",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 65
+  },
+  {
+    "text": "مختصات العمليات",
+    "type": "Person",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 65
+  },
+  {
+    "text": "مبدأ مشاركة البيانات",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 65
+  },
+  {
+    "text": "الضوابط المناسبة",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 65
+  },
+  {
+    "text": "المعلومات حرية سياسة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 67
+  },
+  {
+    "text": "68",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 67
+  },
+  {
+    "text": "Open Data Policy",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 75
+  },
+  {
+    "text": "Open Data",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 75
+  },
+  {
+    "text": "جهة التحكيم",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 90
+  },
+  {
+    "text": "بيانات شخصية لألطفال",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 90
+  },
+  {
+    "text": "المملكة",
+    "type": "Location",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 90
+  },
+  {
+    "text": "الجهة التنظيمية",
+    "type": "Organization",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 90
+  },
+  {
+    "text": "القواعد العامة لنقل البيانات الشخصية",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 90
+  },
+  {
+    "text": "السيادة الوطنية",
+    "type": "Concept",
+    "importance": "medium",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 90
+  },
+  {
+    "text": "البيانات",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 105
+  },
+  {
+    "text": "106",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 105
+  },
+  {
+    "text": "سياسة تصنيف البيانات",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 106
+  },
+  {
+    "text": "سياسة حماية البيانات الشخصية",
+    "type": "Document",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 106
+  },
+  {
+    "text": "مزودي البيانات",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 106
+  },
+  {
+    "text": "البيانات",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 106
+  },
+  {
+    "text": "المنتجات",
+    "type": "Product",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 106
+  },
+  {
+    "text": "الجهات الحكومية",
+    "type": "Organization",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 106
+  },
+  {
+    "text": "الإطار الوطني الموحّد",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 106
+  },
+  {
+    "text": "القواعد العامة",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 106
+  },
+  {
+    "name": "جودة البيانات",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 121
+  },
+  {
+    "name": "دقّة البيانات",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 121
+  },
+  {
+    "name": "طرق جمع البيانات",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 121
+  },
+  {
+    "name": "الخداع",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 121
+  },
+  {
+    "name": "قنوات",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 121
+  },
+  {
+    "name": "الاعتراض",
+    "type": "Concept",
+    "importance": "high",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 121
+  }
+]

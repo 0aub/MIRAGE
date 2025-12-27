@@ -1,0 +1,215 @@
+[
+  {
+    "source": "المحتويات",
+    "target": "4",
+    "type": "CONTAINS",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 3
+  },
+  {
+    "source": "المحتويات",
+    "target": "JSON",
+    "type": "USES",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 3
+  },
+  {
+    "source": "التعريفات2",
+    "target": "12",
+    "type": "RELATED_TO",
+    "weight": 0.5,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 11
+  },
+  {
+    "source": "3",
+    "target": "الأهداف",
+    "type": "PART_OF",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 21
+  },
+  {
+    "source": "22",
+    "target": "الأهداف",
+    "type": "PART_OF",
+    "weight": 0.7,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 21
+  },
+  {
+    "source": "الجهات",
+    "target": "قناة التكامل الحكومي",
+    "type": "USES",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 65
+  },
+  {
+    "source": "الجهات",
+    "target": "شبكة مركّز المعلومات الوطني",
+    "type": "USES",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 65
+  },
+  {
+    "source": "مختصات العمليات",
+    "target": "مكتب الجهة",
+    "type": "BELONGS_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 65
+  },
+  {
+    "source": "القواعد العامة لمشاركة البيانات",
+    "target": "مبدأ مشاركة البيانات",
+    "type": "CONTAINS",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 65
+  },
+  {
+    "source": "القواعد العامة لمشاركة البيانات",
+    "target": "الضوابط المناسبة",
+    "type": "CONTAINS",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 65
+  },
+  {
+    "source": "المعلومات حرية سياسة",
+    "target": "68",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 67
+  },
+  {
+    "source": "Open Data",
+    "target": "Open Data Policy",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 75
+  },
+  {
+    "source": "جهة التحكيم",
+    "target": "بيانات شخصية لألطفال",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 90
+  },
+  {
+    "source": "بيانات شخصية لألطفال",
+    "target": "المملكة",
+    "type": "LOCATED_IN",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 90
+  },
+  {
+    "source": "بيانات شخصية لألطفال",
+    "target": "الجهة التنظيمية",
+    "type": "DEPENDS_ON",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 90
+  },
+  {
+    "source": "القواعد العامة لنقل البيانات الشخصية",
+    "target": "المملكة",
+    "type": "DEPENDS_ON",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 90
+  },
+  {
+    "source": "السيادة الوطنية",
+    "target": "بيانات شخصية لألطفال",
+    "type": "AFFECTS",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 90
+  },
+  {
+    "source": "البيانات",
+    "target": "106",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 105
+  },
+  {
+    "source": "سياسة تصنيف البيانات",
+    "target": "الإطار الوطني الموحّد",
+    "type": "CONTAINS",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 106
+  },
+  {
+    "source": "سياسة تصنيف البيانات",
+    "target": "مزودي البيانات",
+    "type": "AFFECTS",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 106
+  },
+  {
+    "source": "سياسة حماية البيانات الشخصية",
+    "target": "مزودي البيانات",
+    "type": "AFFECTS",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 106
+  },
+  {
+    "source": "سياسة حماية البيانات الشخصية",
+    "target": "القواعد العامة",
+    "type": "USES",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 106
+  },
+  {
+    "source": "مزودي البيانات",
+    "target": "الجهات الحكومية",
+    "type": "BELONGS_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 106
+  },
+  {
+    "source": "البيانات",
+    "target": "المنتجات",
+    "type": "RELATED_TO",
+    "weight": 0.8,
+    "source_doc": "PoliciesAr.pdf",
+    "page": 106
+  },
+  {
+    "source": "جودة البيانات",
+    "target": "دقّة البيانات",
+    "type": "RELATED_TO",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 121
+  },
+  {
+    "source": "طرق جمع البيانات",
+    "target": "الخداع",
+    "type": "RELATED_TO",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 121
+  },
+  {
+    "source": "قنوات",
+    "target": "الاعتراض",
+    "type": "AFFECTS",
+    "source_doc": "PoliciesAr.pdf",
+    "page": 121
+  }
+]
